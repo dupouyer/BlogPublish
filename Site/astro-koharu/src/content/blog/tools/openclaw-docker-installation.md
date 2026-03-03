@@ -46,9 +46,8 @@ OpenClaw 是一个现代化的 AI Agent Gateway，主要特性：
 
 ### 1. 创建项目目录
 
-在 TrueNAS Shell 中执行：
-
 ```bash
+# 在 TrueNAS Shell 中执行
 mkdir -p /mnt/App/Dockers/openclaw/config
 mkdir -p /mnt/App/Dockers/openclaw/workspace
 ```
@@ -216,17 +215,17 @@ docker compose run --rm openclaw-cli health --token "your-token"
 - `loopback` - 仅允许本机访问
 - `tailnet` - Tailscale 网络访问
 
-#### 3. 数据卷
+#### 2. 数据卷
 
 ```yaml
 volumes:
-  - ./config:/home/node/.openclaw                # 配置文件
-  - ./workspace:/home/node/.openclaw/workspace   # 工作空间
+  - ./config:/home/node/.openclaw          # 配置文件
+  - ./workspace:/home/node/.openclaw/workspace  # 工作空间
 ```
 
 **重要**：OpenClaw 容器以 `node` 用户（UID 1000）运行，确保挂载目录的权限正确。
 
-#### 4. 网络配置
+#### 3. 网络配置
 
 ```yaml
 networks:
@@ -517,12 +516,11 @@ restart: unless-stopped  # 推荐用于生产
 
 OpenClaw 的 Docker 部署非常灵活，本文涵盖了从基础安装到高级配置的完整流程。关键要点：
 
-1. ✅ 使用具体的镜像版本标签（如 `2026.2.26`）
-2. ✅ 首次部署必须运行 onboarding 向导初始化配置
-3. ✅ 在 `lan` 模式下必须设置 `ALLOWED_ORIGINS`
-4. ✅ 确保数据卷权限正确（UID 1000）
-5. ✅ CLI 容器使用 `network_mode: service:openclaw-gateway`
-6. ✅ 通过 Traefik 可以安全地暴露服务
+1. ✅ 首次部署必须运行 onboarding 向导初始化配置
+2. ✅ 在 `lan` 模式下必须设置 `ALLOWED_ORIGINS`
+3. ✅ 确保数据卷权限正确（UID 1000）
+4. ✅ CLI 容器使用 `network_mode: service:openclaw-gateway`
+5. ✅ 通过 Traefik 可以安全地暴露服务
 
 ### 部署流程速查
 
@@ -551,7 +549,3 @@ docker compose ps
 - [Docker Compose 文档](https://docs.docker.com/compose/)
 
 ---
-
-**发布日期**：2026-03-03
-**版本**：OpenClaw 2026.2.26
-**适用平台**：TrueNAS SCALE, Linux, macOS, Windows (with Docker Desktop)
