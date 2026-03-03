@@ -55,8 +55,6 @@ mkdir -p /mnt/App/Dockers/openclaw/workspace
 
 ### 2. 创建 docker-compose.yaml
 
-> **💡 提示**：如果你在环境变量中预设了所有必需配置（Token、Bind 模式、ALLOWED_ORIGINS），可以跳过 onboarding 向导，直接使用预设配置访问 Web UI。
-
 ```yaml
 version: "3.8"
 
@@ -72,7 +70,7 @@ services:
       HOME: /home/node
       TERM: xterm-256color
 
-      # Gateway 认证 Token（预设后可跳过 onboarding）
+      # Gateway 认证 Token
       OPENCLAW_GATEWAY_TOKEN: "your-token-here"
 
       # Gateway 绑定模式（lan=局域网访问，loopback=仅本机）
@@ -201,48 +199,11 @@ docker compose run --rm openclaw-cli health --token "your-token"
 - 本地访问：`http://your-server-ip:18789`
 - 使用配置的 Token 登录（如果 onboarding 中自动生成了新 token，查看日志或配置文件获取）
 
-### ⚡ 跳过 Onboarding（可选）
-
-如果你在 `docker-compose.yaml` 中已经通过环境变量预设了所有必需配置，可以跳过 onboarding 向导：
-
-```yaml
-environment:
-  OPENCLAW_GATEWAY_TOKEN: "your-token"
-  OPENCLAW_GATEWAY_BIND: lan
-  OPENCLAW_CONTROL_UI_ALLOWED_ORIGINS: "http://localhost:18789,http://127.0.0.1:18789"
-```
-
-**预设完整配置后，直接访问 Web UI 即可使用，无需运行 onboarding。**
-
-或者，你也可以通过 CLI 非交互式设置配置：
-
-```bash
-# 设置工作模式
-docker compose run --rm openclaw-cli config set gateway.mode local
-
-# 设置绑定模式
-docker compose run --rm openclaw-cli config set gateway.bind lan
-
-# 查看所有配置
-docker compose run --rm openclaw-cli config list
-```
-
 ## 配置详解
 
 ### 核心配置项
 
-#### 1. 镜像版本
-
-```yaml
-image: ghcr.io/openclaw/openclaw:2026.2.26
-```
-
-**可用的镜像标签：**
-- `main` - 最新 main 分支构建
-- `2026.2.26` - 特定版本（推荐用于生产）
-- ⚠️ **不要使用 `:latest`**：该标签在 OpenClaw 中不存在
-
-#### 2. 环境变量
+#### 1. 环境变量
 
 | 变量名 | 说明 | 必填 | 默认值 |
 |--------|------|------|--------|
