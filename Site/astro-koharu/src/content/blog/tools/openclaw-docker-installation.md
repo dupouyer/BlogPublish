@@ -155,7 +155,7 @@ docker compose run --rm openclaw-cli onboard --mode local --no-install-daemon
 
 **向导会询问以下配置项（建议选择）：**
 
-```
+```text
 ? Gateway bind mode:
   ● lan (推荐 - 允许局域网访问)
   ○ loopback (仅本机访问)
@@ -250,7 +250,7 @@ services:
 
 ### 目录结构
 
-```
+```text
 /mnt/App/Dockers/
 └── openclaw/
     ├── docker-compose.yaml    # Compose 配置文件
