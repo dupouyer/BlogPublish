@@ -99,18 +99,18 @@ featuredCategories:
 featuredSeries:
   - slug: weekly # URL 路径: /weekly
     categoryName: 周刊 # 必须与 categoryMap 中的分类名匹配
-    label: 我的周刊 # 简短名称
-    fullName: 我的技术周刊 # 完整名称
+    label: 技术周报 # 简短名称
+    fullName: TA / 实时渲染技术周报 # 完整名称
     description: | # 支持多行 Markdown
-      这是周刊/系列文章功能的示例配置。
-      你可以用它来发布定期更新的系列内容，如技术周刊、读书笔记系列等。
-      设置 enabled: false 可以关闭此功能。
+      每周五精选值得关注的技术动态，每周六推荐一篇深度阅读。
+      聚焦实时渲染、UE、GPU、技术美术与 AI 工具链，保留原始来源与实践价值。
     cover: /img/weekly_header.webp # 系列页面头图
     enabled: true # 启用此系列
     icon: ri:newspaper-line # 导航图标
+    highlightOnHome: false # 首页使用专门的周报卡片
     links: # 相关链接（可选）
-      github: https://github.com/your-username/your-repo # (可选) GitHub 仓库
-      rss: /rss.xml # (可选) RSS 订阅链接
+      github: https://github.com/dupouyer/BlogPublish # 内容仓库
+      rss: /weekly/rss.xml # 周报独立订阅
       # chrome: https://chromewebstore.google.com/detail/your-extension-id # (可选) 浏览器插件
       # docs: https://your-docs-url # (可选) 文档链接
   # 示例：添加第二个系列（取消注释启用）
@@ -337,7 +337,7 @@ navigation:
     icon: ri:home-heart-fill # 图标
   # - name: 书摘
   #   path: /reading
-  - name: 周刊
+  - name: 技术周报
     path: /weekly
     icon: ri:newspaper-line
   - name: 文章 # 有子菜单时，path 可省略

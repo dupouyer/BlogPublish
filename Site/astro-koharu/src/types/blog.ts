@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
+import type { Newsletter } from '@lib/newsletter-schema';
 
 /**
  * Blog post schema - matches the schema defined in content.config.ts
@@ -6,6 +7,7 @@ import type { CollectionEntry } from 'astro:content';
  */
 export interface BlogSchema {
   title: string;
+  newsletter?: Newsletter;
   description?: string;
   link?: string;
   date: Date;

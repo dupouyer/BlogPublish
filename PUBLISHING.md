@@ -2,6 +2,8 @@
 
 `dupouyer/BlogPublish` 保存知识资产和审阅历史；Cloudflare Pages 执行现有构建和部署。
 
+固定周报栏目：`/weekly`，独立订阅：`/weekly/rss.xml`。周五技术精选与周六深度阅读的文章格式、幂等更新和已授权的自动发布流程见 [WEEKLY.md](WEEKLY.md)。
+
 ## 当前发布入口
 
 | 配置 | 当前值 |

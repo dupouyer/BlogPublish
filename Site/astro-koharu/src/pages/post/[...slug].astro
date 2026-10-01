@@ -13,6 +13,7 @@ import Layout from '@layouts/Layout.astro';
 import TwoColumnLayout from '@layouts/TwoColumnLayout.astro';
 import { buildCategoryPath, getCategoryArr, getPostDescription, getPostSummary, getSortedPosts } from '@lib/content';
 import { formatForSeo } from '@lib/date';
+import { newsletterLabels } from '@lib/newsletter';
 import { getOgImageUrl } from '@lib/seo/og-image';
 import { Icon } from 'astro-icon/components';
 import { Comment } from '@/components/comment';
@@ -175,6 +176,13 @@ if (post.data.description) {
           <SummaryPanel client:visible summary={summaryText} source={summarySource} className="mt-2" />
         )
       }
+      {post.data.newsletter && (
+        <aside aria-label="本期期刊信息" class="bg-muted/30 mt-4 flex flex-wrap items-center gap-3 rounded-xl border px-4 py-3 text-sm">
+          <a href="/weekly" class="text-primary font-semibold">技术周报</a>
+          <span>{newsletterLabels[post.data.newsletter.kind]} · {post.data.newsletter.issue}</span>
+          <span class="text-muted-foreground">收集范围 {post.data.newsletter.periodStart} — {post.data.newsletter.periodEnd}</span>
+        </aside>
+      )}
       <article class="prose md:prose-sm dark:prose-invert">
         <CustomContent Content={Content} />
       </article>
