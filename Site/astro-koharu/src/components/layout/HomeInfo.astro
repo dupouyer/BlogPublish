@@ -27,7 +27,7 @@ const allTags = Object.entries(tags).map(([tag, count]) => ({ tag, count }));
 
 // 生成唯一 ID 前缀
 const uniqueId = `home-info-${Math.random().toString(36).substring(2, 11)}`;
-const { className } = Astro.props;
+const { className, isDrawer = false } = Astro.props;
 
 // Filter navigation items to exclude disabled series
 const filteredRouters = filterNavItems(routers, configuredSeriesSlugs, enabledSeriesSlugs, RESERVED_ROUTES);
@@ -36,7 +36,7 @@ const filteredRouters = filterNavItems(routers, configuredSeriesSlugs, enabledSe
 <div class={cn('flex flex-col items-center', className)} data-home-info-container={uniqueId}>
   <div class="relative h-40 w-40 rounded-full" style={getLqipStyle(siteConfig.avatar ?? '/img/avatar.webp')}>
     <img
-      transition:persist="page-home-info-avatar"
+      transition:persist={isDrawer ? 'page-home-info-avatar-drawer' : 'page-home-info-avatar'}
       class="shadow-card-darker hover:animate-shake h-full w-full rounded-full transition"
       src={siteConfig.avatar ?? '/img/avatar.webp'}
       alt={`${siteConfig.name ?? ''} avatar`}
