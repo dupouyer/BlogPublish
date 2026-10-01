@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+Read the repository-root [AGENTS.md](../../AGENTS.md) and [PUBLISHING.md](../../PUBLISHING.md) first. They are the shared source for content, publishing, and change-scoped validation rules; the engineering guidance below supplements them. For documentation-only changes, follow their scoped checks instead of running repository-wide auto-fixes.
+
 ## Project Overview
 
 astro-koharu is an Astro-based blog rebuilt from Hexo, inspired by the Shoka theme. It uses React for interactive components, Tailwind CSS for styling, and maintains compatibility with legacy Hexo blog content.

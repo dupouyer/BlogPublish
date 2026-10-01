@@ -1,268 +1,45 @@
 ---
 name: blog-writer
-description: 帮助用户按照 astro-koharu 博客的规范创建新博文。自动生成正确的 frontmatter 结构、选择合适的分类路径，并提供 Markdown 内容框架建议。使用场景：写一篇博文、创建新文章、写文章、写博客、new post、create blog post。
+description: 将技术对话、笔记或实现经验整理为 BlogPublish 的完整博客文章，或根据新结论更新现有文章。用于整理到博客、写博文、更新文章、new post、create blog post；按仓库规范生成 Frontmatter、分类、资源引用和供 Cloudflare 预览审阅的 PR。
 ---
 
-# Blog Writer Skill
+# Blog Writer
 
-帮助用户按照 astro-koharu 博客的规范创建新博文。
+## 先读取仓库规范
 
-## 你的任务
+定位 Git 仓库根目录，读取根目录 `AGENTS.md` 和 `PUBLISHING.md`。当前 Skill 到根目录的链接为 [AGENTS.md](../../../../../AGENTS.md) 和 [PUBLISHING.md](../../../../../PUBLISHING.md)。以它们记录的路径、发布边界和验证规则为准；不要复制另一套仓库配置到 Skill。
 
-当用户请求创建新博文时：
+从站点目录读取 `src/content/config.ts`、`config/site.yaml` 的 `categoryMap`，以及相关现有文章。站点目录由根目录规范确定。配置使用 Astro 的 `config/site.yaml` / `categoryMap`。
 
-1. **收集必要信息**（如果用户未提供）：
-   - 文章标题
-   - 文章分类（从下面的分类列表中选择）
-   - 文章主题/关键词（用于生成标签和描述）
+## 判断更新还是新建
 
-2. **生成 frontmatter**：
-   ```yaml
-   ---
-   title: [文章标题]
-   link: [URL slug，使用英文短横线分隔]
-   catalog: true
-   date: [当前日期时间，格式：YYYY-MM-DD HH:mm:ss]
-   description: [一句话描述文章内容，50-100字]
-   tags:
-     - [相关标签1]
-     - [相关标签2]
-     - [相关标签3]
-   categories:
-     - [一级分类, 二级分类]
-   ---
-   ```
+1. 从用户提供的对话或资料提取要解决的问题、最终结论、关键实现和适用范围。聊天本身不足以证明技术结论。
+2. 搜索相关旧文，读取正文并比较覆盖范围。对已有问题的纠错、补充或验证更新原文，保留原 URL 和首次日期并写入 `updated`。
+3. 为独立主题选择可理解的标题、唯一英文 slug、合适分类和复用标签。按规范创建工作分支。
+4. 使用已有上下文完成合理选择；只在缺失信息会改变文章核心结论时询问，不逐项让用户填写标题、标签和分类。
 
-   **分类格式说明**：
-   - 嵌套分类使用数组格式：`- [一级分类, 二级分类]`
-   - 例如：`- [笔记, 前端]` 会创建 URL `/categories/note/front-end` 和面包屑 "笔记 → 前端"
-   - 单个分类直接写分类名：`categories: 随笔`
+## 写成完整技术文章
 
-3. **确定文件路径**：
-   - 基础路径：`src/content/blog/`
-   - 根据分类生成对应的子目录结构
-   - 文件名：使用 `link` 字段值 + `.md` 扩展名
+- 直接说明问题、结论和适用条件，补充读者理解所需的背景，删去聊天中的重复尝试和寒暄。
+- 按内容需要组织为问题与现象、原理、实现、验证、限制与参考，不机械套用相同章节。
+- 给出可复用的代码或操作步骤；说明版本、输入输出、坐标空间、单位及重要参数。待补充的代码不要用占位符冒充完成。
+- 对渲染和 TA 主题明确几何法线与着色法线、物体与世界空间、移动端与桌面端差异，以及实际存在的精度或性能限制。
+- 检查关键事实，引用官方文档、源码、论文等原始来源。区分已验证结果、解释性示例和推断；无法验证的结论写明限制。
+- 只保留能解释最终方案的尝试和取舍，不把错误的早期回答当作最终事实。不要捏造实测数据或声称已运行代码。
+- 使用真正有帮助的表格、Mermaid 或图片；按已有语法制作信息图，避免装饰性堆砌。来源使用原始 URL。
 
-4. **生成 Markdown 内容框架**：
-   - 提供文章结构建议（引言、正文章节、总结等）
-   - 如果适合，建议使用 infographic 信息图
-   - 提供代码示例占位符（如果是技术文章）
+## 落入仓库
 
-## 分类系统
+1. 按根目录规范生成 Frontmatter 和文章路径，检查当前 Schema。层级分类写 `categories: [[笔记, AI]]`，单层写 `categories: [工具]`。
+2. 优先复用 `categoryMap`；确需新增分类时，在同一 PR 中加入唯一 slug 映射。目录不决定分类，三级路径不会自动变为标签。
+3. 完整待审阅文章在分支中设置 `draft: false`；未完成或需要合入后隐藏的文章使用 `draft: true`。Cloudflare Preview 执行生产构建，过滤 `draft: true`。
+4. 提交文章所需的实际图片，使用站点公开路径及 alt 文本，核对代码语言、公式和内链。
+5. 保留原文不相关内容和既有资源。不要顺带迁目录、批量重新分类、升级依赖或生成全站摘要。
 
-### 一级分类及其子分类
+## 验证与交付
 
-1. **笔记 (note/)**
-   - 前端 (front-end/)
-     - React
-     - Vue
-     - TypeScript
-     - CSS
-     - 性能优化
-   - 后端 (back-end/) - 如果需要使用，确保已在 `_config.yml` 中添加映射
-   - 其他新增子分类 - 需要先在 `_config.yml` 添加映射
+执行 `PUBLISHING.md` 对应变更范围的检查，修复本次问题并记录历史失败或环境限制。避免全仓自动修复造成无关改动。
 
-2. **工具 (tools/)**
-   - 开发工具
-   - 效率工具
-   - 使用指南
+提交相关文件、推送分支、创建 PR，并检查 Cloudflare 当前提交的状态。交付 PR 链接、更新或新建的理由、关键内容、实际验证结果和真实预览地址；未生成预览时说明状态。
 
-3. **随笔 (life/)**
-   - 生活随笔
-   - 年度总结
-   - 读书笔记
-
-4. **周刊 (weekly/)**
-   - 技术周刊
-   - 每周分享
-
-### 分类映射规则
-
-**YAML 格式（重要）**：
-```yaml
-# 嵌套分类（推荐）- 使用数组包裹
-categories:
-  - [笔记, 前端]
-
-# 单个分类 - 直接写分类名
-categories: 随笔
-```
-
-**URL 和路径映射**：
-- `categories: 随笔` → URL: `/categories/life` → 文件路径: `src/content/blog/life/`
-- `categories: - [笔记, 前端]` → URL: `/categories/note/front-end` → 文件路径: `src/content/blog/note/front-end/`
-- `categories: - [笔记, 前端, CSS]` → URL: `/categories/note/front-end` → 文件路径: `src/content/blog/note/front-end/`（三级分类作为标签）
-
-**注意**：
-- 嵌套分类必须使用 `- [一级, 二级]` 格式
-- 分类名称（中文）会映射到 URL slug（英文），映射关系见上方分类列表
-
-### 新增分类
-
-如果用户需要创建上述分类之外的新分类，需要：
-
-1. **更新 `_config.yml`**：
-   ```yaml
-   category_map:
-     # 一级分类
-     随笔: life
-     笔记: note
-     工具: tools
-     周刊: weekly
-
-     # 二级分类
-     前端: front-end
-     后端: back-end  # 新增示例
-
-     # 添加新分类映射
-     新分类名: new-category-slug
-   ```
-
-2. **创建对应目录**：
-   - 在 `src/content/blog/` 下创建对应的目录结构
-   - 例如：新增"后端"分类需要创建 `src/content/blog/note/back-end/`
-
-3. **提醒用户**：
-   - 告知用户已添加新分类映射到 `_config.yml`
-   - 说明新分类的 URL 路径
-
-## 文件命名规范
-
-- 使用英文小写字母
-- 单词间用短横线 `-` 分隔
-- 避免特殊字符
-- 例如：`react-hooks-guide.md`, `astro-blog-setup.md`
-
-## 内容建议
-
-### 技术文章结构
-
-```markdown
-## 背景/问题
-
-[描述要解决的问题或技术背景]
-
-## 解决方案
-
-[详细说明解决方法]
-
-### 关键技术点1
-
-[技术细节和代码示例]
-
-### 关键技术点2
-
-[技术细节和代码示例]
-
-## 实践效果
-
-[实际应用效果、性能对比等]
-
-## 总结
-
-[总结要点和经验]
-```
-
-### 工具/指南类文章结构
-
-```markdown
-## 简介
-
-[工具/方法简介]
-
-## 安装/准备
-
-[安装步骤或前置条件]
-
-## 基本使用
-
-[基础用法和示例]
-
-## 高级功能
-
-[进阶功能和技巧]
-
-## 实用技巧
-
-[最佳实践和注意事项]
-
-## 总结
-
-[总结和资源链接]
-```
-
-### 随笔类文章结构
-
-```markdown
-## 引言
-
-[开场白，引出话题]
-
-## 正文
-
-[多个段落展开论述]
-
-## 感悟/总结
-
-[个人思考和总结]
-```
-
-## Infographic 使用建议
-
-根据文章类型，建议使用信息图的场景：
-
-- **列表信息**（技术栈、功能特性）→ `list-grid-badge-card`
-- **流程步骤**（安装步骤、开发流程）→ `sequence-zigzag-steps-underline-text`
-- **对比分析**（技术对比、优缺点）→ `compare-binary-horizontal-simple-fold`
-- **统计数据**（性能对比、用量统计）→ `chart-column-simple` 或 `chart-bar-plain-text`
-- **层级结构**（目录结构、知识体系）→ `hierarchy-tree-tech-style-capsule-item`
-
-## 最后步骤
-
-创建完博文后：
-
-1. **如果添加了新分类**：
-   - 确认已更新 `_config.yml` 中的 `category_map`
-   - 确认已创建对应的目录结构
-   - 告知用户新分类的 URL 路径
-
-2. **运行检查**：
-   - 运行 `pnpm dev` 在本地预览
-   - 运行 `pnpm lint:fix` 检查格式
-
-3. **后续建议**：
-   - 提醒用户可以使用 infographic skills 添加信息图
-   - 如果需要，提供相关文章推荐的建议（基于 tags）
-
-## 示例对话
-
-### 示例 1：使用现有分类
-
-**用户**：写一篇关于 React Hooks 使用技巧的文章
-
-**你应该**：
-
-1. 确认分类：笔记 > 前端 > React
-2. 生成文件路径：`src/content/blog/note/front-end/react-hooks-best-practices.md`
-3. 创建包含完整 frontmatter 的文件（使用 `- [笔记, 前端]` 分类格式）
-4. 提供文章结构框架
-5. 建议在"常用 Hooks 对比"部分使用 `list-grid-badge-card` 信息图
-6. 建议在"Hooks 使用流程"部分使用 `sequence-zigzag-steps-underline-text` 信息图
-
-### 示例 2：需要新增分类
-
-**用户**：写一篇关于 Node.js 后端开发的文章
-
-**你应该**：
-
-1. 发现"后端"分类不在现有分类列表中
-2. 询问用户是否要添加"后端"分类
-3. 如果用户同意：
-   - 更新 `_config.yml`，添加 `后端: back-end`
-   - 创建目录 `src/content/blog/note/back-end/`
-   - 生成文章文件 `src/content/blog/note/back-end/nodejs-development.md`
-   - frontmatter 使用 `- [笔记, 后端]` 分类格式
-4. 告知用户：
-   - 新分类已添加到 `_config.yml`
-   - URL 路径为 `/categories/note/back-end`
-   - 已创建对应目录结构
+按根目录规范执行审阅和合并。不得用新部署脚本替代现有 Cloudflare Git 集成，也不得将未合并的 PR 报告为已正式发布。
