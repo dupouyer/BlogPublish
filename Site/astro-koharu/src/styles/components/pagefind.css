@@ -15,10 +15,10 @@
 }
 
 .dark {
-  --pagefind-ui-text: #e5e5e5;
+  --pagefind-ui-text: hsl(var(--foreground));
   --pagefind-ui-background: var(--gradient-bg-start);
-  --pagefind-ui-border: rgba(255, 255, 255, 0.15);
-  --pagefind-ui-tag: rgba(241, 139, 179, 0.2);
+  --pagefind-ui-border: hsl(var(--border));
+  --pagefind-ui-tag: hsl(var(--primary) / 0.15);
 }
 
 .search-dialog:has(.pagefind-ui__results) .search-empty-hint,
@@ -52,7 +52,7 @@
 }
 .pagefind-ui__search-clear:hover {
   background: hsl(var(--primary));
-  color: white;
+  color: hsl(var(--primary-foreground));
 }
 
 /* Results Area */

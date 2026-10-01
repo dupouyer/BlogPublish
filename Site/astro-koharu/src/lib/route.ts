@@ -17,7 +17,7 @@ export function routeBuilder<T extends Routes>(route: T, param: RouteParams<type
     case Routes.Post: {
       // 兼容 BlogPost 和 PostRef
       const link = 'data' in param ? param.data?.link : param.link;
-      const slug = param.slug;
+      const slug = 'collection' in param ? param.id : param.slug;
       href += `/${encodeSlug(link ?? slug)}`;
       break;
     }

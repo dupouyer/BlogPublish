@@ -46,7 +46,7 @@ draft: false
 ---
 ```
 
-- Schema 位于 `Site/astro-koharu/src/content/config.ts`，当前仅 `title` 和 `date` 必填；以上更完整字段是本仓库的写作要求。
+- Schema 位于 `Site/astro-koharu/src/content.config.ts`，当前仅 `title` 和 `date` 必填；以上更完整字段是本仓库的写作要求。
 - 单层分类写成 `categories: [工具]`；`categories: 随笔` 不符合当前 Schema。
 - `categories: [笔记, AI]` 不等同于嵌套路径；层级写成 `categories: [[笔记, AI]]`。通常只使用一条主路径，跨主题信息写到 `tags`。
 - 新文章文件名为 `<link>.md`，检查 `link` 不与其他文章的实际路由冲突。文章地址是 `/post/<link>`，不由分类目录决定。
@@ -82,6 +82,8 @@ PR 草稿状态只表示审阅状态，不等于文章的 `draft` 字段。分�
 
 ## 提交前验证
 
+Astro 6 要求 Node >= 22.12.0；仓库和站点的 `.nvmrc` 固定 Node 22.23.3，根目录和站点的 `package.json` 固定 pnpm 9.15.1。根目录 manifest 仅用于让 Cloudflare 在安装指定 Node 后识别并安装 pnpm，不定义另一套构建入口。Cloudflare 保留现有构建命令，使用仓库根目录的 `.nvmrc` 选择 Node。
+
 所有站点命令从 `Site/astro-koharu/` 执行，使用现有脚本：
 
 ```bash
@@ -114,4 +116,4 @@ Cloudflare Preview 可用时填写真实 URL，确认它对应 PR 最新提交�
 
 ## 后续整理
 
-统一 pnpm 锁文件、整理个人站点模板配置、扩充 TA 分类、增加验证入口和 PR 检查，可以分别作为后续变更。Cloudflare 的 Build Watch Path、缓存、Root directory 优化需根据实际 Dashboard 配置实施；当前阶段保持原值。
+站点已统一使用 `pnpm-lock.yaml`，不再维护 npm 锁文件。整理个人站点模板配置、扩充 TA 分类、增加验证入口和 PR 检查，可以分别作为后续变更。Cloudflare 的 Build Watch Path、缓存、Root directory 优化需根据实际 Dashboard 配置实施；当前阶段保持原值。

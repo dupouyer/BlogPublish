@@ -1,5 +1,7 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection } from 'astro:content';
 import { parseDateInSiteTimezone, reinterpretUtcAsTimezone } from '@lib/date';
+import { glob } from 'astro/loaders';
+import { z } from 'astro/zod';
 import type { BlogSchema, BlogSchemaInput } from 'types/blog';
 
 /**
@@ -25,6 +27,7 @@ const dateInSiteTimezone = z
   });
 
 const blogCollection = defineCollection({
+  loader: glob({ pattern: '**/[^_]*.{md,mdx}', base: './src/content/blog' }),
   schema: z.object({
     title: z.string(),
     description: z.string().optional(),
@@ -49,7 +52,7 @@ const blogCollection = defineCollection({
     // Shoka features per-post toggle
     math: z.boolean().optional(),
     quiz: z.boolean().optional(),
-  }) satisfies z.ZodType<BlogSchema, z.ZodTypeDef, BlogSchemaInput>,
+  }) satisfies z.ZodType<BlogSchema, BlogSchemaInput>,
 });
 
 export const collections = {

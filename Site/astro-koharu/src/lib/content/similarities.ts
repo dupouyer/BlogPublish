@@ -26,7 +26,7 @@ try {
 
 /**
  * Get related post slugs for a given post
- * @param currentSlug Current post's slug (from post.data.link or post.slug)
+ * @param currentSlug Current post's slug (from post.data.link or post.id)
  * @param count Number of related posts to return
  * @returns Array of similar post data with similarity scores
  */
@@ -59,7 +59,7 @@ export function getRelatedPostSlugs(currentSlug: string, count: number = 5): Sim
  */
 export function getRelatedPosts(currentPost: BlogPost, allPosts: BlogPost[], count: number = 5): BlogPost[] {
   try {
-    const currentSlug = currentPost.data.link ?? currentPost.slug;
+    const currentSlug = currentPost.data.link ?? currentPost.id;
     const relatedSlugs = getRelatedPostSlugs(currentSlug, count);
 
     if (!relatedSlugs.length) {
@@ -69,7 +69,7 @@ export function getRelatedPosts(currentPost: BlogPost, allPosts: BlogPost[], cou
     // Create a map from slug to full post object
     const slugToPost = new Map<string, BlogPost>();
     for (const post of allPosts) {
-      const slug = post.data.link ?? post.slug;
+      const slug = post.data.link ?? post.id;
       slugToPost.set(slug, post);
     }
 

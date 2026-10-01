@@ -7,41 +7,15 @@
  * Inspired by https://codepen.io/aaroniker/pen/raaMMGx
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
+import { useIsDarkTheme } from '@/hooks/useIsDarkTheme';
 import './theme-toggle.css';
 
 /**
  * Hook to manage theme state
  */
 function useTheme() {
-  const [isDark, setIsDark] = useState(() => {
-    // Initialize from DOM on client
-    if (typeof document !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return false;
-  });
-
-  // Sync with DOM changes (e.g., from other tabs or initial state)
-  useEffect(() => {
-    const rootElement = document.documentElement;
-
-    // Initial sync
-    setIsDark(rootElement.classList.contains('dark'));
-
-    // Watch for class changes
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (mutation.attributeName === 'class') {
-          setIsDark(rootElement.classList.contains('dark'));
-        }
-      }
-    });
-
-    observer.observe(rootElement, { attributes: true, attributeFilter: ['class'] });
-
-    return () => observer.disconnect();
-  }, []);
+  const isDark = useIsDarkTheme();
 
   const applyTheme = useCallback((dark: boolean) => {
     const root = document.documentElement;
@@ -49,7 +23,11 @@ function useTheme() {
 
     root.classList.toggle('dark', dark);
     root.dataset.theme = theme; // For astro-mermaid autoTheme
-    localStorage.setItem('theme', theme);
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {
+      // Keep the toggle functional when storage is unavailable.
+    }
   }, []);
 
   const toggle = useCallback(() => {
@@ -63,7 +41,6 @@ function useTheme() {
     if (!document.startViewTransition) {
       // Fallback for browsers without View Transitions API
       applyTheme(newIsDark);
-      setIsDark(newIsDark);
       setTimeout(() => {
         rootElement.classList.remove('theme-transition');
       }, 100);
@@ -72,7 +49,6 @@ function useTheme() {
 
     const transition = document.startViewTransition(() => {
       applyTheme(newIsDark);
-      setIsDark(newIsDark);
     });
 
     transition.finished.finally(() => {
@@ -90,28 +66,17 @@ interface ThemeToggleProps {
 export default function ThemeToggle({ className }: ThemeToggleProps) {
   const { isDark, toggle } = useTheme();
 
-  const handleChange = () => {
-    toggle();
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      toggle();
-    }
-  };
-
   return (
     <button
       className={`theme-toggle scale-80 cursor-pointer transition duration-300 hover:scale-90 ${className || ''}`}
-      aria-label="toggle theme"
-      onKeyDown={handleKeyDown}
+      aria-label={isDark ? '切换到浅色模式' : '切换到暗色模式'}
+      aria-pressed={isDark}
+      onClick={toggle}
       type="button"
     >
-      <label className="toggle block cursor-pointer" aria-label="toggle theme">
-        <input type="checkbox" className="hidden" checked={isDark} onChange={handleChange} />
-        <div className="toggle-indicator" />
-      </label>
+      <span className="toggle block" aria-hidden="true">
+        <span className="toggle-indicator block" />
+      </span>
     </button>
   );
 }

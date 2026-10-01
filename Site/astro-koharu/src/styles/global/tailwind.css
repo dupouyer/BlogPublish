@@ -123,5 +123,5 @@
 }
 
 .dark .logo-text {
-  color: #ed788c;
+  color: hsl(var(--primary));
 }

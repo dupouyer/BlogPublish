@@ -62,7 +62,7 @@ const { tag, posts } = Astro.props;
                   >
                     {name}
                   </a>
-                  <a href={`/post/${encodeSlug(post?.data?.link ?? post.slug)}`} class="dashed-border md:absolute md:top-7 md:left-7">
+                  <a href={`/post/${encodeSlug(post?.data?.link ?? post.id)}`} class="dashed-border md:absolute md:top-7 md:left-7">
                     {post?.data?.title}
                   </a>
                 </p>
