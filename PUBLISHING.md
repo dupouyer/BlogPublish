@@ -82,7 +82,7 @@ PR 草稿状态只表示审阅状态，不等于文章的 `draft` 字段。分�
 
 ## 提交前验证
 
-Astro 6 要求 Node >= 22.12.0；仓库和站点的 `.nvmrc` 固定 Node 22.23.3，`package.json` 固定 pnpm 9.15.1。Cloudflare 保留现有构建命令，使用仓库根目录的 `.nvmrc` 选择 Node。
+Astro 6 要求 Node >= 22.12.0；仓库和站点的 `.nvmrc` 固定 Node 22.23.3，根目录和站点的 `package.json` 固定 pnpm 9.15.1。根目录 manifest 仅用于让 Cloudflare 在安装指定 Node 后识别并安装 pnpm，不定义另一套构建入口。Cloudflare 保留现有构建命令，使用仓库根目录的 `.nvmrc` 选择 Node。
 
 所有站点命令从 `Site/astro-koharu/` 执行，使用现有脚本：
 
