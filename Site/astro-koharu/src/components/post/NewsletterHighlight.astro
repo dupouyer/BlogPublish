@@ -1,0 +1,29 @@
+---
+import { getSortedPosts } from '@lib/content';
+import { getNewsletterPosts, newsletterLabels } from '@lib/newsletter';
+import { encodeSlug } from '@lib/route';
+
+const posts = getNewsletterPosts(await getSortedPosts());
+const latest = (['digest', 'long-read'] as const)
+  .map((kind) => posts.find((post) => post.data.newsletter?.kind === kind))
+  .filter((post) => post !== undefined);
+---
+
+<section aria-label="最新技术周报" class="bg-muted/30 rounded-2xl border p-6">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <h2 class="text-xl font-bold">技术周报</h2>
+    <a href="/weekly" class="text-primary text-sm">全部期刊 →</a>
+  </div>
+  <p class="text-muted-foreground mt-3 text-sm leading-7">周五技术精选 · 周六深度阅读 · 实时渲染 / UE / GPU / AI 工具链</p>
+  {latest.length ? (
+    <div class="mt-4 grid gap-4">
+      {latest.map((post) => (
+        <a href={`/post/${encodeSlug(post.data.link ?? post.id)}`} class="hover:text-primary block border-t pt-4">
+          <span class="text-muted-foreground text-xs">{post.data.newsletter && newsletterLabels[post.data.newsletter.kind]} · {post.data.newsletter?.issue}</span>
+          <h3 class="mt-2 font-semibold">{post.data.title}</h3>
+          <p class="text-muted-foreground mt-2 text-sm leading-6">{post.data.description}</p>
+        </a>
+      ))}
+    </div>
+  ) : <p class="text-muted-foreground mt-4 border-t pt-4 text-sm">首期即将更新，往后每周在此归档。</p>}
+</section>

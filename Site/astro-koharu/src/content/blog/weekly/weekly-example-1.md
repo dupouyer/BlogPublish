@@ -2,6 +2,7 @@
 title: 示例周刊 Vol.1
 link: weekly-example-1
 catalog: true
+draft: true
 date: 2024-01-04 00:00:00
 description: 这是一期示例周刊，展示周刊功能的使用方式。周刊适合发布定期更新的系列内容。
 tags:

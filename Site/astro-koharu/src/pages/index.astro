@@ -1,5 +1,6 @@
 ---
 import HomeSider from '@components/layout/HomeSider.astro';
+import NewsletterHighlight from '@components/post/NewsletterHighlight.astro';
 import PostList from '@components/post/PostList.astro';
 import Cover from '@components/ui/cover/Cover.astro';
 import { CONTENT_PADDING, PAGINATION } from '@constants/layout';
@@ -50,6 +51,7 @@ const page: Page<BlogPost> = {
     <div
       class={`bg-gradient-start shadow-box tablet:shadow-none flex flex-col gap-4 overflow-hidden  ${CONTENT_PADDING.standard}`}
     >
+      <NewsletterHighlight />
       {stickyPosts.length > 0 && (
         <>
           <Divider>置顶文章</Divider>
