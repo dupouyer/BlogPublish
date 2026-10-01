@@ -85,9 +85,9 @@ pnpm koharu list         # List all backups
 ## Architecture
 
 ### Tech Stack
-- **Framework**: Astro 5.x with React integration
+- **Framework**: Astro 6.x with React integration
 - **Styling**: Tailwind CSS 4.x with plugins
-- **Content**: Astro Content Collections (`src/content/blog/`)
+- **Content**: Astro Content Layer with a glob loader (`src/content.config.ts`, `src/content/blog/`)
 - **Animations**: Motion (Framer Motion successor)
 - **State**: Nanostores
 - **Search**: Pagefind (static)
@@ -142,7 +142,7 @@ pages/ → components/ → hooks/ → lib/ → constants/
 
 **Featured Series**: Special category-based content series with dedicated pages and homepage highlights. Configured via `featuredSeries` in `config/site.yaml`. Each series requires a unique `slug` (must not conflict with reserved routes) and `categoryName`. Supports multiple series, individual enable/disable, and homepage highlight control. Dynamic routes generated at `[seriesSlug].astro`.
 
-**Theme System**: Dark/light toggle with localStorage, inline check in `<head>` prevents FOUC.
+**Theme System**: Dark by default, with a saved dark/light preference in localStorage. An inline check in `<head>` prevents FOUC.
 
 **Markdown**: Shiki highlighting, auto-generated heading IDs/links via rehype plugins, GFM support.
 

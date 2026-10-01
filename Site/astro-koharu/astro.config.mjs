@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { unified } from '@astrojs/markdown-remark';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import yaml from '@rollup/plugin-yaml';
@@ -161,10 +162,11 @@ export default defineConfig({
   site: yamlConfig.site.url,
   compressHTML: true,
   markdown: {
-    // Enable GitHub Flavored Markdown
-    gfm: true,
-    remarkPlugins,
-    rehypePlugins,
+    processor: unified({
+      gfm: true,
+      remarkPlugins,
+      rehypePlugins,
+    }),
     syntaxHighlight: {
       type: 'shiki',
       excludeLangs: ['mermaid'],
@@ -214,7 +216,8 @@ export default defineConfig({
       sourcemap: isAnalyze,
     },
     plugins: [yaml(), conditionalSnowfall(), svgr(), tailwindcss()],
-    ssr: {
+    resolve: {
+      // Vite 7 applies this to server and prerender environments.
       noExternal: ['react-tweet'],
     },
     optimizeDeps: {

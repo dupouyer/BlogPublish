@@ -15,13 +15,13 @@
 /* === 暗色模式 (Dark Mode) === */
 html.dark body {
   /* 主题色 - 暗色模式下使用更亮的颜色以保持对比度 */
-  --waline-theme-color: #ed788c;
-  --waline-active-color: #f09aab;
+  --waline-theme-color: hsl(var(--primary));
+  --waline-active-color: #ffc59e;
 
-  --waline-color: #8e8e8e;
+  --waline-color: hsl(var(--foreground));
   --waline-disable-bg-color: hsl(0, 0%, 70%);
-  --waline-info-bg-color: #8e8e8e;
-  --waline-info-color: #fff;
+  --waline-info-bg-color: hsl(var(--muted));
+  --waline-info-color: hsl(var(--muted-foreground));
 }
 
 /* === 额外的样式优化 (Additional Styles) === */

@@ -50,7 +50,7 @@ export async function GET(context: APIContext) {
           ...(post.data.tags || []).map((tag) => `tag:${tag}`),
         ];
 
-        const postSlug = post.data.link ?? post.slug;
+        const postSlug = post.data.link ?? post.id;
         const postLink = `/post/${encodeSlug(postSlug)}`;
 
         return {

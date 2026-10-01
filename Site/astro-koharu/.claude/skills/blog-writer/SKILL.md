@@ -9,7 +9,7 @@ description: 将技术对话、笔记或实现经验整理为 BlogPublish 的完
 
 定位 Git 仓库根目录，读取根目录 `AGENTS.md` 和 `PUBLISHING.md`。当前 Skill 到根目录的链接为 [AGENTS.md](../../../../../AGENTS.md) 和 [PUBLISHING.md](../../../../../PUBLISHING.md)。以它们记录的路径、发布边界和验证规则为准；不要复制另一套仓库配置到 Skill。
 
-从站点目录读取 `src/content/config.ts`、`config/site.yaml` 的 `categoryMap`，以及相关现有文章。站点目录由根目录规范确定。配置使用 Astro 的 `config/site.yaml` / `categoryMap`。
+从站点目录读取 `src/content.config.ts`、`config/site.yaml` 的 `categoryMap`，以及相关现有文章。站点目录由根目录规范确定。配置使用 Astro 的 `config/site.yaml` / `categoryMap`。
 
 ## 判断更新还是新建
 

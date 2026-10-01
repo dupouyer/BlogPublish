@@ -51,7 +51,7 @@ const remarkSiteId = commentConfig.remark42?.siteId ?? '';
     site_id: remarkSiteId,
     components: ['embed', 'counter'],
     max_shown_comments: 100,
-    theme: localStorage.getItem('theme') || 'light',
+    theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
     locale: 'en',
     show_email_subscription: false,
     simple_view: true,

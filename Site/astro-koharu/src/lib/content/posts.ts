@@ -22,12 +22,12 @@ type SummariesData = Record<string, { title: string; summary: string }>;
  * @returns 文章描述文本
  */
 export function getPostDescription(post: BlogPost, maxLength: number = 150): string {
-  return post.data.description || extractTextFromMarkdown(post.body, maxLength);
+  return post.data.description || extractTextFromMarkdown(post.body ?? '', maxLength);
 }
 
 /**
  * 获取文章的 AI 摘要
- * @param slug 文章 slug（通常是 post.data.link 或 post.slug）
+ * @param slug 文章 slug（通常是 post.data.link 或 post.id）
  * @returns AI 摘要文本，如果不存在则返回 null
  */
 export function getPostSummary(slug: string): string | null {
@@ -58,8 +58,8 @@ export function getPostSummary(slug: string): string | null {
  * @returns 文章描述文本
  */
 export function getPostDescriptionWithSummary(post: BlogPost, maxLength: number = 150): string {
-  const slug = post.data?.link ?? post.slug;
-  return post.data.description || getPostSummary(slug) || extractTextFromMarkdown(post.body, maxLength);
+  const slug = post.data?.link ?? post.id;
+  return post.data.description || getPostSummary(slug) || extractTextFromMarkdown(post.body ?? '', maxLength);
 }
 
 /**
@@ -214,7 +214,7 @@ export async function getAdjacentSeriesPosts(currentPost: BlogPost): Promise<{
     return { prevPost: null, nextPost: null };
   }
 
-  const currentIndex = seriesPosts.findIndex((post) => post.slug === currentPost.slug);
+  const currentIndex = seriesPosts.findIndex((post) => post.id === currentPost.id);
 
   if (currentIndex === -1) {
     return { prevPost: null, nextPost: null };

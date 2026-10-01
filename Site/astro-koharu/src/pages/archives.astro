@@ -57,7 +57,7 @@ const years = Object.keys(postsByYear).sort((a, b) => Number(b) - Number(a));
                       {displayDate.date(post.data.date)}
                     </span>
                     <a
-                      href={`/post/${encodeSlug(post.data?.link ?? post.slug)}`}
+                      href={`/post/${encodeSlug(post.data?.link ?? post.id)}`}
                       class="dashed-border text-primary hover:text-blue truncate transition-colors"
                     >
                       {post.data.title}

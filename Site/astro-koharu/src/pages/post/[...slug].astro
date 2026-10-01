@@ -1,4 +1,6 @@
 ---
+import { render } from 'astro:content';
+import { relative } from 'node:path';
 import CustomContent from '@components/common/CustomContent.astro';
 import HomeSider from '@components/layout/HomeSider.astro';
 import SummaryPanel, { type SummarySource } from '@components/post/SummaryPanel';
@@ -11,7 +13,6 @@ import Layout from '@layouts/Layout.astro';
 import TwoColumnLayout from '@layouts/TwoColumnLayout.astro';
 import { buildCategoryPath, getCategoryArr, getPostDescription, getPostSummary, getSortedPosts } from '@lib/content';
 import { formatForSeo } from '@lib/date';
-import { encodeSlug } from '@lib/route';
 import { getOgImageUrl } from '@lib/seo/og-image';
 import { Icon } from 'astro-icon/components';
 import { Comment } from '@/components/comment';
@@ -22,15 +23,16 @@ export async function getStaticPaths() {
   const postCollections = await getSortedPosts();
 
   return postCollections.map((post) => {
-    const link = post.data?.link ?? post.slug;
+    const link = post.data?.link ?? post.id;
+    if (!post.filePath) throw new Error(`Missing blog source path for ${post.id}`);
     return {
       params: { slug: link },
-      props: { post, postId: post.id },
+      props: { post, postId: relative('src/content/blog', post.filePath) },
     };
   });
 }
 const { post, postId } = Astro.props;
-const { Content } = await post.render();
+const { Content } = await render(post);
 const { title, categories = [], tags = [], date, math: postMath } = post?.data ?? {};
 // KaTeX CSS: only load when global enableMath is on AND post hasn't opted out.
 // When enableMath is false globally, rehype-katex is not in the pipeline, so no math is rendered.
@@ -105,7 +107,7 @@ const breadcrumbJsonLd = {
 };
 
 // 确定显示的摘要内容和来源类型
-const postSlug = post.data?.link ?? post.slug;
+const postSlug = post.data?.link ?? post.id;
 let summaryText: string | null = null;
 let summarySource: SummarySource | null = null;
 
@@ -121,7 +123,7 @@ if (post.data.description) {
     summarySource = 'ai';
   } else {
     // 降级到自动提取
-    summaryText = extractTextFromMarkdown(post.body, 200);
+    summaryText = extractTextFromMarkdown(post.body ?? '', 200);
     summarySource = 'auto';
   }
 }
