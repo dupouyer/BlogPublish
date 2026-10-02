@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>植被结构实验 · 风与四季</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#0b1420;color:#dce7ed}*{box-sizing:border-box}body{margin:0;padding:20px;max-width:1050px;margin-inline:auto}h1{font-size:22px;margin:0 0 6px}p{line-height:1.6;margin:6px 0 14px;color:#a6b8c8;font-size:13px}.eyebrow{font-size:11px;letter-spacing:2px;color:#64d9b0}nav{display:flex;gap:8px;margin:16px 0}button,select{font:inherit;color:inherit;background:#182737;border:1px solid #365065;border-radius:8px;padding:8px 12px;cursor:pointer}button[aria-selected="true"]{background:#23473e;border-color:#69d6ab}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #69d6ab;outline-offset:3px}.panel{border:1px solid #294054;background:#101e2c;border-radius:12px;padding:12px;margin-bottom:12px}.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:12px}label{display:block;font-size:13px}label output{float:right;color:#69d6ab}input[type="range"]{width:100%;accent-color:#69d6ab;cursor:pointer}.toggles{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0 12px;font-size:13px}input[type="checkbox"]{accent-color:#69d6ab}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.tag{font-size:12px;color:#9fb6c8}canvas{display:block;width:100%;height:230px;border-radius:8px;background:#0b1420}#field{height:110px}#tree{height:310px}.caption{font-size:12px;margin:8px 0 0;line-height:1.6;color:#adbfcb}pre{white-space:pre-wrap;font:12px/1.6 ui-monospace,monospace;margin:6px 0;color:#a0d5c5}.stats{font-size:12px;color:#69d6ab;margin-top:8px}footer{font-size:11px;color:#8098ac;margin-top:12px}section[hidden]{display:none}select{width:100%;margin-top:4px}a{color:#7cdbc2}@media(max-width:520px){body{padding:12px}.controls{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}h1{font-size:19px}#tree{height:270px}canvas{height:210px}nav{margin:12px 0}}
+</style>
+</head>
+<body>
+<div class="eyebrow">STRUCTURE → RESPONSE</div>
+<h1>植被结构实验 · 风与四季</h1>
+<p>原创二维算法示意。固定种子，根部不动；没有模拟流体、保长度弯曲或引擎光照。</p>
+<nav role="tablist" aria-label="实验类型"><button id="windTab" role="tab" aria-controls="windPanel" aria-selected="true">01 风场与运动</button><button id="seasonTab" role="tab" aria-controls="seasonPanel" aria-selected="false" tabindex="-1">02 分层变色</button></nav>
+<section id="windPanel" role="tabpanel" aria-labelledby="windTab">
+<div class="controls">
+<label>风强度 <output for="strength" id="strengthValue"></output><input id="strength" type="range" min="0" max="2" step="0.01" value="0.9"></label>
+<label>阵风权重 <output for="gust" id="gustValue"></output><input id="gust" type="range" min="0" max="1" step="0.01" value="0.8"></label>
+<label>传播 m/s <output for="speed" id="speedValue"></output><input id="speed" type="range" min="0" max="3" step="0.01" value="0.8"></label>
+<label>风带尺度 m <output for="scale" id="scaleValue"></output><input id="scale" type="range" min="0.5" max="6" step="0.05" value="2"></label>
+<label>主运动 Hz <output for="freq" id="freqValue"></output><input id="freq" type="range" min="0" max="1.5" step="0.01" value="0.35"></label>
+<label>随机相位 <output for="random" id="randomValue"></output><input id="random" type="range" min="0" max="1" step="0.01" value="0.8"></label>
+</div>
+<div class="toggles"><label><input id="primary" type="checkbox" checked> Primary</label><label><input id="secondary" type="checkbox" checked> Secondary（2.4 Hz）</label><label><input id="weights" type="checkbox"> 显示结构权重</label></div>
+<div class="row"><button id="pause">暂停</button><button id="step">步进 0.1 s</button><button id="reset">重置</button><span id="time" class="tag"></span></div>
+<div class="panel" style="margin-top:12px"><canvas id="field" role="img" aria-label="平移噪声风场，亮色表示较强外力，白点是草株根部"></canvas><p class="caption">固定世界范围 12 × 4 m。亮色＝风强，白点＝根部采样；图案沿 +X 向右传播。</p></div>
+<div class="panel"><canvas id="grass" role="img" aria-label="草株主次运动实验，末端随风弯曲而根部保持固定"></canvas><p class="caption">整株在根部采样同一风量 A。Primary 权重 h²；Secondary 权重 h⁴。加法偏移会拉伸草叶，不是保长度模型。</p><div id="sample" class="stats"></div></div>
+<pre>u = (root.xy − (speed × t, 0)) / scale
+A = strength × ((1 − gust) + gust × N(u))
+Δx = 0.35 h² A (0.65 + 0.35 sin(2π f t + φᵢ))
+   + 0.035 h⁴ A sin(2π × 2.4 t + φᵢ + φ꜀)</pre>
+</section>
+<section id="seasonPanel" role="tabpanel" aria-labelledby="seasonTab" hidden>
+<div class="controls">
+<label>Season <output for="season" id="seasonValue"></output><input id="season" type="range" min="0" max="1" step="0.005" value="0.5"></label>
+<label>叶簇差异 <output for="variation" id="variationValue"></output><input id="variation" type="range" min="0" max="1" step="0.01" value="1"></label>
+<label>模式<select id="mode"><option value="layered">结构阈值 · 先后转色</option><option value="uniform">整株 Lerp · 同步转色</option></select></label>
+<label>调试视图<select id="view"><option value="color">最终颜色</option><option value="threshold">阈值 T · 亮色较晚</option><option value="exposure">暴露程度 e · 亮色较高</option><option value="mask">状态 Mask · 亮色已转色</option></select></label>
+</div>
+<div class="panel"><canvas id="tree" role="img" aria-label="枝干保持棕色，叶簇按照不同阈值由绿转黄再转褐"></canvas><p class="caption">暴露程度由二维冠形估计，外圈更高；同一叶簇共享随机数。枝干不参与染色，实验只改颜色。</p><div id="seasonStats" class="stats" aria-live="polite"></div></div>
+<div class="panel"><pre>Tᵣ = 0.15 + 0.65 (0.4 rᵢ + 0.35 r꜀ + 0.25 (1 − e))
+T = lerp(0.5, Tᵣ, 叶簇差异)
+m = smoothstep(T − 0.08, T + 0.08, Season)
+color = Palette(m)；整株模式直接用 Palette(Season)</pre><p class="caption">示意调色板：绿 → 黄 → 褐。不是 Epic LUT 或 Health/Growth 的复刻。Season=0 全绿，Season=1 全部完成转色。</p></div>
+<p>拖动 Season，比较两种模式；再查看阈值和状态 Mask，区分“何时变化”与“变化成什么”。</p>
+</section>
+<noscript><p>请启用 JavaScript 查看交互；公式与原理可在博客正文阅读。</p></noscript>
+<footer>无外部依赖 · 固定种子 · 尊重减少动态效果设置 · <a href="/post/foliage-structure-wind-season" target="_blank" rel="noopener">阅读原理与 UE 实现</a></footer>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const tau=Math.PI*2;
+const clamp=x=>Math.max(0,Math.min(1,x));
+const lerp=(a,b,t)=>a+(b-a)*t;
+const smooth=(a,b,x)=>{const t=clamp((x-a)/(b-a));return t*t*(3-2*t);};
+// Integer hash: fixed world/part identity, never animated coordinates.
+function hash(x,y=0){let h=Math.imul(x+17,374761393)^Math.imul(y+31,668265263);h=Math.imul(h^(h>>>13),1274126177);return((h^(h>>>16))>>>0)/4294967296;}
+function noise(x,y){const ix=Math.floor(x),iy=Math.floor(y),fx=x-ix,fy=y-iy;const sx=fx*fx*(3-2*fx),sy=fy*fy*(3-2*fy);return lerp(lerp(hash(ix,iy),hash(ix+1,iy),sx),lerp(hash(ix,iy+1),hash(ix+1,iy+1),sx),sy);}
+const roots=Array.from({length:96},(_,i)=>({x:0.25+hash(i,1)*11.5,y:0.15+hash(i,2)*3.7,height:0.5+hash(i,3)*0.8,seed:hash(i,4),part:hash(i,5)})).sort((a,b)=>b.y-a.y);
+const leaves=Array.from({length:180},(_,i)=>{const a=hash(i,10)*tau,r=Math.sqrt(hash(i,11));return{x:Math.cos(a)*r,y:Math.sin(a)*r,cluster:Math.floor((a/tau)*12)+12*Math.floor(r*3),e:r*r,size:0.75+hash(i,12)*0.5};});
+let time=0,last=0,playing=!matchMedia('(prefers-reduced-motion: reduce)').matches,tab='wind';
+const ranges=['strength','gust','speed','scale','freq','random','season','variation'];
+const val=id=>Number($(id).value);
+function updateLabels(){for(const id of ranges)$(id+'Value').value=val(id).toFixed(2);$('pause').textContent=playing?'暂停':'播放';$('time').textContent='t = '+time.toFixed(1)+' s';}
+function context(id){const c=$(id),r=c.getBoundingClientRect(),dpr=Math.min(devicePixelRatio||1,2);if(c.width!==Math.round(r.width*dpr)||c.height!==Math.round(r.height*dpr)){c.width=Math.round(r.width*dpr);c.height=Math.round(r.height*dpr);}const ctx=c.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,r.width,r.height);return{ctx,w:r.width,h:r.height};}
+function amplitude(x,y){return val('strength')*lerp(1,noise((x-val('speed')*time)/val('scale'),y/val('scale')),val('gust'));}
+function displacement(root,h){const a=amplitude(root.x,root.y),phi=tau*root.seed*val('random'),pc=tau*root.part*val('random');return($('primary').checked?0.35*h*h*a*(0.65+0.35*Math.sin(tau*val('freq')*time+phi)):0)+($('secondary').checked?0.035*h**4*a*Math.sin(tau*2.4*time+phi+pc):0);}
+function drawWind(){const f=context('field');for(let y=0;y<f.h;y+=6)for(let x=0;x<f.w;x+=6){const a=amplitude(x/f.w*12,y/f.h*4)/2;f.ctx.fillStyle=`rgb(${Math.round(10+35*a)},${Math.round(27+160*a)},${Math.round(42+110*a)})`;f.ctx.fillRect(x,y,6,6);}f.ctx.fillStyle='#d8e9e1';for(const r of roots){f.ctx.beginPath();f.ctx.arc(r.x/12*f.w,r.y/4*f.h,1.2,0,tau);f.ctx.fill();}f.ctx.fillStyle='#f1e4b0';f.ctx.font='12px system-ui';f.ctx.fillText('+X →',f.w-52,18);
+const g=context('grass');const ground=g.ctx.createLinearGradient(0,0,0,g.h);ground.addColorStop(0,'#0b1420');ground.addColorStop(1,'#17312a');g.ctx.fillStyle=ground;g.ctx.fillRect(0,0,g.w,g.h);const px=g.w/12;for(const r of roots){const bx=r.x/12*g.w,by=g.h*0.86-r.y/4*g.h*0.14;const height=r.height*(g.h*0.47);for(let j=0;j<10;j++){const a=j/10,b=(j+1)/10;g.ctx.beginPath();g.ctx.moveTo(bx+displacement(r,a)*px,by-a*height);g.ctx.lineTo(bx+displacement(r,b)*px,by-b*height);g.ctx.strokeStyle=$('weights').checked?`rgb(${Math.round(255*b)},${Math.round(180*(1-b))},130)`:`rgb(${Math.round(55+60*b)},${Math.round(106+70*b)},${Math.round(66+35*b)})`;g.ctx.lineWidth=2.5*(1-a)+0.5;g.ctx.stroke();}}
+const selected=roots[48];$('sample').textContent=`固定样本 #48：风量 A=${amplitude(selected.x,selected.y).toFixed(3)}，末端 Δx=${displacement(selected,1).toFixed(3)} m`;
+}
+function palette(m){const a=m<0.5?[55,130,75]:[204,166,59],b=m<0.5?[204,166,59]:[133,73,40],t=m<0.5?m*2:(m-0.5)*2;return a.map((v,i)=>Math.round(lerp(v,b[i],t)));}
+function state(leaf){const target=0.15+0.65*(0.4*0.42+0.35*hash(leaf.cluster,20)+0.25*(1-leaf.e));const threshold=lerp(0.5,target,val('variation'));return{threshold,m:$('mode').value==='uniform'?val('season'):smooth(threshold-0.08,threshold+0.08,val('season'))};}
+function drawSeason(){const g=context('tree'),cx=g.w/2,cy=g.h*0.42,rx=Math.min(g.w*0.42,230),ry=g.h*0.33;g.ctx.strokeStyle='#806349';g.ctx.lineWidth=9;g.ctx.beginPath();g.ctx.moveTo(cx,g.h*0.94);g.ctx.lineTo(cx,cy-ry*0.25);g.ctx.stroke();for(let i=0;i<12;i++){const a=i/12*tau;g.ctx.lineWidth=3;g.ctx.beginPath();g.ctx.moveTo(cx,g.h*0.72);g.ctx.lineTo(cx+Math.cos(a)*rx*0.85,cy+Math.sin(a)*ry*0.85);g.ctx.stroke();}let sum=0;for(const l of leaves){const s=state(l);sum+=s.m;let rgb=palette(s.m);const view=$('view').value;if(view!=='color'){const v=view==='threshold'?s.threshold:view==='exposure'?l.e:s.m;rgb=[Math.round(v*225+20),Math.round(v*225+20),Math.round(v*225+20)];}g.ctx.fillStyle=`rgb(${rgb.join(',')})`;g.ctx.beginPath();g.ctx.ellipse(cx+l.x*rx,cy+l.y*ry,5*l.size,9*l.size,Math.atan2(l.y,l.x),0,tau);g.ctx.fill();}$('seasonStats').textContent=`180 片示意叶片 / 36 个叶簇 · 平均转色 Mask = ${(sum/leaves.length).toFixed(3)} · Seed 固定`;}
+function draw(){updateLabels();if(tab==='wind')drawWind();else drawSeason();}
+function setTab(next){tab=next;const isWind=next==='wind';$('windPanel').hidden=!isWind;$('seasonPanel').hidden=isWind;for(const [id,on] of [['windTab',isWind],['seasonTab',!isWind]]){$(id).setAttribute('aria-selected',String(on));$(id).tabIndex=on?0:-1;}draw();}
+$('windTab').onclick=()=>setTab('wind');$('seasonTab').onclick=()=>setTab('season');
+for(const id of ['windTab','seasonTab'])$(id).onkeydown=e=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(e.key)){e.preventDefault();const next=e.key==='Home'?'wind':e.key==='End'?'season':tab==='wind'?'season':'wind';setTab(next);$(next+'Tab').focus();}};
+for(const id of [...ranges,'primary','secondary','weights','mode','view'])$(id).addEventListener('input',draw);
+$('pause').onclick=()=>{playing=!playing;last=0;draw();};$('step').onclick=()=>{playing=false;time+=0.1;draw();};$('reset').onclick=()=>{time=0;draw();};
+new ResizeObserver(draw).observe(document.body);
+function tick(now){if(last&&playing&&!document.hidden&&tab==='wind'){time+=Math.min((now-last)/1000,0.05);draw();}last=now;requestAnimationFrame(tick);}draw();requestAnimationFrame(tick);
+</script>
+</body></html>
