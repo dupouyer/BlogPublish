@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 650" role="img" aria-labelledby="title desc">
+<title id="title">Three views working on the same explanation</title><desc id="desc">STE language, engineering review structure, and visual dynamic media jointly support a human review cycle.</desc>
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 Z" fill="#657e91"/></marker></defs>
+<rect width="1040" height="650" rx="24" fill="#f4f8fb"/>
+<g font-family="sans-serif" fill="#172838"><text x="52" y="63" font-size="29" font-weight="700">One explanation, three cooperating views</text>
+<text x="52" y="97" font-size="18" fill="#486276">Language + review structure + observable presentation</text>
+<g font-size="20" font-weight="700"><rect x="52" y="142" width="294" height="180" rx="16" fill="#e7f1fc" stroke="#90b5d5"/><text x="74" y="180">STE principles</text>
+<rect x="373" y="142" width="294" height="180" rx="16" fill="#edf3ec" stroke="#9db39b"/><text x="395" y="180">Engineering review</text>
+<rect x="694" y="142" width="294" height="180" rx="16" fill="#fff2e5" stroke="#d9b48b"/><text x="716" y="180">Visual + dynamic media</text></g>
+<g font-size="18"><text x="74" y="224">Stable terms</text><text x="74" y="258">Actor / action / condition</text><text x="74" y="292">Explicit result</text>
+<text x="395" y="224">Boundaries + contracts</text><text x="395" y="258">Data / state / evidence</text><text x="395" y="292">Trace a local decision</text>
+<text x="716" y="224">See relationships</text><text x="716" y="258">Pause evolving state</text><text x="716" y="292">Try a counterexample</text></g>
+<g fill="none" stroke="#657e91" stroke-width="2.5" marker-end="url(#arrow)"><path d="M199,325 L199,365 L430,410"/><path d="M520,325 L520,404"/><path d="M841,325 L841,365 L610,410"/></g>
+<rect x="280" y="410" width="480" height="103" rx="16" fill="white" stroke="#657e91" stroke-width="2"/><text x="520" y="454" text-anchor="middle" font-size="24" font-weight="700">Self-descriptive review artifact</text><text x="520" y="488" text-anchor="middle" font-size="18">Same model across prose, diagram and code</text>
+<text x="520" y="558" text-anchor="middle" font-size="20">Overview → inspect a detail → check evidence → revisit the whole</text>
+<text x="520" y="600" text-anchor="middle" font-size="17" fill="#486276">An understood model is not yet a verified implementation.</text>
+</g></svg>

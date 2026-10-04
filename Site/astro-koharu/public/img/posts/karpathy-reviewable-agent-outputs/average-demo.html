@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>同一个平均公式，读取哪一代数据？</title>
+<style>
+:root{color-scheme:light;--ink:#172838;--muted:#486276;--blue:#1565c0;--amber:#a34b0c;--line:#d7e3eb;--bg:#f4f8fb}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Noto Sans CJK SC","Microsoft YaHei",sans-serif}main{max-width:1000px;margin:auto;padding:24px}h1{font-size:clamp(23px,4vw,32px);line-height:1.35;margin:0 0 12px}p{margin:10px 0}.muted{color:var(--muted)}.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:18px 0}button,select{font:inherit;border:1px solid #9ab2c4;border-radius:9px;background:white;color:var(--ink);padding:8px 14px;min-height:44px;cursor:pointer}button:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline-offset:3px}button:disabled{opacity:.5;cursor:default}button.primary{color:white;background:var(--blue);border-color:var(--blue)}.stage{font-weight:650;min-height:28px}.source,.panel,.scope{background:white;border:1px solid var(--line);border-radius:14px;padding:18px;margin:14px 0}.panels{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{margin:0}.panel h2{font-size:19px;margin:0 0 6px}.panel.sync{border-top:4px solid var(--blue)}.panel.work{border-top:4px solid var(--amber)}.array{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:14px 0}.cell{border:1px solid var(--line);border-radius:8px;text-align:center;min-width:0;background:#f8fafc;padding:8px 3px}.cell .index{display:block;font-size:12px;color:var(--muted)}.cell .value{display:block;font:600 clamp(18px,3vw,26px)/1.5 ui-monospace,monospace}.cell .flag{display:block;min-height:18px;font-size:11px}.cell.read{border:2px solid var(--blue);background:#eef6ff;padding:7px 2px}.cell.write{border:2px solid var(--amber);background:#fff2e5;padding:7px 2px}.equation{font-family:ui-monospace,monospace;font-size:15px;min-height:58px;overflow-wrap:anywhere}.comparison{padding:15px;border-radius:9px;background:#e8f1f8;min-height:62px;margin:14px 0}.scope{font-size:14px}.scope strong{font-weight:650}pre{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.65;background:#f0f5f9;padding:16px;border-radius:8px}summary{cursor:pointer;min-height:44px;padding:8px 0}table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--line);padding:8px;text-align:left}.generation{font-size:13px;color:var(--muted)}@media(max-width:650px){main{padding:16px}.panels{grid-template-columns:1fr}.source,.panel,.scope{padding:12px}.controls{gap:8px}.controls label{width:100%}.array{gap:5px}}
+</style>
+</head>
+<body><main>
+<h1>同一个平均公式，读取哪一代数据？</h1>
+<p>观察目标：检查第 2 次更新时，左邻居读到的是旧值 <strong>0</strong>，还是刚写入的新值 <strong>3</strong>。</p>
+<p class="muted">只更新内部格子，首尾固定为 0。同步规则要求本轮所有读取都来自旧数组 A；下方原地版本则直接读取正在变化的 W。</p>
+<div class="controls"><button id="play" class="primary" type="button">播放 10 秒</button><button id="step" type="button">下一步</button><button id="reset" type="button">重置</button><label for="direction">遍历方向：<select id="direction"><option value="forward">从左到右</option><option value="backward">从右到左</option></select></label></div>
+<div id="stage" class="stage" aria-live="polite"></div>
+<section class="source"><strong>旧数组 A · 整轮不变</strong><div id="old" class="array"></div><div class="generation">索引为 0–4。蓝框标出同步版本本步读取的三个旧值。</div></section>
+<div class="panels">
+<section class="panel sync"><h2>同步更新 · 写入 B</h2><p class="generation">每次从 A 读取；未写入的内部值用 · 表示。</p><div id="sync" class="array"></div><div id="syncEq" class="equation"></div></section>
+<section class="panel work"><h2>直接原地更新 · 覆盖 W</h2><p class="generation">每次从当前 W 读取；已更新邻居可能被下一步读取。</p><div id="work" class="array"></div><div id="workEq" class="equation"></div></section>
+</div>
+<div id="comparison" class="comparison" aria-live="polite"></div>
+<details><summary>查看本演示的可读规则与代码</summary><pre id="code"></pre></details>
+<section class="scope"><strong>结论的边界</strong><p>同步版本对这两个遍历方向得到同一个结果；直接原地版本得到镜像结果。这里演示的是读取规则的差异，不是性能测量。原地实现如果缓存被覆盖的旧邻居，也可以满足同步规则；不能仅凭“原地写入”判断错误。</p><p>输入固定为 [0, 0, 9, 0, 0]，只做一轮三邻域平均。真实并发、GPU 内存可见性和资源生命周期需要另行验证。</p></section>
+<noscript><p>JavaScript 未启用。下面保留可审查的静态结果。</p><table><tr><th>规则</th><th>从左到右</th><th>从右到左</th></tr><tr><td>读旧 A，写 B</td><td>[0, 3, 3, 3, 0]</td><td>[0, 3, 3, 3, 0]</td></tr><tr><td>直接读写 W</td><td>[0, 3, 4, 4/3, 0]</td><td>[0, 4/3, 4, 3, 0]</td></tr></table></noscript>
+</main>
+<script>
+"use strict";
+const initial = [0, 0, 9, 0, 0];
+function buildTrace(direction) {
+  const order = direction === "forward" ? [1, 2, 3] : [3, 2, 1];
+  const sync = [0, null, null, null, 0], work = initial.slice();
+  const trace = [{step:0, i:null, old:initial.slice(), sync:sync.slice(), work:work.slice()}];
+  order.forEach((i,k) => {
+    const read_sync=initial.slice(i-1,i+2), read_work=work.slice(i-1,i+2);
+    sync[i]=read_sync.reduce((a,b)=>a+b,0)/3;
+    work[i]=read_work.reduce((a,b)=>a+b,0)/3;
+    trace.push({step:k+1,i,old:initial.slice(),sync:sync.slice(),work:work.slice(),read_sync,read_work});
+  });
+  trace.push({...trace[3],step:4,i:null});
+  return trace;
+}
+function format(n){return n===null ? "·" : Number.isInteger(n) ? String(n) : Math.abs(n-4/3)<1e-9 ? "4/3" : n.toFixed(3);}
+const ids=["old","sync","work","stage","syncEq","workEq","comparison","code","play","step","reset","direction"];
+const el=Object.fromEntries(ids.map(id=>[id,document.getElementById(id)]));
+let trace=buildTrace("forward"), phase=0, timer=null;
+function cells(target,values,current,kind){
+  target.replaceChildren();
+  values.forEach((v,i)=>{
+    const cell=document.createElement("div"); cell.className="cell";
+    const isRead=kind==="old" && current!==null && Math.abs(i-current)<=1;
+    const isWrite=kind!=="old" && i===current;
+    if(isRead)cell.classList.add("read"); if(isWrite)cell.classList.add("write");
+    const index=document.createElement("span");index.className="index";index.textContent="i = "+i;
+    const value=document.createElement("span");value.className="value";value.textContent=format(v);
+    const flag=document.createElement("span");flag.className="flag";flag.textContent=isRead?"本步读取":isWrite?"本步写入":"";
+    cell.append(index,value,flag);target.append(cell);
+  });
+}
+function render(){
+  const s=trace[phase];
+  el.stage.textContent=phase===0?"初始状态 · 先确定整轮读取规则":phase===4?"一轮完成 · 改变遍历方向再检查结果":`步骤 ${phase}/3 · 更新索引 ${s.i}`;
+  cells(el.old,s.old,s.i,"old");cells(el.sync,s.sync,s.i,"sync");cells(el.work,s.work,s.i,"work");
+  if(phase>0 && phase<4){
+    el.syncEq.textContent=`B[${s.i}] = (${s.read_sync.map(format).join(" + ")}) / 3 = ${format(s.sync[s.i])}`;
+    el.workEq.textContent=`W[${s.i}] = (${s.read_work.map(format).join(" + ")}) / 3 = ${format(s.work[s.i])}`;
+    const equal=s.read_sync.every((v,k)=>v===s.read_work[k]);
+    el.comparison.textContent=equal?"这一步读取的三个值相同，因此结果相同。继续到下一步检查被覆盖的邻居。":`差异来自输入：同步读取 [${s.read_sync.map(format).join(", ")}]，直接原地读取 [${s.read_work.map(format).join(", ")}]。公式没有变化，数据代际已经不同。`;
+  }else{
+    el.syncEq.textContent=phase===4?"每次读取旧 A，输出 [0, 3, 3, 3, 0]。":"B[i] = (A[i-1] + A[i] + A[i+1]) / 3";
+    el.workEq.textContent=phase===4?`直接读写当前 W，输出 [${s.work.map(format).join(", ")}]。`:"W[i] = (W[i-1] + W[i] + W[i+1]) / 3";
+    el.comparison.textContent=phase===4?"切换遍历方向：同步输出不变，直接原地输出会改变。这是当前规则与样例的结果，不代表所有原地算法都错误。":"首尾固定为 0。请选择步进，或播放十秒动画；页面不会自动播放。";
+  }
+  el.step.disabled=phase===4;
+  if(timer===null)el.play.textContent=phase===4?"重播 10 秒":phase>0?"继续播放":"播放 10 秒";
+}
+function stop(){if(timer!==null)clearInterval(timer);timer=null;render();}
+el.play.addEventListener("click",()=>{
+  if(timer!==null){stop();return;}
+  if(phase===4)phase=0;render();el.play.textContent="暂停";
+  timer=setInterval(()=>{if(phase===4){stop();return;}phase++;render();},2000);
+});
+el.step.addEventListener("click",()=>{stop();if(phase<4)phase++;render();});
+el.reset.addEventListener("click",()=>{stop();phase=0;render();});
+el.direction.addEventListener("change",()=>{stop();trace=buildTrace(el.direction.value);phase=0;render();});
+el.code.textContent=`// 同步：读旧数组，写新数组；首尾固定\nconst B = A.slice();\nfor (const i of order) {\n  B[i] = (A[i-1] + A[i] + A[i+1]) / 3;\n}\n\n// 直接原地：读取当前工作数组，随后覆盖\nconst W = A.slice();\nfor (const i of order) {\n  W[i] = (W[i-1] + W[i] + W[i+1]) / 3;\n}\n\n// 从左到右时缓存旧左邻居，也能在原地满足同步规则\nconst C = A.slice();\nlet oldLeft = C[0];\nfor (let i = 1; i < C.length - 1; i++) {\n  const oldCurrent = C[i];\n  C[i] = (oldLeft + oldCurrent + C[i+1]) / 3;\n  oldLeft = oldCurrent;\n}`;
+render();
+</script></body></html>
