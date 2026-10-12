@@ -9,16 +9,26 @@
 import { FloatingFocusManager, FloatingPortal, useDismiss, useFloating, useInteractions, useRole } from '@floating-ui/react';
 import { useKeyboardShortcut } from '@hooks/useKeyboardShortcut';
 import { useZoomPan } from '@hooks/useZoomPan';
-import { Icon } from '@iconify/react';
 import { useStore } from '@nanostores/react';
 import { $imageLightboxData, closeModal, type ImageLightboxData, navigateImage, openModal } from '@store/modal';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { RiArrowLeftSLine, RiArrowRightSLine, RiClockwiseLine, RiCloseLine, RiZoomInLine, RiZoomOutLine } from 'react-icons/ri';
+
+const VIEWER_ICONS = {
+  'ri:zoom-in-line': RiZoomInLine,
+  'ri:zoom-out-line': RiZoomOutLine,
+  'ri:clockwise-line': RiClockwiseLine,
+  'ri:close-line': RiCloseLine,
+};
 
 export default function ImageLightbox() {
   const data = useStore($imageLightboxData);
   const isOpen = data !== null;
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const [imageSize, setImageSize] = useState<{ src: string; width: number; height: number } | null>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const [rotation, setRotation] = useState(0);
 
   const { containerRef, state, reset, zoomTo, zoomLevel } = useZoomPan(isOpen);
@@ -112,9 +122,22 @@ export default function ImageLightbox() {
     if (isOpen) {
       reset();
       setRotation(0);
-      setImageLoaded(false);
     }
   }, [isOpen, reset]);
+
+  // Cached images can finish before the opening effect; keep their loaded state and explicit size.
+  useEffect(() => {
+    if (!data?.src) {
+      setImageLoaded(false);
+      setImageError(false);
+      return;
+    }
+    const image = imageRef.current;
+    const loaded = Boolean(image?.complete && image.naturalWidth > 0);
+    setImageLoaded(loaded);
+    setImageError(Boolean(image?.complete && image.naturalWidth === 0));
+    if (loaded && image) setImageSize({ src: image.src, width: image.naturalWidth, height: image.naturalHeight });
+  }, [data?.src]);
 
   // Lock page scroll while lightbox is open
   useEffect(() => {
@@ -135,6 +158,8 @@ export default function ImageLightbox() {
   };
 
   if (!data) return null;
+  const size = imageSize?.src === data.src ? imageSize : null;
+  const imageWidth = size ? `min(90vw, ${(80 * size.width) / size.height}vh, ${size.width}px)` : '90vw';
 
   return (
     <FloatingPortal>
@@ -151,7 +176,11 @@ export default function ImageLightbox() {
             <div className="fixed inset-0 bg-black/90 backdrop-blur-sm" />
             {/* Content */}
             <FloatingFocusManager context={context}>
-              <div ref={refs.setFloating} className="fixed inset-0 flex items-center justify-center" {...getFloatingProps()}>
+              <div
+                ref={refs.setFloating}
+                className="fixed inset-0 flex items-center justify-center"
+                {...getFloatingProps({ 'aria-label': '图片查看器' })}
+              >
                 {/* Toolbar: vertical right on desktop, horizontal top on tablet */}
                 <motion.div
                   className="absolute tablet:top-4 top-1/2 right-4 tablet:right-auto tablet:left-1/2 z-10 flex tablet:-translate-x-1/2 -translate-y-1/2 tablet:translate-y-0 tablet:flex-row flex-col items-center gap-1 rounded-2xl bg-black/50 p-1.5 backdrop-blur-sm"
@@ -184,13 +213,15 @@ export default function ImageLightbox() {
                   onDoubleClick={handleDoubleClick}
                 >
                   <motion.div
-                    className="flex items-center justify-center"
+                    className="flex h-full w-full min-w-0 items-center justify-center"
                     initial={{ scale: 0.95 }}
                     animate={{ scale: 1 }}
                     exit={{ scale: 0.95 }}
                     transition={{ duration: 0.2 }}
                   >
                     <motion.img
+                      key={data.src}
+                      ref={imageRef}
                       src={data.src}
                       alt={data.alt}
                       className="max-h-[80vh] max-w-[90vw] origin-center rounded-lg object-contain shadow-2xl will-change-transform"
@@ -201,15 +232,41 @@ export default function ImageLightbox() {
                         opacity: { duration: 0.2 },
                       }}
                       style={{
+                        width: imageWidth,
+                        height: 'auto',
+                        flexShrink: 0,
                         x: state.translateX,
                         y: state.translateY,
                         cursor: state.scale > 1.05 ? 'grab' : 'zoom-in',
                       }}
-                      onLoad={() => setImageLoaded(true)}
+                      onLoad={(e) => {
+                        const image = e.currentTarget;
+                        setImageSize({ src: image.src, width: image.naturalWidth, height: image.naturalHeight });
+                        setImageLoaded(true);
+                        setImageError(false);
+                      }}
+                      onError={() => {
+                        setImageLoaded(false);
+                        setImageError(true);
+                      }}
                       draggable={false}
                     />
                   </motion.div>
                 </div>
+
+                {!imageLoaded && (
+                  <p
+                    className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white"
+                    role={imageError ? 'alert' : 'status'}
+                  >
+                    {imageError ? '图片加载失败，请单独打开原图。' : '正在加载图片…'}
+                  </p>
+                )}
+                {imageError && (
+                  <a href={data.src} target="_blank" rel="noopener" className="absolute bottom-16 text-white underline">
+                    单独打开原图
+                  </a>
+                )}
 
                 {/* Navigation bar */}
                 {data.images.length > 1 && (
@@ -243,11 +300,12 @@ function ToolbarButton({
   onClick,
   disabled,
 }: {
-  icon: string;
+  icon: keyof typeof VIEWER_ICONS;
   label: string;
   onClick: () => void;
   disabled?: boolean;
 }) {
+  const ToolIcon = VIEWER_ICONS[icon];
   return (
     <motion.button
       type="button"
@@ -257,7 +315,7 @@ function ToolbarButton({
       whileTap={{ scale: 0.85 }}
       aria-label={label}
     >
-      <Icon icon={icon} className="size-5" />
+      <ToolIcon className="size-5" aria-hidden="true" />
     </motion.button>
   );
 }
@@ -269,6 +327,7 @@ const BOUNCE_NONE = { x: 0 };
 
 function NavButton({ direction, disabled, onClick }: { direction: 1 | -1; disabled: boolean; onClick: () => void }) {
   const isLeft = direction === -1;
+  const ArrowIcon = isLeft ? RiArrowLeftSLine : RiArrowRightSLine;
   return (
     <motion.button
       type="button"
@@ -282,7 +341,7 @@ function NavButton({ direction, disabled, onClick }: { direction: 1 | -1; disabl
         animate={disabled ? BOUNCE_NONE : isLeft ? BOUNCE_LEFT : BOUNCE_RIGHT}
         transition={{ duration: 1.6, repeat: 3, ease: 'easeInOut' }}
       >
-        <Icon icon={isLeft ? 'ri:arrow-left-s-line' : 'ri:arrow-right-s-line'} className="size-5" />
+        <ArrowIcon className="size-5" aria-hidden="true" />
       </motion.span>
     </motion.button>
   );

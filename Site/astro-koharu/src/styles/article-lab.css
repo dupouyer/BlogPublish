@@ -14,7 +14,8 @@
   box-sizing: border-box;
 }
 body {
-  margin: 0;
+  margin: 0 auto;
+  max-width: 960px;
   padding: 18px;
   background: var(--bg);
   color: var(--fg);
@@ -34,16 +35,28 @@ p {
 svg {
   display: block;
   width: 100%;
-  max-height: 310px;
   background: var(--panel);
   border-radius: 12px;
   user-select: none;
 }
 svg text {
-  font:
-    14px "寒蝉全圆体",
-    system-ui;
-  fill: currentColor;
+  font-family: "寒蝉全圆体", system-ui, sans-serif;
+  fill: var(--fg);
+}
+.lab-plot {
+  width: min(100%, 680px);
+  height: auto;
+  aspect-ratio: 500 / 340;
+  margin: 14px auto 20px;
+}
+.lab-plot text {
+  font-size: inherit;
+}
+.projections svg {
+  aspect-ratio: 180 / 160;
+}
+.projections svg text {
+  font-size: inherit;
 }
 .controls {
   display: grid;
