@@ -20,6 +20,7 @@ import Sonda from 'sonda/astro';
 import { loadEnv } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import YAML from 'yaml';
+import { rehypeArticleLab } from './src/lib/markdown/rehype-article-lab.ts';
 import { rehypeEncryptedBlock } from './src/lib/markdown/rehype-encrypted-block.ts';
 import { rehypeImagePlaceholder } from './src/lib/markdown/rehype-image-placeholder.ts';
 import { rehypeShokaAttrs } from './src/lib/markdown/rehype-shoka-attrs.ts';
@@ -135,6 +136,7 @@ remarkPlugins.push([
 
 // Rehype plugins — order matters
 const rehypePlugins = [
+  rehypeArticleLab,
   rehypeSlug,
   [
     rehypeAutolinkHeadings,

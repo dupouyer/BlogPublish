@@ -37,6 +37,15 @@ const finalConfig = { ...defaultContentConfig, ...config };
 {finalConfig.enableTweetEmbed && <EmbedHydrator client:load />}
 
 <script>
+  window.addEventListener('message', (event) => {
+    if (event.origin !== window.location.origin || event.data?.type !== 'article-lab-size') return;
+    const height = event.data.height;
+    if (typeof height !== 'number' || !Number.isFinite(height)) return;
+    document.querySelectorAll<HTMLIFrameElement>('.article-lab-frame').forEach((frame) => {
+      if (frame.contentWindow === event.source) frame.style.height = `${Math.max(400, Math.min(2400, height))}px`;
+    });
+  });
+
   import { enhanceImages } from '@lib/image-enhancer';
   import { enhanceLinkPreviews } from '@lib/link-preview-enhancer';
 

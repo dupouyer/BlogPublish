@@ -1,0 +1,13 @@
+---
+interface Props {
+  title: string;
+  note: string;
+}
+const { title, note } = Astro.props;
+---
+<section aria-label={title}>
+  <h1>{title}</h1>
+  <p>{note}</p>
+  <slot />
+  <noscript><p>JavaScript 已关闭。上图与数值为默认状态；正文和本页说明仍可阅读，滑块操作需要 JavaScript。</p></noscript>
+</section>
