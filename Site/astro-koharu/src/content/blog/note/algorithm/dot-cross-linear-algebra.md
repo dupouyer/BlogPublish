@@ -3,6 +3,7 @@ title: "Dot 与 Cross：从方向进度到有向面积，建立 Shader 的线性
 link: dot-cross-linear-algebra
 catalog: true
 date: "2026-10-12 12:37:00"
+updated: "2026-10-12 14:44:26"
 description: "用 16 个正文交互理解投影、射线参数、有向面积、三个坐标平面的投影面积，以及 Shader 中的法线、TBN、弯曲轴与数值边界。"
 tags:
   - 数学
@@ -10,7 +11,7 @@ tags:
   - 图形学
 categories:
   - [笔记, 算法]
-cover: /img/posts/dot-cross-linear-algebra/cover.svg
+cover: /img/posts/dot-cross-linear-algebra/cover.svg?v=layout-20261012
 draft: false
 ---
 
@@ -22,7 +23,7 @@ draft: false
 
 每节都提供正文内交互与独立页面。青色、金色是输入，紫色是投影或面积法线，红色是求交平面。图与数值是本文的解释性模型，不代表 UE 或 Unity 中的性能实测。拖动端点改变 XY，滑块可精确改变 XYZ；没有 JavaScript 时，默认图、数值和静态说明仍可阅读。
 
-![原创几何示意：左侧位移投影到参照轴，右侧两根边撑出平行四边形及面积法线。](/img/posts/dot-cross-linear-algebra/cover.svg)
+![原创几何示意：左侧位移投影到参照轴，右侧两根边撑出平行四边形及面积法线。](/img/posts/dot-cross-linear-algebra/cover.svg?v=layout-20261012)
 
 *两种空间读数：Dot 记录沿方向的进度，Cross 记录撑开的有向面积。本文原创示意，具体数值与边界在下方交互中核验。*
 
