@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { add, cross, dot, length, projection, rayPlane, scale, sub, unit, type Vec3 } from '../../lib/article-lab/math';
+import { fitPlot, type PlotBounds } from '../../lib/article-lab/plot';
 import { type LabId, labs } from '../../lib/article-lab/registry';
 
 const fmt = (n: number) => (Math.abs(n) < 0.00005 ? '0' : n.toFixed(3));
@@ -16,6 +17,7 @@ function VectorLabContent({ id }: { id: LabId }) {
   const [depth, setDepth] = useState(2);
   const [normalized, setNormalized] = useState(id === 'unit-cos' || id === 'dot-vs-cross');
   const [yaw, setYaw] = useState(30);
+  const [dragBounds, setDragBounds] = useState<PlotBounds | null>(null);
   const [drag, setDrag] = useState<'a' | 'b' | 'p0' | null>(null);
   const A = normalized && lab.family !== 'triangle' ? unit(a) : a;
   const B = lab.family === 'ray' ? ([1, 0, 0] as Vec3) : normalized && lab.family !== 'triangle' ? unit(b) : b;
@@ -39,6 +41,22 @@ function VectorLabContent({ id }: { id: LabId }) {
   ];
   const project2 = (v: Vec3): [number, number] => [250 + 40 * v[0], 155 - 40 * v[1]];
   const point = isCross ? project3 : project2;
+  const origin: Vec3 = lab.family === 'triangle' ? p0 : [0, 0, 0];
+  const axisLength = normalized && lab.family !== 'triangle' ? 1.25 : 3;
+  const axes: Vec3[] = [
+    [axisLength, 0, 0],
+    [0, axisLength, 0],
+    [0, 0, axisLength],
+  ];
+  const geometry: Vec3[] = [[0, 0, 0], origin, av, bv, ...axes.slice(0, isCross ? 3 : 2)];
+  if (isCross) geometry.push(add(av, bv), add(origin, scale(unit(c) ?? [0, 0, 0], 1.5)));
+  if (proj) geometry.push(proj);
+  if (lab.family === 'linearity') geometry.push(scale(av, scalar), scale(bv, scalar), scale(proj ?? [0, 0, 0], scalar));
+  if (lab.family === 'ray') {
+    geometry.push(scale(av, scalar), [av[0] * scalar, 0, 0], [depth, 0, 0]);
+    if (hit && length(hit) < 9) geometry.push(hit);
+  }
+  const bounds = dragBounds ?? fitPlot(geometry.map(point));
   const line = (start: Vec3, end: Vec3, color: string, label: string, dashed = false) => {
     const s = point(start);
     const e = point(end);
@@ -50,17 +68,20 @@ function VectorLabContent({ id }: { id: LabId }) {
           x2={e[0]}
           y2={e[1]}
           stroke={color}
-          strokeWidth="3"
+          strokeWidth={bounds.width * 0.006}
           strokeDasharray={dashed ? '5 5' : undefined}
         />
-        <circle cx={e[0]} cy={e[1]} r="4" fill={color} />
-        <text x={e[0] + 8} y={e[1] - 8} fill={color}>
+        <circle cx={e[0]} cy={e[1]} r={bounds.width * 0.008} fill={color} />
+        <text
+          x={dashed ? (s[0] + e[0]) / 2 + bounds.width * 0.025 : e[0] + bounds.width * 0.025}
+          y={dashed ? (s[1] + e[1]) / 2 : e[1] + bounds.width * (label.includes('proj') || label === '交点' ? 0.07 : -0.025)}
+          style={{ fill: color }}
+        >
           {label}
         </text>
       </g>
     );
   };
-  const origin: Vec3 = lab.family === 'triangle' ? p0 : [0, 0, 0];
   const poly = (vs: Vec3[]) => vs.map((v) => point(v).join(',')).join(' ');
   const handleMove = (event: React.PointerEvent<SVGSVGElement>) => {
     if (!drag) return;
@@ -89,13 +110,14 @@ function VectorLabContent({ id }: { id: LabId }) {
       <circle
         cx={p[0]}
         cy={p[1]}
-        r="12"
+        r={bounds.width * 0.035}
         fill={color}
         fillOpacity="0.4"
         style={{ touchAction: 'none' }}
         stroke={color}
         onPointerDown={(e) => {
           e.currentTarget.ownerSVGElement?.setPointerCapture(e.pointerId);
+          setDragBounds(bounds);
           setDrag(name);
         }}
       />
@@ -132,26 +154,25 @@ function VectorLabContent({ id }: { id: LabId }) {
         。拖动圆点改变 XY，滑块改变 XYZ；面积图为可旋转的正交投影；Dot/Ray 主图是 XY 视图，Z 参加数值计算。
       </p>
       <svg
-        viewBox="0 0 500 310"
+        className="lab-plot"
+        viewBox={`${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`}
         role="img"
         aria-label={lab.title}
         onPointerMove={handleMove}
-        onPointerUp={() => setDrag(null)}
-        onPointerCancel={() => setDrag(null)}
-        style={{ touchAction: 'pan-y' }}
+        onPointerUp={() => {
+          setDrag(null);
+          setDragBounds(null);
+        }}
+        onPointerCancel={() => {
+          setDrag(null);
+          setDragBounds(null);
+        }}
+        style={{ touchAction: 'pan-y', fontSize: bounds.width * 0.034 }}
       >
         <title>{`${lab.title}，拖动端点或使用下方滑块`}</title>
-        {(
-          [
-            [3, 0, 0],
-            [0, 3, 0],
-            [0, 0, 3],
-          ] as Vec3[]
-        )
-          .slice(0, isCross ? 3 : 2)
-          .map((v, i) => (
-            <g key={'xyz'[i]}>{line([0, 0, 0], v, '#718096', 'xyz'[i])}</g>
-          ))}
+        {axes.slice(0, isCross ? 3 : 2).map((v, i) => (
+          <g key={'xyz'[i]}>{line([0, 0, 0], v, '#718096', 'xyz'[i])}</g>
+        ))}
         {isCross && (
           <polygon
             points={lab.family === 'triangle' ? poly([p0, av, bv]) : poly([origin, av, add(av, bv), bv])}
@@ -160,10 +181,10 @@ function VectorLabContent({ id }: { id: LabId }) {
             stroke="#38bdf8"
           />
         )}
-        {line(origin, av, '#22d3ee', lab.family === 'triangle' ? 'P1' : 'A / V')}
-        {line(origin, bv, '#fbbf24', lab.family === 'triangle' ? 'P2' : 'B / N')}
+        {line(origin, av, '#22d3ee', lab.family === 'triangle' ? 'P1' : isCross ? 'A' : 'V')}
+        {line(origin, bv, '#fbbf24', lab.family === 'triangle' ? 'P2' : isCross ? 'B' : 'N')}
         {isCross
-          ? line(origin, add(origin, scale(unit(c) ?? [0, 0, 0], 1.5)), '#c084fc', 'Ĉ（显示定长）')
+          ? line(origin, add(origin, scale(unit(c) ?? [0, 0, 0], 1.5)), '#c084fc', 'Ĉ')
           : proj && (
               <>
                 {line([0, 0, 0], proj, '#c084fc', 'proj')}
@@ -172,8 +193,15 @@ function VectorLabContent({ id }: { id: LabId }) {
             )}
         {lab.family === 'ray' && (
           <>
-            <line x1={250 + 40 * depth} y1="10" x2={250 + 40 * depth} y2="300" stroke="#fb7185" strokeDasharray="5 5" />
-            <text x={255 + 40 * depth} y="25" fill="#fb7185">
+            <line
+              x1={250 + 40 * depth}
+              y1={bounds.y}
+              x2={250 + 40 * depth}
+              y2={bounds.y + bounds.height}
+              stroke="#fb7185"
+              strokeDasharray="5 5"
+            />
+            <text x={250 + 40 * depth + bounds.width * 0.025} y={bounds.y + bounds.width * 0.06} fill="#fb7185">
               x=depth
             </text>
             {hit && length(hit) < 9 && line([0, 0, 0], hit, '#fb7185', '交点')}
@@ -204,37 +232,46 @@ function VectorLabContent({ id }: { id: LabId }) {
               [2, 0, 'ZX', c[1]],
               [0, 1, 'XY', c[2]],
             ] as const
-          ).map(([i, j, name, area]) => (
-            <figure key={name}>
-              <svg viewBox="0 0 180 160" role="img" aria-label={`${name} 有向投影面积 ${fmt(area)}`}>
-                <title>{`${name} 有向投影`}</title>
-                <line x1="10" y1="110" x2="175" y2="110" stroke="#718096" />
-                <line x1="65" y1="5" x2="65" y2="150" stroke="#718096" />
-                <polygon
-                  points={[
-                    [0, 0],
-                    [edgeA[i], edgeA[j]],
-                    [edgeA[i] + edgeB[i], edgeA[j] + edgeB[j]],
-                    [edgeB[i], edgeB[j]],
-                  ]
-                    .map(([x, y]) => `${65 + 18 * x},${110 - 18 * y}`)
-                    .join(' ')}
-                  fill="#c084fc"
-                  fillOpacity="0.3"
-                  stroke="#c084fc"
-                />
-                <text x="145" y="130">
-                  {'xyz'[i]}
-                </text>
-                <text x="75" y="16">
-                  {'xyz'[j]}
-                </text>
-              </svg>
-              <figcaption>
-                {name} → C{'xyz'[[1, 2, 0].indexOf(i)]} = {fmt(area)}
-              </figcaption>
-            </figure>
-          ))}
+          ).map(([i, j, name, area]) => {
+            const projected: [number, number][] = [
+              [0, 0],
+              [40 * edgeA[i], -40 * edgeA[j]],
+              [40 * (edgeA[i] + edgeB[i]), -40 * (edgeA[j] + edgeB[j])],
+              [40 * edgeB[i], -40 * edgeB[j]],
+            ];
+            const view = fitPlot(projected, 180 / 160);
+            const size = view.width * 0.1;
+            return (
+              <figure key={name}>
+                <svg
+                  viewBox={`${view.x} ${view.y} ${view.width} ${view.height}`}
+                  style={{ fontSize: size }}
+                  role="img"
+                  aria-label={`${name} 有向投影面积 ${fmt(area)}`}
+                >
+                  <title>{`${name} 有向投影`}</title>
+                  <line x1={view.x} y1={0} x2={view.x + view.width} y2={0} stroke="#718096" strokeWidth={view.width * 0.006} />
+                  <line x1={0} y1={view.y} x2={0} y2={view.y + view.height} stroke="#718096" strokeWidth={view.width * 0.006} />
+                  <polygon
+                    points={projected.map((p) => p.join(',')).join(' ')}
+                    fill="#c084fc"
+                    fillOpacity="0.3"
+                    stroke="#c084fc"
+                    strokeWidth={view.width * 0.008}
+                  />
+                  <text x={view.x + view.width - size * 1.2} y={Math.min(size * 1.2, view.y + view.height - size * 0.25)}>
+                    {'xyz'[i]}
+                  </text>
+                  <text x={Math.min(size * 0.3, view.x + view.width - size * 1.2)} y={view.y + size * 1.2}>
+                    {'xyz'[j]}
+                  </text>
+                </svg>
+                <figcaption>
+                  {name} → C{'xyz'[[1, 2, 0].indexOf(i)]} = {fmt(area)}
+                </figcaption>
+              </figure>
+            );
+          })}
         </div>
       )}
       <div className="readout" aria-live="polite">
@@ -304,8 +341,8 @@ function VectorLabContent({ id }: { id: LabId }) {
         </p>
       </div>
       <div className="controls">
-        {controlVector(a, lab.family === 'triangle' ? 'P1' : 'A / V / dir', setA)}
-        {lab.family !== 'ray' && controlVector(b, lab.family === 'triangle' ? 'P2' : 'B / N', setB)}
+        {controlVector(a, lab.family === 'triangle' ? 'P1' : isCross ? 'A' : lab.family === 'ray' ? 'dir' : 'V', setA)}
+        {lab.family !== 'ray' && controlVector(b, lab.family === 'triangle' ? 'P2' : isCross ? 'B' : 'N', setB)}
         {lab.family === 'triangle' && controlVector(p0, 'P0', setP0)}
       </div>
       <div className="options">

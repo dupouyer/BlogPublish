@@ -364,7 +364,8 @@
 .prose .markdown-image-wrapper {
   position: relative;
   display: block;
-  margin: 1.5rem 0;
+  max-inline-size: 100%;
+  margin: 1.5rem auto;
   overflow: hidden;
   border-radius: 0.5rem;
   background-color: hsl(var(--muted));
