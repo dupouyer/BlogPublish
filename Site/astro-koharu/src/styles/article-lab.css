@@ -1,0 +1,135 @@
+:root {
+  color-scheme: dark;
+  --bg: #111827;
+  --fg: #e2e8f0;
+  --panel: #1e293b;
+}
+:root.light {
+  color-scheme: light;
+  --bg: #f8fafc;
+  --fg: #172033;
+  --panel: #e2e8f0;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  padding: 18px;
+  background: var(--bg);
+  color: var(--fg);
+  font:
+    15px / 1.65 system-ui,
+    sans-serif;
+}
+h1 {
+  font-size: 21px;
+  line-height: 1.4;
+  margin: 0 0 12px;
+}
+p {
+  margin: 8px 0;
+}
+svg {
+  display: block;
+  width: 100%;
+  max-height: 310px;
+  background: var(--panel);
+  border-radius: 12px;
+  user-select: none;
+}
+svg text {
+  font: 14px system-ui;
+  fill: currentColor;
+}
+.controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+fieldset {
+  border: 1px solid #64748b;
+  border-radius: 10px;
+  min-width: 0;
+  padding: 8px;
+}
+label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+}
+input[type="range"] {
+  width: 100%;
+  min-width: 40px;
+  accent-color: #22d3ee;
+}
+label span {
+  width: 48px;
+  font-variant-numeric: tabular-nums;
+}
+.readout {
+  border-left: 3px solid #c084fc;
+  padding: 6px 12px;
+  margin: 14px 0;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+button {
+  background: var(--panel);
+  color: var(--fg);
+  border: 1px solid #64748b;
+  padding: 9px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  min-height: 44px;
+}
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid #22d3ee;
+  outline-offset: 3px;
+}
+a {
+  color: #38bdf8;
+}
+.projections {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+figure {
+  margin: 10px 0 0;
+}
+figcaption {
+  text-align: center;
+  font-size: 13px;
+}
+.options label {
+  flex-wrap: wrap;
+}
+.options input[type="range"] {
+  max-width: 200px;
+}
+@media (max-width: 420px) {
+  body {
+    padding: 12px;
+    font-size: 14px;
+  }
+  .controls {
+    grid-template-columns: 1fr;
+  }
+  .legend {
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto;
+  }
+}

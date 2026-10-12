@@ -203,5 +203,5 @@ Agent 工具链也在朝同一方向收敛：Worktree 提供隔离状态，Shade
 - 已检查 Epic Games / Unreal Engine 官方 YouTube 频道过去一周的新内容；没有发现发布日期和技术价值均可确认、足以进入本期前五的更新，因此未单独占位。
 - 已与 2026-W40 的 5 个 URL 和主题硬去重；Gaussian Splat 论文与 RenderMan 工作流属于同一选题，合并为一条。
 - 论文日期以 arXiv Submission History 为准，并换算上海自然日；Codex Release 同时保留 UTC 与上海日期。性能数字沿用作者的硬件、基线和测量口径，不外推为 UE 项目的预期收益。
-- SteadySplats 论文标注 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)，本期据此转载图 1 与图 4并署名、链接许可证；其余来源未确认可再分发图片，正文只链接原始页面，没有复制图片。
+- SteadySplats 论文标注 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)，本期据此转载图 1 与图 4 并署名、链接许可证；其余来源未确认可再分发图片，正文只链接原始页面，没有复制图片。
 - 本期未另发 Weekend Long Read；深读已合并在第 1 项。

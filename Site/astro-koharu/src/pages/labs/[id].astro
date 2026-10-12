@@ -1,0 +1,38 @@
+---
+import InteractiveDemo from '../../components/article-lab/InteractiveDemo.astro';
+import VectorLab from '../../components/article-lab/VectorLab';
+import { type LabId, labs } from '../../lib/article-lab/registry';
+import '../../styles/article-lab.css';
+export function getStaticPaths() {
+  return Object.entries(labs).map(([id, lab]) => ({ params: { id }, props: { id: id as LabId, lab } }));
+}
+const { id, lab } = Astro.props;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>{lab.title}</title>
+    <script is:inline>
+      try { document.documentElement.classList.toggle('light', localStorage.getItem('theme') === 'light'); } catch {}
+    </script>
+  </head>
+  <body>
+    <InteractiveDemo title={lab.title} note={lab.note}>
+      <VectorLab id={id} client:visible />
+    </InteractiveDemo>
+    <p><a href="/post/dot-cross-linear-algebra" target="_top">阅读完整文章</a></p>
+    <script>
+      // Same-origin parent owns theme; report size only to that origin.
+      const applyTheme = () => {
+        if (window.parent !== window) document.documentElement.classList.toggle('light', !window.parent.document.documentElement.classList.contains('dark'));
+      };
+      applyTheme();
+      const themeObserver = new MutationObserver(applyTheme);
+      if (window.parent !== window) themeObserver.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      const resizeObserver = new ResizeObserver(() => {
+        window.parent.postMessage({ type: 'article-lab-size', height: document.body.scrollHeight + 32 }, window.location.origin);
+      });
+      resizeObserver.observe(document.body);
+      window.addEventListener('pagehide', () => { themeObserver.disconnect(); resizeObserver.disconnect(); });
+    </script>
+  </body>
+</html>
