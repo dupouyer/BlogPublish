@@ -64,9 +64,12 @@ function VectorLabContent({ id }: { id: LabId }) {
   const poly = (vs: Vec3[]) => vs.map((v) => point(v).join(',')).join(' ');
   const handleMove = (event: React.PointerEvent<SVGSVGElement>) => {
     if (!drag) return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) * 500) / rect.width;
-    const y = ((event.clientY - rect.top) * 310) / rect.height;
+    const matrix = event.currentTarget.getScreenCTM();
+    if (!matrix) return;
+    const pointer = event.currentTarget.createSVGPoint();
+    pointer.x = event.clientX;
+    pointer.y = event.clientY;
+    const { x, y } = pointer.matrixTransform(matrix.inverse());
     const prior = drag === 'a' ? a : drag === 'b' ? b : p0;
     // 3D handles move in the world XY plane while preserving Z, solving the displayed oblique projection.
     const vx = Math.max(
