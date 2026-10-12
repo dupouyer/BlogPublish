@@ -179,6 +179,19 @@ function VectorLabContent({ id }: { id: LabId }) {
             {hit && length(hit) < 9 && line([0, 0, 0], hit, '#fb7185', '交点')}
           </>
         )}
+        {lab.family === 'linearity' && (
+          <>
+            {line([0, 0, 0], scale(av, scalar), '#fb7185', 'tV')}
+            {line([0, 0, 0], scale(bv, scalar), '#fbbf24', 'tN')}
+            {proj && line([0, 0, 0], scale(proj, scalar), '#c084fc', 't·proj')}
+          </>
+        )}
+        {lab.family === 'ray' && (
+          <>
+            {line([0, 0, 0], scale(av, scalar), '#c084fc', 'P(t)')}
+            {line(scale(av, scalar), [av[0] * scalar, 0, 0], '#c084fc', 't·dot', true)}
+          </>
+        )}
         {handle(av, 'a', '#22d3ee')}
         {lab.family !== 'ray' && handle(bv, 'b', '#fbbf24')}
         {lab.family === 'triangle' && handle(p0, 'p0', '#fb7185')}
