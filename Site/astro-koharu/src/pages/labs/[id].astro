@@ -11,6 +11,7 @@ const { id, lab } = Astro.props;
 <!doctype html>
 <html lang="zh-CN">
   <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>{lab.title}</title>
+    <link rel="stylesheet" href="/fonts/ChillRoundFRegular/result.css" />
     <script is:inline>
       try { document.documentElement.classList.toggle('light', localStorage.getItem('theme') === 'light'); } catch {}
     </script>

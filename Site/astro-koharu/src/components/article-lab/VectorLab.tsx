@@ -137,7 +137,7 @@ function VectorLabContent({ id }: { id: LabId }) {
         onPointerCancel={() => setDrag(null)}
         style={{ touchAction: 'pan-y' }}
       >
-        <title>{lab.title}，拖动端点或使用下方滑块</title>
+        <title>{`${lab.title}，拖动端点或使用下方滑块`}</title>
         {(
           [
             [3, 0, 0],
@@ -191,7 +191,7 @@ function VectorLabContent({ id }: { id: LabId }) {
           ).map(([i, j, name, area]) => (
             <figure key={name}>
               <svg viewBox="0 0 180 160" role="img" aria-label={`${name} 有向投影面积 ${fmt(area)}`}>
-                <title>{name} 有向投影</title>
+                <title>{`${name} 有向投影`}</title>
                 <line x1="10" y1="110" x2="175" y2="110" stroke="#718096" />
                 <line x1="65" y1="5" x2="65" y2="150" stroke="#718096" />
                 <polygon

@@ -19,7 +19,8 @@ body {
   background: var(--bg);
   color: var(--fg);
   font:
-    15px / 1.65 system-ui,
+    15px / 1.65 "寒蝉全圆体",
+    system-ui,
     sans-serif;
 }
 h1 {
@@ -39,7 +40,9 @@ svg {
   user-select: none;
 }
 svg text {
-  font: 14px system-ui;
+  font:
+    14px "寒蝉全圆体",
+    system-ui;
   fill: currentColor;
 }
 .controls {
@@ -132,4 +135,8 @@ figcaption {
   * {
     scroll-behavior: auto;
   }
+}
+button,
+input {
+  font: inherit;
 }
