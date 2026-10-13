@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>法线镜像实验：采样位置、基底与光照</title>
+<style>
+:root{color-scheme:dark;--bg:#101722;--fg:#e9edf5;--panel:#192433;--line:#65758a;--accent:#71dace;--muted:#a8b9cb}html.light{color-scheme:light;--bg:#f5f7fb;--fg:#182535;--panel:#e4ecf5;--line:#77899e;--accent:#126c68;--muted:#405775}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.65 system-ui,sans-serif}main{max-width:940px;margin:auto;padding:18px}h1{font-size:22px;line-height:1.4;margin:0 0 8px}p{margin:8px 0}.controls,.panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}label{display:block;min-width:0}select,button{font:inherit;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:8px;min-height:44px;padding:6px;width:100%}input[type=range]{display:block;width:100%;min-height:32px;accent-color:var(--accent)}figure{margin:10px 0}canvas{display:block;width:100%;height:auto;background:var(--panel);border-radius:10px}figcaption{font-size:14px;text-align:center}pre{font:13px/1.65 ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--panel);padding:12px;border-radius:10px}output{font-variant-numeric:tabular-nums;color:var(--accent)}.note{border-left:3px solid var(--accent);padding:6px 12px;color:var(--muted)}button{width:auto;margin-top:10px}a{color:var(--accent)}:focus-visible{outline:3px solid var(--accent);outline-offset:2px}@media(max-width:520px){main{padding:12px}.controls,.panels{grid-template-columns:1fr}h1{font-size:20px}}
+</style></head><body><main>
+<h1>法线镜像：同时看采样位置与方向</h1>
+<p>两个平面相互平移后并排显示。右侧几何始终 ScaleX=-1；模型轴与 UV 轴在本实验中对齐。调整灯光和补偿，检查“法线一致”和“亮度一致”的区别。</p>
+<div class="controls">
+<label>法线场<select id="field"><option value="dome">居中圆顶：严格对称</option><option value="relief">复杂浮雕：可加入不对称</option><option value="quad">四象限：+U / -U / +V / -V</option></select></label>
+<label>显示<select id="view"><option value="light">漫反射亮度</option><option value="world">世界法线 RGB</option><option value="tangent">采样后的切线法线 RGB（补偿前）</option><option value="height">高度（四象限没有高度）</option></select></label>
+<label>右侧材质处理<select id="mode"><option value="default">默认：随几何一起镜像</option><option value="both">UV 与 Normal X 同时补偿</option><option value="uv">只补偿 UV</option><option value="nx">只补偿 Normal X</option></select></label>
+<label>右侧 B 轴<select id="basis"><option value="correct">正确：B 保持原方向</option><option value="wrong">故意错误：遗漏手性，B 也翻转</option></select></label>
+<label>浮雕不对称强度 <output id="amountO"></output><input id="amount" type="range" min="0" max="100" value="55"></label>
+<label>光源 X <output id="lightO"></output><input id="light" type="range" min="-100" max="100" value="-65"></label>
+<label>右侧光源<select id="lighting"><option value="fixed">保持同一世界方向</option><option value="reflected">光源也做 X 镜像</option></select></label>
+<label>检查点横向位置 <output id="probeO"></output><input id="probe" type="range" min="1" max="99" value="31"></label>
+</div>
+<div class="panels"><figure><canvas id="left" width="288" height="288" aria-label="正缩放平面的法线或亮度"></canvas><figcaption>ScaleX=+1</figcaption></figure><figure><canvas id="right" width="288" height="288" aria-label="负缩放平面的法线或亮度"></canvas><figcaption>ScaleX=-1</figcaption></figure></div>
+<pre id="metrics" aria-live="polite">默认圆顶：最终世界法线相同。镜像后采样 U 左右交换，T 反向，两次变化抵消。</pre>
+<p id="explain" class="note"></p>
+<pre id="point">检查点固定在 v=0.43；也可以点击或触摸图像选点。</pre>
+<button id="reset" type="button">重置实验</button>
+<p class="note">简化边界：正交平面；单位 T/B/N；单个方向光；固定材质。亮度=0.12+0.88·max(dot(N,L),0)。无高光、阴影、AO、法线压缩或 UE 渲染路径。RGB=(N+1)/2 仅用于查看向量。</p>
+<noscript><p>交互需要 JavaScript。圆顶的 Nx 左右反号，Ny/Nz 左右相同；完整静态对照见博客正文。</p><img src="comparison.png" width="1200" height="720" alt="对称与非对称浮雕镜像结果对照" style="width:100%;height:auto"></noscript>
+</main><script>
+const $=id=>document.getElementById(id),unit=a=>{const l=Math.hypot(...a);return a.map(x=>x/l)},clamp=x=>Math.max(-1,Math.min(1,x));
+let pv=.43;
+function height(u,v){const x=2*u-1,y=2*v-1;if($('field').value==='dome')return .35*Math.exp(-6*(x*x+y*y));const symmetric=.3*Math.exp(-5*(x*x+y*y))+.11*Math.cos(4*Math.PI*x)*Math.exp(-2*y*y)+.06*Math.cos(7*Math.PI*x)*Math.cos(3*Math.PI*y);const a=Number($('amount').value)/100;return symmetric+a*.14*Math.sin(5*x+3*y+.4)*Math.exp(-1.5*(x*x+y*y))+a*.08*Math.sin(9*x-4*y+1)*Math.exp(-3*((x-.2)**2+y*y));}
+function normal(u,v){if($('field').value==='quad'){const k=Math.SQRT1_2;return v<.5?(u<.5?[k,0,k]:[-k,0,k]):(u<.5?[0,k,k]:[0,-k,k]);}const e=1/2048;return unit([-(height(u+e,v)-height(u-e,v))/(2*e),-(height(u,v+e)-height(u,v-e))/(2*e),1]);}
+function sample(x,y,mirror){let u=mirror?1-x:x;const mode=$('mode').value;if(mirror&&(mode==='uv'||mode==='both'))u=1-u;const raw=normal(u,y),n=raw.slice();if(mirror&&(mode==='nx'||mode==='both'))n[0]*=-1;const w=mirror?[-n[0],$('basis').value==='wrong'?-n[1]:n[1],n[2]]:n;return{u,raw,w,h:$('field').value==='quad'?null:height(u,y)};}
+function light(mirror){let x=Number($('light').value)/100;if(mirror&&$('lighting').value==='reflected')x=-x;return unit([x,.25,.8]);}
+function brightness(n,l){return .12+.88*Math.max(0,n.reduce((s,x,i)=>s+x*l[i],0));}
+function color(s,mirror){const view=$('view').value;if(view==='world'||view==='tangent')return(view==='world'?s.w:s.raw).map(x=>Math.round((x*.5+.5)*255));if(view==='height')return s.h===null?[100,100,100]:Array(3).fill(Math.round(Math.max(0,Math.min(1,(s.h+.25)/.8))*255));const q=brightness(s.w,light(mirror));return[225,198,163].map(x=>Math.round(x*q));}
+function draw(id,mirror){const c=$(id),ctx=c.getContext('2d'),im=ctx.createImageData(c.width,c.height);for(let y=0;y<c.height;y++)for(let x=0;x<c.width;x++){const s=sample((x+.5)/c.width,(y+.5)/c.height,mirror),rgb=color(s,mirror),i=(x+y*c.width)*4;im.data.set([...rgb,255],i);}ctx.putImageData(im,0,0);ctx.strokeStyle='#ff5d8e';ctx.lineWidth=2;ctx.beginPath();ctx.arc(Number($('probe').value)/100*c.width,pv*c.height,6,0,2*Math.PI);ctx.stroke();}
+function refresh(){draw('left',false);draw('right',true);let angle=0,diff=0,count=0;for(let y=0;y<64;y++)for(let x=0;x<64;x++){const a=sample((x+.5)/64,(y+.5)/64,false),b=sample((x+.5)/64,(y+.5)/64,true);angle+=Math.acos(clamp(a.w.reduce((s,v,i)=>s+v*b.w[i],0)))*180/Math.PI;diff+=Math.abs(brightness(a.w,light(false))-brightness(b.w,light(true)));count++;}const x=Number($('probe').value)/100,a=sample(x,pv,false),b=sample(x,pv,true),fmt=n=>n.map(x=>x.toFixed(3)).join(', ');$('metrics').textContent=`同一归一化位置的世界法线平均角差：${(angle/count).toFixed(4)}°\n漫反射平均绝对亮度差：${(diff/count).toFixed(4)}（线性值）\n采样网格：64×64，未包含 UE 压缩和插值`; $('point').textContent=`位置：x=${x.toFixed(2)}, v=${pv.toFixed(2)}\n左：采样 U=${a.u.toFixed(2)}；N_TS=(${fmt(a.raw)})\n右：采样 U=${b.u.toFixed(2)}；N_TS=(${fmt(b.raw)})\n左：N_WS=(${fmt(a.w)})\n右：N_WS=(${fmt(b.w)})`;
+$('amountO').value=(Number($('amount').value)/100).toFixed(2);$('lightO').value=(Number($('light').value)/100).toFixed(2);$('probeO').value=x.toFixed(2);
+$('explain').textContent=$('basis').value==='wrong'?'此选项故意让 B 错误翻转；圆顶也会暴露问题。':$('mode').value==='both'?'UV 恢复采样位置，Normal X 抵消 T 反向。世界法线可一致；若光源也镜像，亮度仍可能不同。':$('field').value==='dome'?'默认圆顶满足 Nx(1-u)=-Nx(u)，Ny/Nz 不变，所以世界法线一致。':$('field').value==='quad'?'下半部 +V/-V 左右交换；X 镜像不会自动抵消 Ny 的变化。':'把不对称强度设为 0，再逐步增加：世界法线角差与亮度差分别变化。';}
+for(const el of document.querySelectorAll('select,input'))el.addEventListener('input',refresh);
+for(const id of ['left','right'])$(id).addEventListener('pointerdown',e=>{const r=e.currentTarget.getBoundingClientRect();$('probe').value=Math.max(1,Math.min(99,Math.round((e.clientX-r.left)/r.width*100)));pv=Math.max(0,Math.min(1,(e.clientY-r.top)/r.height));refresh();});
+$('reset').addEventListener('click',()=>{for(const [id,v]of Object.entries({field:'dome',view:'light',mode:'default',basis:'correct',amount:55,light:-65,lighting:'fixed',probe:31}))$(id).value=v;pv=.43;refresh();});
+refresh();
+try{const root=window.parent.document.documentElement,apply=()=>document.documentElement.classList.toggle('light',!root.classList.contains('dark'));apply();const obs=new MutationObserver(apply);obs.observe(root,{attributes:true,attributeFilter:['class']});addEventListener('pagehide',()=>obs.disconnect(),{once:true});}catch{}
+if(window.parent!==window){const ro=new ResizeObserver(()=>window.parent.postMessage({type:'article-lab-size',height:document.body.scrollHeight+24},location.origin));ro.observe(document.body);addEventListener('pagehide',()=>ro.disconnect(),{once:true});}
+</script></body></html>
