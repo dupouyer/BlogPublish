@@ -3,7 +3,7 @@ title: "法线贴图遇到负缩放：为什么球形正常，浮雕却变了？
 link: normal-map-mirror-symmetry
 catalog: true
 date: "2026-10-13 17:30:00"
-updated: "2026-10-13 19:22:03"
+updated: "2026-10-13 19:37:31"
 description: "解释球形与浮雕的镜像差异，明确取消法线方向反射为何会改变凹凸，并给出匹配自定义 UV 的真实基底、AI 法线检查与分离颜色/法线采样的取舍。"
 cover: /img/posts/normal-map-mirror-symmetry/cover.webp
 tags: [Rendering, Unreal Engine, Shader, 线性代数]
