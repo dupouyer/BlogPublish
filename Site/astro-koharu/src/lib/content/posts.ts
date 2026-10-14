@@ -8,6 +8,7 @@ import summaries from '@assets/summaries.json';
 import { siteConfig } from '@constants/site-config';
 import type { FeaturedSeriesItem } from '@lib/config/types';
 import type { BlogPost } from 'types/blog';
+import { getLearningPosts, validateKnowledge } from '../knowledge';
 import { extractTextFromMarkdown } from '../sanitize';
 import { buildCategoryPath } from './categories';
 
@@ -77,6 +78,7 @@ export async function getSortedPosts(): Promise<CollectionEntry<'blog'>[]> {
     return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
   });
 
+  validateKnowledge(sortedPosts);
   return sortedPosts;
 }
 
@@ -188,15 +190,12 @@ export async function getRandomPosts(count: number = 10): Promise<BlogPost[]> {
 }
 
 /**
- * 获取文章所属系列的所有文章（基于最深层分类）
+ * 获取文章所属学习系列的所有文章（显式 Frontmatter）
  * @param post 当前文章
- * @returns 系列文章列表（按日期排序，最新的在前）
+ * @returns 系列文章列表（按学习顺序）
  */
 export async function getSeriesPosts(post: BlogPost): Promise<BlogPost[]> {
-  const lastCategory = getPostLastCategory(post);
-  if (!lastCategory.name) return [];
-
-  return await getPostsByCategory(lastCategory.name);
+  return post.data.series ? getLearningPosts(await getSortedPosts(), post.data.series.id) : [];
 }
 
 /**
@@ -220,9 +219,7 @@ export async function getAdjacentSeriesPosts(currentPost: BlogPost): Promise<{
     return { prevPost: null, nextPost: null };
   }
 
-  // 因为文章是按日期降序排列的（最新的在前）
-  // prevPost 是更新的文章（索引 - 1）
-  // nextPost 是更旧的文章（索引 + 1）
+  // Learning navigation follows series.order, independent of publication dates.
   const prevPost = currentIndex > 0 ? seriesPosts[currentIndex - 1] : null;
   const nextPost = currentIndex < seriesPosts.length - 1 ? seriesPosts[currentIndex + 1] : null;
 
@@ -292,7 +289,7 @@ export function getFeaturedCategoryNames(): string[] {
 
 /**
  * 获取所有非 Featured Series 的文章（已排序）
- * @returns 非系列文章列表（按日期排序，最新的在前）
+ * @returns 非系列文章列表（按学习顺序）
  */
 export async function getNonFeaturedPosts(): Promise<BlogPost[]> {
   const categoryNames = getFeaturedCategoryNames();

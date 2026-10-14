@@ -1,6 +1,7 @@
 ---
 title: "从风动到四季：把植被结构数据变成可复用的材质系统"
 link: foliage-structure-wind-season
+updated: "2026-10-14 10:47:42"
 catalog: true
 date: "2026-10-02 13:00:00"
 description: "从 Epic Megascans 植被更新出发，拆解风场、主次运动与分层变色，并用交互实验解释结构数据如何驱动一套可扩展的植被材质。"
@@ -10,6 +11,10 @@ categories:
   - [笔记, 算法]
 draft: false
 math: true
+collection: [foliage]
+interactive: true
+prerequisites: [dot-cross-linear-algebra]
+difficulty: 进阶
 ---
 
 一片草地要显得自然，不能只有“所有顶点一起摆”；一棵秋天的树也不能只有“整张 BaseColor 乘黄色”。它们缺的往往是同一种信息：**这是谁的根部、谁的末端、谁属于同一簇叶片，以及哪些部位应该先发生变化。**

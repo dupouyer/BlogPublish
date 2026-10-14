@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import { relative } from 'node:path';
 import CustomContent from '@components/common/CustomContent.astro';
+import ArticleKnowledge from '@components/knowledge/ArticleKnowledge.astro';
 import HomeSider from '@components/layout/HomeSider.astro';
 import SummaryPanel, { type SummarySource } from '@components/post/SummaryPanel';
 import Cover from '@components/ui/cover/Cover.astro';
@@ -183,9 +184,11 @@ if (post.data.description) {
           <span class="text-muted-foreground">收集范围 {post.data.newsletter.periodStart} — {post.data.newsletter.periodEnd}</span>
         </aside>
       )}
+      <ArticleKnowledge post={post} />
       <article class="prose md:prose-sm dark:prose-invert">
         <CustomContent Content={Content} />
       </article>
+      <ArticleKnowledge post={post} position="bottom" />
       <Comment />
     </div>
   </TwoColumnLayout>

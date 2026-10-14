@@ -1,0 +1,14 @@
+---
+import KnowledgeCards from '@components/knowledge/KnowledgeCards.astro';
+import PageLayout from '@layouts/PageLayout.astro';
+import { getSortedPosts } from '@lib/content';
+import { topicCollections } from '@lib/knowledge-config';
+
+const posts = await getSortedPosts();
+---
+<PageLayout frontmatter={{ title: '专题研究', comments: false }}>
+  <div class="not-prose">
+    <p class="mb-6 text-muted-foreground">围绕实时材质与 Agent 工程，按当前问题选择阅读入口。</p>
+    <KnowledgeCards groups={topicCollections} posts={posts} kind="collection" />
+  </div>
+</PageLayout>

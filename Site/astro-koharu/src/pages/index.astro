@@ -1,4 +1,5 @@
 ---
+import KnowledgeCards from '@components/knowledge/KnowledgeCards.astro';
 import HomeSider from '@components/layout/HomeSider.astro';
 import NewsletterHighlight from '@components/post/NewsletterHighlight.astro';
 import PostList from '@components/post/PostList.astro';
@@ -7,14 +8,16 @@ import { CONTENT_PADDING, PAGINATION } from '@constants/layout';
 import { seoConfig } from '@constants/site-config';
 import Layout from '@layouts/Layout.astro';
 import TwoColumnLayout from '@layouts/TwoColumnLayout.astro';
-import { getHomePagePosts } from '@lib/content';
+import { getHomePagePosts, getSortedPosts } from '@lib/content';
 import { toPostCardDataList } from '@lib/content/transforms';
+import { learningSeries, topicCollections } from '@lib/knowledge-config';
 import type { Page } from 'astro';
 import type { BlogPost } from 'types/blog';
 import CategoryCards from '@/components/post/CategoryCards.astro';
 import Divider from '@/components/ui/divider';
 
 // 使用优化的单次查询获取所有首页数据
+const knowledgePosts = await getSortedPosts();
 const { highlightedPosts, stickyPosts: normalStickyPosts, regularPosts } = await getHomePagePosts();
 
 // 将高亮系列文章放在置顶列表开头（转换为卡片数据）
@@ -52,13 +55,21 @@ const page: Page<BlogPost> = {
       class={`bg-gradient-start shadow-box tablet:shadow-none flex flex-col gap-4 overflow-hidden  ${CONTENT_PADDING.standard}`}
     >
       <NewsletterHighlight />
+      <section aria-labelledby="home-series" class="my-3">
+        <div class="mb-4 flex items-baseline justify-between gap-3"><h2 id="home-series" class="text-xl font-bold">系统学习</h2><a href="/series/" class="text-primary text-sm">全部系列 ↗</a></div>
+        <KnowledgeCards groups={learningSeries} posts={knowledgePosts} kind="series" />
+      </section>
+      <section aria-labelledby="home-collections" class="my-3">
+        <div class="mb-4 flex items-baseline justify-between gap-3"><h2 id="home-collections" class="text-xl font-bold">专题研究</h2><a href="/collections/" class="text-primary text-sm">全部专题 ↗</a></div>
+        <KnowledgeCards groups={topicCollections} posts={knowledgePosts} kind="collection" />
+      </section>
       {stickyPosts.length > 0 && (
         <>
           <Divider>置顶文章</Divider>
           <PostList posts={stickyPosts} showPaginator={false} />
         </>
       )}
-      <Divider>文章列表</Divider>
+      <Divider>最近更新文章</Divider>
       <PostList posts={posts} page={page} showPaginator={true} baseUrl="/posts" isHomePage={true} />
       <Divider className="mt-6">精选分类</Divider>
       <CategoryCards />

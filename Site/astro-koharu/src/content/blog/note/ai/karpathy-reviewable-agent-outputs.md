@@ -1,6 +1,7 @@
 ---
 title: "从生成答案到交付理解：Karpathy、STE100 与可审查的 Agent 输出"
 link: karpathy-reviewable-agent-outputs
+updated: "2026-10-14 10:47:42"
 catalog: true
 date: "2026-10-04T23:21:03+08:00"
 description: "把明确语言、软件工程的审查结构与图解、交互、视频结合起来，让读者能从总览进入细节，用证据回看整体设计。"
@@ -13,6 +14,8 @@ tags:
 categories:
   - [笔记, AI]
 draft: false
+collection: [agent-engineering]
+difficulty: 进阶
 ---
 
 Agent 可以很快写出一份设计说明。系统分层清楚，术语专业，末尾还有几条优点。读完以后，我往往能复述它的方向，却回答不了最关键的问题：数据究竟从哪里进入，经过哪个模块，谁修改状态，接口返回什么，失败以后怎么办？

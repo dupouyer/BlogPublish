@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
+import type { ArticleSeries } from '@lib/knowledge-schema';
 import type { Newsletter } from '@lib/newsletter-schema';
 
 /**
@@ -8,6 +9,13 @@ import type { Newsletter } from '@lib/newsletter-schema';
 export interface BlogSchema {
   title: string;
   newsletter?: Newsletter;
+  series?: ArticleSeries;
+  collection?: string[];
+  prerequisites?: string[];
+  interactive?: boolean;
+  learningOutcome?: string;
+  difficulty?: '入门' | '进阶' | '深入';
+  readingMinutes?: number;
   description?: string;
   link?: string;
   date: Date;
@@ -62,6 +70,7 @@ export interface PostRefWithCategory extends PostRef {
  * 文章卡片数据 - 用于卡片展示
  */
 export interface PostCardData {
+  series?: ArticleSeries;
   slug: string;
   link?: string;
   title: string;

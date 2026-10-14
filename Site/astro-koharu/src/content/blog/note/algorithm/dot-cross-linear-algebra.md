@@ -3,7 +3,7 @@ title: "Dot 与 Cross：从方向进度到有向面积，建立 Shader 的线性
 link: dot-cross-linear-algebra
 catalog: true
 date: "2026-10-12 12:37:00"
-updated: "2026-10-12 14:44:26"
+updated: "2026-10-14 10:47:42"
 description: "用 16 个正文交互理解投影、射线参数、有向面积、三个坐标平面的投影面积，以及 Shader 中的法线、TBN、弯曲轴与数值边界。"
 tags:
   - 数学
@@ -13,6 +13,13 @@ categories:
   - [笔记, 算法]
 cover: /img/posts/dot-cross-linear-algebra/cover.svg?v=layout-20261012
 draft: false
+series:
+  id: linear-algebra-for-ta
+  order: 1
+  stage: geometry
+learningOutcome: "理解 Dot 如何测量方向分量、Cross 如何保存有向面积，并用投影计算射线距离。"
+interactive: true
+difficulty: 入门
 ---
 
 一条斜着穿过空间的射线，为什么走了很远，沿墙面法线却只推进了一点？两根向量撑出的面，为什么能用一根垂直向量完整记录？这些问题比背下 `cos` 与 `sin` 更接近 Shader 日常工作的几何本质。

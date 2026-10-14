@@ -340,6 +340,12 @@ navigation:
   - name: 技术周报
     path: /weekly
     icon: ri:newspaper-line
+  - name: 系统学习
+    path: /series/
+    icon: ri:route-line
+  - name: 专题研究
+    path: /collections/
+    icon: ri:compass-3-line
   - name: 文章 # 有子菜单时，path 可省略
     icon: ri:quill-pen-ai-fill
     children: # 子菜单列表

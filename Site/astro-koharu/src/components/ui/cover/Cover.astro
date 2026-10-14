@@ -1,6 +1,8 @@
 ---
 import { siteConfig } from '@constants/site-config';
 import { displayDate } from '@lib/date';
+import { seriesHref } from '@lib/knowledge';
+import { seriesById } from '@lib/knowledge-config';
 import { getLqipStyle } from '@lib/lqip';
 import { Icon } from 'astro-icon/components';
 import readingTime from 'reading-time';
@@ -18,6 +20,7 @@ const { data, title } = Astro.props as CoverProps;
 const { date, updated, title: dataTitle, draft } = data?.data ?? {};
 
 const readState = readingTime(data?.body ?? '');
+const learningSeries = data?.data.series && seriesById.get(data.data.series.id);
 const isDraft = import.meta.env.DEV && draft === true;
 
 // 获取横幅图片的 LQIP 样式
@@ -42,6 +45,7 @@ const bannerLqipStyle = getLqipStyle('/img/site_header_1920.webp');
         </h1>
       ) : data ? (
         <>
+          {learningSeries && <a href={seriesHref(learningSeries.id)} class="mb-3 rounded-full border border-white/30 bg-black/20 px-4 py-2 text-center text-sm backdrop-blur-sm">系列：{learningSeries.title} · {String(data?.data.series?.order).padStart(2, '0')}</a>}
           <h1
             class={`shadow-text word-break text-4.5xl text-center font-bold md:text-2xl ${MAX_WIDTH.content} flex flex-wrap items-center justify-center gap-3`}
           >

@@ -1,5 +1,6 @@
 import { defineCollection } from 'astro:content';
 import { displayDate, parseDateInSiteTimezone, reinterpretUtcAsTimezone } from '@lib/date';
+import { articleCollectionsSchema, articleSeriesSchema } from '@lib/knowledge-schema';
 import { getNewsletterIssue, newsletterSchema } from '@lib/newsletter-schema';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
@@ -33,6 +34,13 @@ const blogCollection = defineCollection({
     .object({
       title: z.string(),
       newsletter: newsletterSchema.optional(),
+      series: articleSeriesSchema.optional(),
+      collection: articleCollectionsSchema.optional(),
+      prerequisites: z.array(z.string()).optional(),
+      interactive: z.boolean().optional(),
+      learningOutcome: z.string().optional(),
+      difficulty: z.enum(['入门', '进阶', '深入']).optional(),
+      readingMinutes: z.number().int().positive().optional(),
       description: z.string().optional(),
       link: z.string().optional(),
       date: dateInSiteTimezone,

@@ -1,0 +1,15 @@
+---
+import KnowledgePage from '@components/knowledge/KnowledgePage.astro';
+import { getSortedPosts } from '@lib/content';
+import { getLearningPosts } from '@lib/knowledge';
+import { learningSeries } from '@lib/knowledge-config';
+export async function getStaticPaths() {
+  const allPosts = await getSortedPosts();
+  return learningSeries.map((group) => ({
+    params: { id: group.id },
+    props: { group, allPosts, posts: getLearningPosts(allPosts, group.id) },
+  }));
+}
+const { group, allPosts, posts } = Astro.props;
+---
+<KnowledgePage group={group} allPosts={allPosts} posts={posts} kind="series" />

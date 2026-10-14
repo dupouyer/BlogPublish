@@ -1,0 +1,65 @@
+---
+import { getSortedPosts } from '@lib/content';
+import { collectionHref, getLearningPosts, postHref, postKey, seriesHref } from '@lib/knowledge';
+import { collectionById, seriesById } from '@lib/knowledge-config';
+import type { BlogPost } from '@/types/blog';
+
+interface Props {
+  post: BlogPost;
+  position?: 'top' | 'bottom';
+}
+const { post, position = 'top' } = Astro.props;
+const series = post.data.series && seriesById.get(post.data.series.id);
+const allPosts = series || post.data.collection?.length || post.data.prerequisites?.length ? await getSortedPosts() : [];
+const members = series ? getLearningPosts(allPosts, series.id) : [];
+const index = members.findIndex((item) => item.id === post.id);
+const previous = members[index - 1];
+const next = members[index + 1];
+const prerequisites = allPosts.filter((item) => post.data.prerequisites?.includes(postKey(item)));
+const collections = (post.data.collection ?? []).flatMap((id) => {
+  const group = collectionById.get(id);
+  return group ? [group] : [];
+});
+---
+{(series || collections.length > 0 || prerequisites.length > 0) && (
+  <aside class:list={['article-knowledge', { 'bottom-knowledge': position === 'bottom' }]} aria-label={position === 'top' ? '文章知识路径' : '继续阅读'}>
+    {series && <>
+      <a class="series-label" href={seriesHref(series.id)}>系列：{series.title} · {String(post.data.series?.order).padStart(2, '0')}</a>
+      {position === 'top' && <span class="current-position">当前第 {index + 1} / {members.length} 篇已发布内容</span>}
+      {position === 'top' ? <nav class="series-steps" aria-label="系列阅读顺序">{members.map((item) => <a href={postHref(item)} aria-current={item.id === post.id ? 'page' : undefined}><span>{String(item.data.series?.order).padStart(2, '0')}</span>{item.data.title}</a>)}</nav> : <>
+        <p class="reading-bridge">{post.data.learningOutcome && <span>这一篇建立的直觉：{post.data.learningOutcome}<br /></span>}{next ? '接下来，把当前的几何模型带到下一个问题。' : '你已读到本系列当前已发布内容的最后一篇，后续主题见学习地图。'}</p>
+        <div class="adjacent-reading">
+          {previous && <a href={postHref(previous)}><span>← 回顾前篇</span><strong>{previous.data.title}</strong></a>}
+          {next && <a href={postHref(next)}><span>继续学习 →</span><strong>{next.data.title}</strong><p>{next.data.description}</p></a>}
+          {!next && <a href={seriesHref(series.id)}><span>查看后续计划 →</span><strong>完整学习地图</strong></a>}
+        </div>
+      </>}
+    </>}
+    {position === 'top' && prerequisites.length > 0 && <div class="prerequisite-links">前置阅读：{prerequisites.map((item) => <a href={postHref(item)}>{item.data.title}</a>)}</div>}
+    {collections.length > 0 && <div class="collection-links"><span>{position === 'bottom' ? '继续探索专题' : '所属专题'}</span>{collections.map((group) => <a href={collectionHref(group.id)}>{group.title} ↗</a>)}</div>}
+  </aside>
+)}
+<style>
+  .article-knowledge { margin: 1rem 0; border: 1px solid hsl(var(--border)); border-radius: 1rem; padding: 1.25rem; background: color-mix(in srgb, hsl(var(--primary)) 5%, transparent); }
+  .current-position { display: block; font-size: .7rem; color: hsl(var(--muted-foreground)); margin-top: .4rem; }
+  .series-label { color: hsl(var(--primary)); font-weight: 600; font-size: .85rem; }
+  a:hover { color: hsl(var(--primary)); }
+  a:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 3px; }
+  .series-steps { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .9rem; }
+  .series-steps a { flex: 1 1 230px; border: 1px solid hsl(var(--border)); border-radius: .5rem; padding: .65rem; font-size: .75rem; line-height: 1.7; }
+  .series-steps span { margin-right: .5rem; opacity: .7; }
+  .series-steps [aria-current] { border-color: hsl(var(--primary)); color: hsl(var(--primary)); }
+  .collection-links { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; font-size: .75rem; }
+  .collection-links a { border: 1px solid hsl(var(--border)); border-radius: 2rem; padding: .35rem .7rem; }
+  .collection-links span, .prerequisite-links, .reading-bridge { color: hsl(var(--muted-foreground)); }
+  .series-label ~ .collection-links { margin-top: .9rem; }
+  .prerequisite-links { font-size: .75rem; line-height: 1.8; margin-top: .9rem; }
+  .prerequisite-links a { text-decoration: underline; text-underline-offset: .2em; }
+  .bottom-knowledge { margin-top: 2rem; }
+  .reading-bridge { font-size: .85rem; line-height: 1.8; margin-top: .8rem; }
+  .adjacent-reading { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 1rem; margin: 1rem 0; }
+  .adjacent-reading a { display: grid; gap: .5rem; padding: 1rem; background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: .75rem; }
+  .adjacent-reading span { font-size: .7rem; color: hsl(var(--primary)); }
+  .adjacent-reading strong { font-size: .85rem; line-height: 1.7; }
+  .adjacent-reading p { color: hsl(var(--muted-foreground)); font-size: .75rem; line-height: 1.8; }
+</style>

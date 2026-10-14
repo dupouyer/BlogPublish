@@ -22,6 +22,8 @@ export const RESERVED_ROUTES = new Set([
   // Static pages
   'about',
   'categories',
+  'series',
+  'collections',
   'tags',
   'friends',
   'post',

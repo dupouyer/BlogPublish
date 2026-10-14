@@ -1,0 +1,110 @@
+---
+import HomeSider from '@components/layout/HomeSider.astro';
+import Cover from '@components/ui/cover/Cover.astro';
+import { CONTENT_PADDING } from '@constants/layout';
+import { siteConfig } from '@constants/site-config';
+import Layout from '@layouts/Layout.astro';
+import TwoColumnLayout from '@layouts/TwoColumnLayout.astro';
+import { getArticleReadingInfo, getFoundations, postHref, postKey } from '@lib/knowledge';
+import type { KnowledgeGroup } from '@lib/knowledge-config';
+import type { BlogPost } from '@/types/blog';
+
+interface Props {
+  group: KnowledgeGroup;
+  posts: BlogPost[];
+  allPosts: BlogPost[];
+  kind: 'series' | 'collection';
+}
+const { group, posts, allPosts, kind } = Astro.props;
+const foundations = getFoundations(group, allPosts);
+const sections =
+  kind === 'series'
+    ? group.stages
+    : [
+        ...(posts.length
+          ? [
+              {
+                id: 'published',
+                title: '已发布专篇',
+                description: '按当前问题选择文章，以下内容无需严格依次阅读。',
+                planned: [] as string[],
+              },
+            ]
+          : []),
+        ...group.stages.filter((stage) => stage.planned?.length),
+      ];
+const kindTitle = kind === 'series' ? '系统学习' : '专题研究';
+const prerequisites = (post: BlogPost) => allPosts.filter((item) => post.data.prerequisites?.includes(postKey(item)));
+---
+<Layout title={`${group.title} | ${siteConfig.title}`} description={group.description}>
+  <TwoColumnLayout>
+    <Cover slot="cover" title={group.title} />
+    <HomeSider slot="sider" />
+    <div class={`knowledge-page shadow-box bg-gradient-start ${CONTENT_PADDING.standard}`}>
+      <nav aria-label="面包屑"><a href="/">首页</a><span> / </span><a href={kind === 'series' ? '/series/' : '/collections/'}>{kindTitle}</a></nav>
+      <header class="group-intro">
+        <span class="eyebrow">{kind === 'series' ? 'SERIES · 知识路径' : 'COLLECTION · 主题聚合'}</span>
+        <h2>{group.title}</h2><p>{group.description}</p>
+        <div class="group-stats">{posts.length} 篇已发布 · {kind === 'series' ? '按学习顺序组织，文章编号与发布日期无关' : '可按问题选择，无需从头读起'}</div>
+      </header>
+      {posts.length === 0 && <aside class="empty-note">专题筹备中。以下是计划中的阅读地图；专篇尚未发布，可先阅读底部的基础文章。</aside>}
+      {sections.map((stage, index) => {
+        const members = kind === 'series' ? posts.filter((post) => post.data.series?.stage === stage.id) : stage.id === 'published' ? posts : [];
+        return (
+          <section class="knowledge-stage" aria-labelledby={`stage-${stage.id}`}>
+            <header class="stage-heading"><span class="stage-index">{String(index + 1).padStart(2, '0')}</span><div><h3 id={`stage-${stage.id}`}>{stage.title}</h3><p>{stage.description}</p></div></header>
+            <ol class="article-path">
+              {members.map((post) => {
+                const info = getArticleReadingInfo(post);
+                return <li class="path-item">
+                  <div class="article-number">{kind === 'series' ? String(post.data.series?.order).padStart(2, '0') : '↗'}</div>
+                  <div class="path-content">
+                    <a class="article-title" href={postHref(post)}>{post.data.title}</a>
+                    <p>{post.data.description}</p>
+                    <div class="article-meta"><span>已发布</span><span>{info.difficulty}</span><span>约 {info.minutes} 分钟</span>{info.interactive && <span>交互演示{info.demos > 0 && ` × ${info.demos}`}</span>}</div>
+                    {prerequisites(post).length > 0 && <div class="prerequisites">前置阅读：{prerequisites(post).map((item) => <a href={postHref(item)}>{item.data.title}</a>)}</div>}
+                  </div>
+                </li>;
+              })}
+              {stage.planned?.map((title) => <li class="planned-item"><span class="planned-status">计划中</span><span>{title}</span></li>)}
+            </ol>
+          </section>
+        );
+      })}
+      {foundations.length > 0 && <section class="foundation-section"><h3>关联基础 · 从这里补齐几何直觉</h3><p>这些文章是理解本专题的基础，可按需要回看。</p><ul>{foundations.map((post) => <li><a href={postHref(post)}>{post.data.title} ↗</a></li>)}</ul></section>}
+    </div>
+  </TwoColumnLayout>
+</Layout>
+<style>
+  .knowledge-page { min-width: 0; }
+  nav { font-size: .8rem; color: hsl(var(--muted-foreground)); }
+  a:hover { color: hsl(var(--primary)); }
+  a:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 3px; }
+  .group-intro { margin: 2rem 0; }
+  .eyebrow { color: hsl(var(--primary)); letter-spacing: .12em; font-size: .75rem; }
+  h2 { margin: .6rem 0; font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700; }
+  p { color: hsl(var(--muted-foreground)); line-height: 1.85; }
+  .group-stats { margin-top: 1rem; font-size: .8rem; color: hsl(var(--muted-foreground)); }
+  .knowledge-stage { margin: 2.5rem 0; }
+  .stage-heading { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .stage-index { color: hsl(var(--primary)); font-size: 1.7rem; line-height: 1.2; font-weight: 700; opacity: .65; }
+  h3 { font-size: 1.15rem; font-weight: 700; }
+  .stage-heading p { margin-top: .3rem; font-size: .85rem; }
+  .article-path { list-style: none; padding: 0; display: grid; gap: .75rem; }
+  .path-item { display: flex; gap: 1rem; padding: 1.25rem; border-radius: 1rem; border: 1px solid hsl(var(--border)); background: hsl(var(--card)); }
+  .article-number { color: hsl(var(--primary)); font-size: .8rem; padding-top: .2rem; }
+  .path-content { min-width: 0; }
+  .article-title { font-weight: 700; line-height: 1.7; }
+  .path-content p { font-size: .85rem; margin: .5rem 0; }
+  .article-meta { display: flex; flex-wrap: wrap; gap: .5rem 1rem; color: hsl(var(--muted-foreground)); font-size: .75rem; }
+  .article-meta span:first-child { color: hsl(var(--primary)); }
+  .prerequisites { margin-top: .8rem; font-size: .75rem; color: hsl(var(--muted-foreground)); }
+  .prerequisites a { display: inline-block; text-decoration: underline; text-underline-offset: .2em; }
+  .planned-item { display: flex; gap: .8rem; align-items: baseline; padding: .9rem 1.25rem; border: 1px dashed hsl(var(--border)); border-radius: .75rem; color: hsl(var(--muted-foreground)); font-size: .85rem; }
+  .planned-status { flex-shrink: 0; font-size: .7rem; }
+  .empty-note { padding: 1rem 1.25rem; border-left: 3px solid hsl(var(--primary)); background: color-mix(in srgb, hsl(var(--primary)) 7%, transparent); font-size: .9rem; line-height: 1.8; }
+  .foundation-section { padding-top: 1.5rem; border-top: 1px solid hsl(var(--border)); }
+  .foundation-section p { margin: .6rem 0; font-size: .85rem; }
+  .foundation-section ul { padding-left: 1rem; display: grid; gap: .7rem; font-size: .9rem; }
+  @media (max-width: 600px) { .path-item { gap: .65rem; padding: 1rem; } .planned-item { padding: .8rem; } }
+</style>

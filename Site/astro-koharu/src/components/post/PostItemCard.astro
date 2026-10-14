@@ -1,11 +1,13 @@
 ---
-// 导入所需的库和类型
 import { Badge } from '@components/ui/badge';
 import { Button } from '@components/ui/button';
 import { Routes } from '@constants/router';
 import { defaultCoverList } from '@constants/site-config';
 import { buildCategoryPath, buildTagPath, getCategoryArr } from '@lib/content';
 import { displayDate } from '@lib/date';
+import { seriesHref } from '@lib/knowledge';
+// 导入所需的库和类型
+import { seriesById } from '@lib/knowledge-config';
 import { getLqipProps } from '@lib/lqip';
 import { routeBuilder } from '@lib/route';
 import { cn } from '@lib/utils';
@@ -37,6 +39,7 @@ const hideCover = hideCoverProp ?? isSimple;
 
 const { cover, date, categories, title, draft, description, slug, link, tags, wordCount, readingTime } = data ?? {};
 
+const learningSeries = data.series && seriesById.get(data.series.id);
 const finalCover = cover ?? randomCover ?? defaultCoverList[0];
 const href = routeBuilder(Routes.Post, { slug, link, title });
 const isDraft = import.meta.env.DEV && draft === true;
@@ -106,6 +109,7 @@ function getStaggerPadding(rowIndex: number): string {
       'md:order-0',
     )}
   >
+    {learningSeries && <a href={seriesHref(learningSeries.id)} class="text-primary text-xs">{learningSeries.title} · {String(data.series?.order).padStart(2, '0')}</a>}
     <div class={cn('flex w-full justify-between', { 'order-2 justify-start gap-4 pb-3 md:pb-0': isSimple }, getStaggerPadding(0), 'md:pl-0 md:pr-0')}>
       {
         categoryStr && (
