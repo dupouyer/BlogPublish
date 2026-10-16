@@ -15,7 +15,7 @@ site:
   alternate: red-panda-dev # 网站英文名称
   subtitle: 艺术与程序的交叉领域，爱吃苹果的红熊猫 # 网站副标题
   name: sdoo # 作者名称 - 请修改为你的名字
-  description: 一个基于 Astro 的现代化博客主题 # 网站描述
+  description: 记录实时渲染、技术美术与 Agent 工程的探索和实践 # 网站描述
   avatar: /img/avatar.webp # 网站头像
   showLogo: true # 是否显示 Logo
   author: sdoo # 作者名称 - 请修改为你的名字
@@ -25,7 +25,10 @@ site:
   timezone: Asia/Shanghai # 时区配置 (IANA 格式)，用于日期显示和处理
   keywords: # SEO 关键词
     - 博客
-    - Astro
+    - 实时渲染
+    - 技术美术
+    - Shader
+    - AI Agent
     - 技术
     - TA
     # 请根据你的网站内容添加关键词
