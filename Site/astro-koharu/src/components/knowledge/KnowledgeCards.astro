@@ -10,12 +10,18 @@ interface Props {
 }
 const { groups, posts, kind } = Astro.props;
 ---
-<div class="knowledge-cards">
+<div class:list={['knowledge-cards', { 'collection-cards': kind === 'collection' }]}>
   {groups.map((group) => {
     const members = kind === 'series' ? getLearningPosts(posts, group.id) : getCollectionPosts(posts, group.id);
     const demos = members.reduce((sum, post) => sum + getArticleReadingInfo(post).demos, 0);
     return (
-      <a class:list={['knowledge-card', { 'learning-card': kind === 'series' }]} href={kind === 'series' ? seriesHref(group.id) : collectionHref(group.id)}>
+      <a class:list={['knowledge-card', { 'learning-card': kind === 'series', 'collection-card': kind === 'collection' }]} href={kind === 'series' ? seriesHref(group.id) : collectionHref(group.id)}>
+        {kind === 'collection' && group.cover && (
+          <div class="card-cover">
+            <img src={group.cover} alt={group.coverAlt ?? ''} width="800" height="600" loading="lazy" decoding="async" />
+          </div>
+        )}
+        <div class="card-content">
         <span class="card-eyebrow">{kind === 'series' ? 'SERIES · 按顺序学习' : 'COLLECTION · 按问题阅读'}</span>
         <h3>{group.title}</h3>
         <p>{group.description}</p>
@@ -24,19 +30,33 @@ const { groups, posts, kind } = Astro.props;
           <span>{members.length ? `${members.length} 篇已发布` : '专题筹备中'}{demos > 0 && ` · ${demos} 个交互`}</span>
           <span>{kind === 'series' ? '查看学习路径' : '进入专题'} ↗</span>
         </div>
+        </div>
       </a>
     );
   })}
 </div>
 <style>
   .knowledge-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 1rem; }
-  .knowledge-card { display: flex; flex-direction: column; gap: .8rem; min-width: 0; padding: 1.5rem; border: 1px solid hsl(var(--border)); border-radius: 1rem; background: hsl(var(--card)); transition: border-color .2s; }
+  .knowledge-card { display: flex; min-width: 0; overflow: hidden; border: 1px solid hsl(var(--border)); border-radius: 1rem; background: hsl(var(--card)); transition: border-color .2s; }
+  .collection-cards { grid-template-columns: minmax(0, 1fr); }
+  .card-content { display: flex; flex: 1; flex-direction: column; gap: .8rem; min-width: 0; padding: 1.5rem; }
+  .collection-card { display: grid; grid-template-columns: clamp(11rem, 30%, 18rem) minmax(0, 1fr); }
+  .card-cover { position: relative; min-height: 12rem; background: hsl(var(--muted)); }
+  .card-cover img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
   .knowledge-card:hover { border-color: hsl(var(--primary)); }
   .knowledge-card:focus-visible { outline: 2px solid hsl(var(--primary)); outline-offset: 4px; }
   .learning-card { background: linear-gradient(125deg, color-mix(in srgb, hsl(var(--primary)) 10%, hsl(var(--card))), hsl(var(--card))); }
   .card-eyebrow { color: hsl(var(--primary)); font-size: .7rem; letter-spacing: .1em; }
-  h3 { font-size: 1.25rem; font-weight: 700; line-height: 1.5; }
+  h3 { font-size: 1.25rem; font-weight: 700; line-height: 1.5; overflow-wrap: anywhere; }
   p { color: hsl(var(--muted-foreground)); font-size: .9rem; line-height: 1.8; flex: 1; }
   .route-preview { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; font-size: .8rem; color: hsl(var(--primary)); }
   .card-meta { display: flex; flex-wrap: wrap; gap: .5rem 1rem; justify-content: space-between; border-top: 1px solid hsl(var(--border)); padding-top: .9rem; font-size: .75rem; color: hsl(var(--muted-foreground)); }
+  @media (max-width: 600px) {
+    .collection-card { grid-template-columns: 28% minmax(0, 1fr); }
+    .collection-card .card-content { gap: .6rem; padding: 1rem; }
+    .collection-card h3 { font-size: 1.1rem; }
+    .collection-card p { font-size: .8rem; }
+    .collection-card .card-eyebrow { font-size: .6rem; letter-spacing: .04em; }
+    .collection-card .card-meta { padding-top: .65rem; }
+  }
 </style>

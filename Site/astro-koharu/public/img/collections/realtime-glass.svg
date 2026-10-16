@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600" role="img" aria-label="玻璃块中的折射光线示意">
+  <defs>
+    <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#0d1c2c"/><stop offset="1" stop-color="#193f4b"/></linearGradient>
+    <linearGradient id="glass" x2="1" y2="1"><stop stop-color="#b4f5ee" stop-opacity=".35"/><stop offset=".5" stop-color="#5ac4cf" stop-opacity=".08"/><stop offset="1" stop-color="#f6d5a5" stop-opacity=".3"/></linearGradient>
+    <linearGradient id="beam"><stop stop-color="#ffd8a3"/><stop offset=".45" stop-color="#fff3cb"/><stop offset="1" stop-color="#6ee1eb"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#79e9e4" stop-opacity=".25"/><stop offset="1" stop-color="#79e9e4" stop-opacity="0"/></radialGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="12"/></filter>
+  </defs>
+  <path fill="url(#bg)" d="M0 0h800v600H0z"/>
+  <circle cx="450" cy="320" r="270" fill="url(#glow)"/>
+  <g fill="none" stroke="#b5e6e9" stroke-opacity=".08">
+    <path d="M0 440h800M0 500h800M0 560h800M60 600l260-250M220 600l160-250M400 600V350M580 600 460 350M740 600 520 350"/>
+  </g>
+  <ellipse cx="415" cy="492" rx="179" ry="28" fill="#040e18" opacity=".5"/>
+  <path d="m290 165 193-47 60 61v259l-193 47-60-61Z" fill="url(#glass)" stroke="#b7ede5" stroke-opacity=".7" stroke-width="2"/>
+  <path d="m290 165 60 61 193-47M350 226v259" fill="none" stroke="#cef8ee" stroke-opacity=".7" stroke-width="2"/>
+  <path d="m483 118 60 61v259l-60-61Z" fill="#71cbd7" opacity=".08"/>
+  <path d="m60 270 230 28 136 63 117-29 197 62" stroke="url(#beam)" stroke-width="20" opacity=".4" fill="none" filter="url(#blur)"/>
+  <path d="m60 270 230 28 136 63 117-29 197 62" stroke="url(#beam)" stroke-width="4" fill="none"/>
+  <path d="m290 298 136 63 117-29" stroke="#eafff7" stroke-width="2" fill="none"/>
+  <path d="m543 332 197 48m-197-48 197 77" stroke="#98e8e6" opacity=".35" stroke-width="2" fill="none"/>
+  <g fill="#fff1c9"><circle cx="290" cy="298" r="5"/><circle cx="543" cy="332" r="5"/></g>
+  <path d="m310 190 22 24m30 26 154-38" stroke="#e5fff7" stroke-width="4" stroke-linecap="round" opacity=".65"/>
+</svg>

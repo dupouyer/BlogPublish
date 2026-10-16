@@ -2,6 +2,8 @@ export interface KnowledgeGroup {
   id: string;
   title: string;
   description: string;
+  cover?: string;
+  coverAlt?: string;
   stages: { id: string; title: string; description: string; planned?: string[] }[];
   foundations?: string[];
 }
@@ -33,6 +35,8 @@ export const learningSeries: KnowledgeGroup[] = [
 export const topicCollections: KnowledgeGroup[] = [
   {
     id: 'realtime-glass',
+    cover: '/img/collections/realtime-glass.svg',
+    coverAlt: '玻璃块中的折射光线与透射色彩示意',
     title: '一块玻璃里的实时渲染',
     description: '沿一条光线梳理折射、吸收与模糊，也可以直接从当前材质问题进入。',
     foundations: ['dot-cross-linear-algebra', 'normal-map-mirror-symmetry'],
@@ -59,6 +63,8 @@ export const topicCollections: KnowledgeGroup[] = [
   },
   {
     id: 'normal-mapping',
+    cover: '/img/posts/normal-map-mirror-symmetry/cover.webp',
+    coverAlt: '法线贴图与镜像表面细节',
     title: '法线与表面细节',
     description: '从异常光照追溯采样、坐标基底与资产坡度，建立可重复的法线检查方法。',
     foundations: ['dot-cross-linear-algebra'],
@@ -66,6 +72,8 @@ export const topicCollections: KnowledgeGroup[] = [
   },
   {
     id: 'foliage',
+    cover: '/img/posts/foliage-structure-wind-season/cover.webp',
+    coverAlt: '植被结构、风动与季节变化',
     title: '生产级植被材质',
     description: '把结构、枢轴与实例数据连成一套系统，贯通风动、颜色与季节变化。',
     foundations: ['dot-cross-linear-algebra'],
@@ -73,6 +81,8 @@ export const topicCollections: KnowledgeGroup[] = [
   },
   {
     id: 'agent-engineering',
+    cover: '/img/posts/karpathy-reviewable-agent-outputs/cover.webp',
+    coverAlt: '可审查的 Agent 工程输出',
     title: 'Agent 工程实践',
     description: '围绕任务描述、验证与长期维护，探索个人开发者可以持续使用的协作方式。',
     stages: [{ id: 'workflow', title: '协作与验证', description: '让输出可理解、改动可审查、工程可持续。' }],
