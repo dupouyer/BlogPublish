@@ -1,14 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="176" height="44" viewBox="0 0 176 44" role="img" aria-label="小熊猫的技术工坊">
   <title>小熊猫的技术工坊</title>
   <g stroke="#502f2b" stroke-width="1.5" stroke-linejoin="round">
-    <path d="M7 18 4 4Q12 2 18 12M27 12Q33 2 41 4L38 19" fill="#d87642"/>
-    <path d="m9 12-1-5 7 5m16 0 6-5-1 6" fill="#fff1d9" stroke="none"/>
-    <path d="M5 23C5 12 13 9 22 9S40 13 40 23C40 35 30 41 22 41S5 35 5 23Z" fill="#d87642"/>
-    <path d="M6 25c0-6 5-9 10-6l6 5 6-5c5-3 11 0 11 6-2 9-10 14-17 14S8 34 6 25Z" fill="#fff1d9" stroke="none"/>
-    <path d="m10 24 5-3 4 7-5 3Zm16 4 4-7 5 3-4 7Z" fill="#65443c" stroke="none"/>
+    <path d="M6 18C-2 4 10 0 17 11M27 11C35 0 47 4 39 19" fill="#a95735"/>
+    <path d="M7 13C3 6 9 4 13 11M31 11c4-7 10-5 6 3" fill="#fff1d9" stroke="none"/>
+    <path d="M3 24C3 13 12 9 22 9S42 14 42 24C42 35 32 42 22 42S3 35 3 24Z" fill="#a95735"/>
+    <path d="M4 27c0-6 5-9 11-5l7 6 7-6c6-4 12-1 12 5-3 9-11 14-19 14S7 36 4 27Z" fill="#fff1d9" stroke="none"/>
+    <path d="M10 23q5-4 8 1l-2 8-4-2Zm16 1q3-5 8-1l-2 7-4 2Z" fill="#65443c" stroke="none"/>
+    <path d="M10 18q4-5 8-1l-2 3Zm16-1q4-4 8 1l-8 2Z" fill="#fff1d9" stroke="none"/>
+    <circle cx="14" cy="25" r="1.5" fill="#241d1c" stroke="none"/>
+    <circle cx="30" cy="25" r="1.5" fill="#241d1c" stroke="none"/>
     <path d="m19 30 3 3 3-3Z" fill="#502f2b"/>
     <path d="M22 33v2m-4 0q4 3 8 0" fill="none" stroke-linecap="round"/>
-    <path d="m18 12 4 6 4-6" fill="#fff1d9" stroke="none"/>
   </g>
   <g fill="#fff4e7" font-family="Noto Sans CJK SC, PingFang SC, Microsoft YaHei, sans-serif">
     <text x="49" y="26" font-size="25" font-weight="700" letter-spacing="2">熊猫工坊</text>
