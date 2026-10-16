@@ -15,13 +15,14 @@ export interface CoverProps {
 
 const { data, title } = Astro.props as CoverProps;
 
-const { date, updated, title: dataTitle, draft } = data?.data ?? {};
+const { date, updated, title: dataTitle, draft, cover } = data?.data ?? {};
 
 const readState = readingTime(data?.body ?? '');
 const isDraft = import.meta.env.DEV && draft === true;
 
-// 获取横幅图片的 LQIP 样式
-const bannerLqipStyle = getLqipStyle('/img/site_header_1920.webp');
+const postCover = cover?.trim();
+const bannerSrc = postCover || '/img/site_header_1920.webp';
+const bannerLqipStyle = getLqipStyle(bannerSrc);
 ---
 
 <div class="relative flex h-[60dvh] z-0 max-h-200 overflow-hidden">
@@ -86,16 +87,17 @@ const bannerLqipStyle = getLqipStyle('/img/site_header_1920.webp');
   </div>
   <div
     class="relative -z-10 h-full min-h-60 w-full"
-    transition:persist="page-cover-banner"
+    transition:persist={`page-cover-banner:${bannerSrc}`}
     id="banner-box"
     style={bannerLqipStyle}
   >
     <img
-      src="/img/site_header_1920.webp"
-      alt="cover"
+      src={bannerSrc}
+      alt={postCover ? `${dataTitle}的封面` : '站点横幅'}
       class="h-full w-full object-cover"
-      sizes="50vw"
-      srcset="/img/site_header_800.webp 800w,/img/site_header_1920.webp 1200w"
+      sizes="100vw"
+      srcset={postCover ? undefined : '/img/site_header_800.webp 800w,/img/site_header_1920.webp 1920w'}
+      onerror="this.onerror=null;this.removeAttribute('srcset');this.src='/img/site_header_1920.webp';this.alt='站点横幅'"
       loading="eager"
       fetchpriority="high"
       decoding="async"
