@@ -142,6 +142,8 @@ pages/ → components/ → hooks/ → lib/ → constants/
 
 **Featured Series**: Special category-based content series with dedicated pages and homepage highlights. Configured via `featuredSeries` in `config/site.yaml`. Each series requires a unique `slug` (must not conflict with reserved routes) and `categoryName`. Supports multiple series, individual enable/disable, and homepage highlight control. Dynamic routes generated at `[seriesSlug].astro`.
 
+**Learning series and topic collections**: Explicit article metadata (`series`, `collection`, `prerequisites`) drives `/series/` and `/collections/`, independent of category-based Featured Series and `/weekly`. Configuration lives in `src/lib/knowledge-config.ts`; pure transforms and dependency validation in `src/lib/knowledge.ts`; static Astro UI in `src/components/knowledge/`. See repository-root `KNOWLEDGE.md` for authoring.
+
 **Theme System**: Dark by default, with a saved dark/light preference in localStorage. An inline check in `<head>` prevents FOUC.
 
 **Markdown**: Shiki highlighting, auto-generated heading IDs/links via rehype plugins, GFM support.

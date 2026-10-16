@@ -1,6 +1,7 @@
 ---
 title: 个人开发者如何落地可靠的 Agent 工作流：以 UE 与 Python 插件开发为例
 link: reliable-agent-workflow-for-personal-developers
+updated: "2026-10-14 10:47:42"
 catalog: true
 date: 2026-05-13 13:42:00
 description: 面向个人开发者，给出一套轻量、可延期、可验证的 Agent 协作流程，并说明如何在 Codex、UE 引擎功能开发和 Python 插件开发中落地。
@@ -14,6 +15,8 @@ tags:
 categories:
   - [笔记, AI]
 cover: /img/posts/agent-collaboration/reliable-agent-workflow.png
+collection: [agent-engineering]
+difficulty: 进阶
 ---
 
 上一篇文章讨论了为什么 Agent 协作会越来越累：Spec 膨胀、决策爆炸、监督循环、审核疲劳，都会让个人开发者从“写代码的人”变成“审核 Agent 的项目经理”。

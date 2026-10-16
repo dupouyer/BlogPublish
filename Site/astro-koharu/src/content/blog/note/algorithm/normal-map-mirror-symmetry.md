@@ -3,7 +3,7 @@ title: "法线贴图遇到负缩放：为什么球形正常，浮雕却变了？
 link: normal-map-mirror-symmetry
 catalog: true
 date: "2026-10-13 17:30:00"
-updated: "2026-10-13 19:37:31"
+updated: "2026-10-14 10:47:42"
 description: "解释球形与浮雕的镜像差异，明确取消法线方向反射为何会改变凹凸，并给出匹配自定义 UV 的真实基底、AI 法线检查与分离颜色/法线采样的取舍。"
 cover: /img/posts/normal-map-mirror-symmetry/cover.webp
 tags: [Rendering, Unreal Engine, Shader, 线性代数]
@@ -11,6 +11,15 @@ categories:
   - [笔记, 算法]
 draft: false
 math: true
+series:
+  id: linear-algebra-for-ta
+  order: 2
+  stage: coordinates
+collection: [normal-mapping]
+prerequisites: [dot-cross-linear-algebra]
+learningOutcome: "分清镜像采样与法线方向，使用匹配的表面基底检查浮雕和负缩放。"
+interactive: true
+difficulty: 进阶
 ---
 
 把两个 Quad 并排放置，一个 `ScaleX=+1`，另一个 `ScaleX=-1`，给它们使用同一张切线空间法线贴图。居中的球形凸起看起来一样，方向测试图和卷草浮雕却变了。这个现象很容易让人怀疑：负缩放是否破坏了法线？是否必须把材质切到世界空间？

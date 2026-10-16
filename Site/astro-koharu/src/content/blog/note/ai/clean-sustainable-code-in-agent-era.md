@@ -1,6 +1,7 @@
 ---
 title: "Agent 时代的代码整洁与可持续能力"
 link: clean-sustainable-code-in-agent-era
+updated: "2026-10-14 10:47:42"
 catalog: true
 date: "2026-10-02T12:10:00+08:00"
 description: "从 Matt Pocock 与 Uncle Bob 的访谈出发，结合 OpenAI 的 Harness 工程经验与评估研究，用图解说明如何把代码整洁落实为契约、有效测试、架构边界和持续维护。"
@@ -14,6 +15,8 @@ categories:
 cover: /img/posts/clean-sustainable-code-in-agent-era/banner.webp
 draft: false
 math: true
+collection: [agent-engineering]
+difficulty: 进阶
 ---
 
 Agent 可以很快交付一次修改，但一个项目是否值得继续投入，要看下一次修改：**能否找到正确位置，理解已有约束，安全地改变行为，并拿出可信的验证结果。**

@@ -5,6 +5,8 @@ import HomeSiderSegmented from '@components/ui/segmented/HomeSiderSegmented';
 import { HomeSiderSegmentType, HomeSiderType } from '@constants/enum';
 import { getAdjacentSeriesPosts, getSeriesPosts } from '@lib/content/posts';
 import { toPostRef, toPostRefs } from '@lib/content/transforms';
+import { seriesHref } from '@lib/knowledge';
+import { seriesById } from '@lib/knowledge-config';
 import { cn } from '@lib/utils';
 import type { BlogPost } from 'types/blog';
 import HomeInfo from './HomeInfo.astro';
@@ -19,6 +21,7 @@ interface Props {
 }
 
 const { type = HomeSiderType.HOME, className, isDrawer = false, post } = Astro.props;
+const learningSeries = post?.data.series && seriesById.get(post.data.series.id);
 const defaultSegmentType = type === HomeSiderType.POST ? HomeSiderSegmentType.DIRECTORY : HomeSiderSegmentType.INFO;
 
 // 获取系列文章（转换为轻量级引用）
@@ -62,6 +65,7 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
       {type === HomeSiderType.POST && <TableOfContents client:only="react" enableNumbering={post?.data.tocNumbering ?? true} />}
     </div>
     <div slot="series" class="sider-slot" data-slot-type="series">
+      {learningSeries && <a class="my-4 block text-primary text-sm" href={seriesHref(learningSeries.id)}>{learningSeries.title} ↗</a>}
       {type === HomeSiderType.POST && <SeriesPostList client:load posts={seriesPosts} currentPostSlug={post?.id} />}
     </div>
   </sider-content>

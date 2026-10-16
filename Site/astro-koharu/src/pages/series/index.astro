@@ -1,0 +1,14 @@
+---
+import KnowledgeCards from '@components/knowledge/KnowledgeCards.astro';
+import PageLayout from '@layouts/PageLayout.astro';
+import { getSortedPosts } from '@lib/content';
+import { learningSeries } from '@lib/knowledge-config';
+
+const posts = await getSortedPosts();
+---
+<PageLayout frontmatter={{ title: '系统学习', comments: false }}>
+  <div class="not-prose">
+    <p class="mb-6 text-muted-foreground">从几何直觉到 Shader 工程，沿明确的知识路径逐步学习。</p>
+    <KnowledgeCards groups={learningSeries} posts={posts} kind="series" />
+  </div>
+</PageLayout>

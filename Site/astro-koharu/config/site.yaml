@@ -15,7 +15,7 @@ site:
   alternate: red-panda-dev # 网站英文名称
   subtitle: 艺术与程序的交叉领域，爱吃苹果的红熊猫 # 网站副标题
   name: sdoo # 作者名称 - 请修改为你的名字
-  description: 一个基于 Astro 的现代化博客主题 # 网站描述
+  description: 记录实时渲染、技术美术与 Agent 工程的探索和实践 # 网站描述
   avatar: /img/avatar.webp # 网站头像
   showLogo: true # 是否显示 Logo
   author: sdoo # 作者名称 - 请修改为你的名字
@@ -25,7 +25,10 @@ site:
   timezone: Asia/Shanghai # 时区配置 (IANA 格式)，用于日期显示和处理
   keywords: # SEO 关键词
     - 博客
-    - Astro
+    - 实时渲染
+    - 技术美术
+    - Shader
+    - AI Agent
     - 技术
     - TA
     # 请根据你的网站内容添加关键词
@@ -62,18 +65,10 @@ categoryMap:
 #   description: 分类描述文字，显示在卡片上
 # -----------------------------------------------------------------------------
 featuredCategories:
-  - link: life # 对应 categoryMap 中 随笔: life
-    label: 随笔
-    image: /img/cover/2.webp
-    description: 生活记录、随想随笔
   - link: note # 对应 categoryMap 中 笔记: note
     label: 笔记
     image: /img/cover/4.webp
     description: 技术笔记、学习笔记
-  - link: note/front-end # 嵌套分类：笔记/前端
-    label: 前端
-    image: /img/cover/1.webp
-    description: 前端技术相关
   - link: tools # 对应 categoryMap 中 工具: tools
     label: 工具
     image: /img/cover/11.webp
@@ -340,6 +335,12 @@ navigation:
   - name: 技术周报
     path: /weekly
     icon: ri:newspaper-line
+  - name: 系统学习
+    path: /series/
+    icon: ri:route-line
+  - name: 专题研究
+    path: /collections/
+    icon: ri:compass-3-line
   - name: 文章 # 有子菜单时，path 可省略
     icon: ri:quill-pen-ai-fill
     children: # 子菜单列表

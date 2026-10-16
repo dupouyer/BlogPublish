@@ -1,6 +1,7 @@
 ---
 title: 为什么和 Agent 协作会越来越累：Spec 膨胀、决策爆炸与监督循环
 link: why-agent-collaboration-becomes-exhausting
+updated: "2026-10-14 10:47:42"
 catalog: true
 date: 2026-05-13 13:32:00
 description: 从 Codex、Claude、OpenSpec 的使用体验出发，分析为什么 Agent 编程会让个人开发者产生审核负担、决策疲劳和信任感下降。
@@ -13,6 +14,8 @@ tags:
 categories:
   - [笔记, AI]
 cover: /img/posts/agent-collaboration/decision-explosion-and-defer.png
+collection: [agent-engineering]
+difficulty: 进阶
 ---
 
 这篇文章来自一次关于 Codex、Claude、OpenSpec 和个人开发流程的讨论。问题的起点很简单：**为什么 Agent 明明完成了任务，结果却经常和高级工程师心里的“正确结果”不一致？**

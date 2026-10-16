@@ -16,6 +16,7 @@ import { getPostDescriptionWithSummary, getPostLastCategory } from './posts';
  */
 export type PostFieldMap = {
   // 直接字段
+  series: BlogPost['data']['series'];
   slug: string;
   link: string | undefined;
   title: string;
@@ -37,6 +38,7 @@ export type PostFieldMap = {
  */
 const fieldExtractors: { [K in keyof PostFieldMap]: (post: BlogPost) => PostFieldMap[K] } = {
   // 直接字段
+  series: (p) => p.data.series,
   slug: (p) => p.id,
   link: (p) => p.data?.link,
   title: (p) => p.data.title,
@@ -84,6 +86,7 @@ const POST_REF_WITH_CATEGORY_KEYS = ['slug', 'link', 'title', 'categoryName'] as
 
 /** PostCardData 需要的字段 */
 const POST_CARD_DATA_KEYS = [
+  'series',
   'slug',
   'link',
   'title',
