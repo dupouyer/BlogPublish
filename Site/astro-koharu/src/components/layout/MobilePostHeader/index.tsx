@@ -18,11 +18,12 @@ interface MobilePostHeaderProps {
   /** Whether the current page is a post page */
   isPostPage: boolean;
   /** Type of logo element to display */
-  logoElement: 'svg' | 'text';
+  logoElement: 'image' | 'text';
   /** Text to display when logoElement is 'text' */
   logoText?: string;
-  /** Logo image URL (for svg type) */
+  /** Logo image URL */
   logoSrc?: string;
+  logoSrcSet?: string;
   /** Whether to enable CSS counter numbering in TOC (default: true) */
   enableNumbering?: boolean;
 }
@@ -35,6 +36,7 @@ export function MobilePostHeader({
   logoElement,
   logoText,
   logoSrc,
+  logoSrcSet,
   enableNumbering = true,
 }: MobilePostHeaderProps) {
   const shouldReduceMotion = useReducedMotion();
@@ -67,8 +69,14 @@ export function MobilePostHeader({
   // Logo component
   const Logo = () => (
     <a href="/" className="flex items-center gap-1">
-      {logoElement === 'svg' && logoSrc ? (
-        <img src={logoSrc} alt={siteConfig?.alternate ?? siteConfig?.name} className="h-8" height={32} />
+      {logoElement === 'image' && logoSrc ? (
+        <img
+          src={logoSrc}
+          srcSet={logoSrcSet}
+          alt={siteConfig?.title ?? siteConfig?.name}
+          className="h-10 w-auto"
+          height={40}
+        />
       ) : (
         <span className="logo-text">{logoText}</span>
       )}
