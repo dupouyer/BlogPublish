@@ -1,5 +1,5 @@
-import type { BufferGeometry, Material, NormalBufferAttributes } from 'three';
 import type { RimSettings } from '../../lib/article-lab/rimlight';
+import { createRimScene } from './rimlight-scene';
 
 /** Three.js is fetched only after the article's visible island mounts. */
 export async function createRimRenderer(canvas: HTMLCanvasElement) {
@@ -7,50 +7,19 @@ export async function createRimRenderer(canvas: HTMLCanvasElement) {
   const renderer = new T.WebGLRenderer({ canvas, antialias: false });
   renderer.setPixelRatio(1);
   renderer.outputColorSpace = T.SRGBColorSpace;
-  const scene = new T.Scene();
-  scene.background = new T.Color('#101c30');
-  const camera = new T.PerspectiveCamera(50, 1, 0.1, 180);
+  const { scene, camera, light, dispose: disposeScene } = createRimScene(T);
   const target = new T.WebGLRenderTarget(1, 1, { minFilter: T.NearestFilter, magFilter: T.NearestFilter });
   target.depthTexture = new T.DepthTexture(1, 1, T.UnsignedIntType);
   target.depthTexture.minFilter = target.depthTexture.magFilter = T.NearestFilter;
   const normalTarget = new T.WebGLRenderTarget(1, 1, { minFilter: T.NearestFilter, magFilter: T.NearestFilter });
   const normalMaterial = new T.MeshNormalMaterial();
-  const geometries: BufferGeometry<NormalBufferAttributes>[] = [];
-  const materials: Material[] = [];
-  function mesh(geometry: BufferGeometry<NormalBufferAttributes>, color: string, x: number, y: number, z: number) {
-    const material = new T.MeshStandardMaterial({ color, roughness: 1, flatShading: true });
-    const object = new T.Mesh(geometry, material);
-    object.position.set(x, y, z);
-    scene.add(object);
-    geometries.push(geometry);
-    materials.push(material);
-    return object;
-  }
-  function box(w: number, h: number, d: number, color: string, x: number, y: number, z: number) {
-    return mesh(new T.BoxGeometry(w, h, d), color, x, y, z);
-  }
-  box(160, 0.2, 160, '#24394b', 0, -0.15, -30);
-  box(1.65, 3.2, 1.5, '#547484', 0, 1.6, 0);
-  box(2, 0.22, 1.85, '#a0b2ac', 0, 3.2, 0);
-  mesh(new T.ConeGeometry(1.6, 1.2, 4), '#3a6167', 0, 3.9, 0).rotation.y = Math.PI / 4;
-  box(0.4, 0.8, 0.08, '#172538', 0.25, 2.2, 0.79);
-  box(0.6, 0.95, 0.1, '#19293d', -0.3, 0.48, 0.8);
-  mesh(new T.CylinderGeometry(0.5, 0.65, 2.6, 12), '#7e9499', -2.2, 1.3, 0.5);
-  mesh(new T.IcosahedronGeometry(0.8, 1), '#829990', 2, 1.2, 0.6);
-  box(1.2, 0.4, 1.2, '#536e7b', 2, 0.2, 0.6);
-  for (let i = 0; i < 7; i++) {
-    const x = (i % 2 ? 1 : -1) * (3 + i * 0.35);
-    box(1.2, 2 + (i % 3), 1.3, '#3a5669', x, 1 + (i % 3) / 2, -5 - i * 3);
-  }
-  scene.add(new T.HemisphereLight('#c3dce6', '#26384d', 2));
-  const light = new T.DirectionalLight('#ffe3b1', 2.5);
-  scene.add(light);
   const uniforms = {
     colorTex: { value: target.texture },
     depthTex: { value: target.depthTexture },
     normalTex: { value: normalTarget.texture },
     size: { value: new T.Vector2(1, 1) },
     lightVS: { value: new T.Vector3() },
+    upVS: { value: new T.Vector3() },
     fov: { value: 50 },
     width: { value: 0.06 },
     cap: { value: 0.012 },
@@ -66,7 +35,7 @@ export async function createRimRenderer(canvas: HTMLCanvasElement) {
       varying vec2 vUV;
       uniform sampler2D colorTex, depthTex, normalTex;
       uniform vec2 size;
-      uniform vec3 lightVS;
+      uniform vec3 lightVS, upVS;
       uniform float fov, width, cap;
       uniform int mode, debug;
       uniform bool fadeOn, normalsOn;
@@ -88,8 +57,9 @@ export async function createRimRenderer(canvas: HTMLCanvasElement) {
         float edge=smoothstep(0.08,0.35,max(z1-z,0.0));
         vec3 normal=normalize(texture2D(normalTex,vUV).rgb*2.0-1.0);
         float normalWeight=normalsOn?smoothstep(-0.15,0.45,dot(normal,lightVS)):1.0;
+        float surfaceMask=1.0-smoothstep(0.65,0.95,abs(dot(normal,upVS)));
         float fade=fadeOn?smoothstep(0.0,1.0,pixels):1.0;
-        float mask=edge*normalWeight*fade*valid*step(0.0001,dirLen)*float(raw<0.99999);
+        float mask=edge*normalWeight*surfaceMask*fade*valid*step(0.0001,dirLen)*float(raw<0.99999);
         vec3 color=texture2D(colorTex,vUV).rgb;
         if(debug==1) color=vec3(pow(1.0-clamp(z/65.0,0.0,1.0),3.0));
         else if(debug==2) color=vec3(mask);
@@ -126,6 +96,7 @@ export async function createRimRenderer(canvas: HTMLCanvasElement) {
     const dir = new T.Vector3(Math.cos(angle), Math.sin(angle), 0.3).normalize();
     light.position.copy(dir.clone().multiplyScalar(20));
     uniforms.lightVS.value.copy(dir).transformDirection(camera.matrixWorldInverse);
+    uniforms.upVS.value.set(0, 1, 0).transformDirection(camera.matrixWorldInverse);
     uniforms.size.value.set(w, h);
     for (const key of ['fov', 'width', 'cap', 'mode', 'debug'] as const) uniforms[key].value = settings[key];
     uniforms.fadeOn.value = settings.fade;
@@ -141,11 +112,11 @@ export async function createRimRenderer(canvas: HTMLCanvasElement) {
     return h;
   }
   return {
+    kind: 'WebGL',
     render,
     dispose() {
       disposed = true;
-      for (const geometry of geometries) geometry.dispose();
-      for (const material of materials) material.dispose();
+      disposeScene();
       target.dispose();
       normalTarget.dispose();
       normalMaterial.dispose();

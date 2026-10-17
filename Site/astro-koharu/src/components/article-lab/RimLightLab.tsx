@@ -23,6 +23,10 @@ export default function RimLightLab() {
     };
     node.addEventListener('webglcontextlost', onLoss);
     createRimRenderer(node)
+      .catch(async () => {
+        const { createRimSoftwareRenderer } = await import('./rimlight-software');
+        return createRimSoftwareRenderer(node);
+      })
       .then((instance) => {
         if (!active) {
           instance.dispose();
@@ -34,10 +38,10 @@ export default function RimLightLab() {
         observer = new ResizeObserver(redraw);
         observer.observe(node);
         setReady(true);
-        setStatus('3D 已就绪。先切近景 / 远景，再比较三种宽度模式。');
+        setStatus(`${instance.kind} · 3D 已就绪。先切近景 / 远景，再比较三种宽度模式。`);
       })
       .catch(() => {
-        if (active) setStatus('当前设备无法启动 WebGL。静态图、宽度数值和正文公式仍可使用。');
+        if (active) setStatus('当前设备无法启动图形渲染。静态图、宽度数值和正文公式仍可使用。');
       });
     return () => {
       active = false;
@@ -80,7 +84,7 @@ export default function RimLightLab() {
     <div className="rim-lab">
       <div className="rim-view">
         {!ready && (
-          <img src="/img/posts/stylized-rimlight-depth-width/width.svg" alt="固定像素、世界宽度和混合宽度随视深度的静态曲线" />
+          <img src="/img/posts/stylized-rimlight-depth-width/demo-default.webp" alt="塔楼、圆柱和多面体的默认边缘光静态渲染" />
         )}
         <canvas ref={canvas} aria-label="真实 3D 模型的深度偏移边缘光" style={{ visibility: ready ? 'visible' : 'hidden' }} />
         <span className="rim-badge">{['固定 4 px', '世界宽度投影', '混合：投影 + 上限'][settings.mode]}</span>
@@ -151,8 +155,8 @@ export default function RimLightLab() {
       </div>
       <p>逐像素使用各自的深度，上面只读模型中心。固定像素模式始终为 4 px。混合模式近处封顶、远处不设最小像素值。</p>
       <p>
-        浏览器说明性实现：程序化不透明模型、单方向深度采样、独立法线 Pass；没有 UE 的 TAA、曝光、Shading Model
-        或阴影可见性。亚像素淡出是显式抑制策略，并非精确覆盖率。
+        浏览器说明性实现：程序化不透明模型、单方向深度采样；WebGL 不可用时用同一模型的软件光栅化后备。没有 UE 的
+        TAA、曝光、Shading Model 或阴影可见性。实验过滤近水平表面，避免地面坡度误亮。亚像素淡出是显式抑制策略，并非精确覆盖率。
       </p>
     </div>
   );
