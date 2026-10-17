@@ -1,0 +1,31 @@
+---
+import InteractiveDemo from '../../components/article-lab/InteractiveDemo.astro';
+import RimLightLab from '../../components/article-lab/RimLightLab';
+import '../../styles/article-lab.css';
+import '../../styles/rimlight-lab.css';
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>风格化边缘光 · 3D 实验</title>
+    <script is:inline>try { document.documentElement.classList.toggle('light', localStorage.getItem('theme') === 'light'); } catch {}</script>
+  </head>
+  <body>
+    <InteractiveDemo title="深度偏移 RimLight · 3D 实验" note="移动相机，观察模型边缘如何从近处受限的笔触，缩成远处的亚像素细光。">
+      <RimLightLab client:visible />
+    </InteractiveDemo>
+    <p><a href="/post/stylized-rimlight-depth-width" target="_top">阅读完整文章</a></p>
+    <script>
+      const applyTheme = () => {
+        if (window.parent !== window) document.documentElement.classList.toggle('light', !window.parent.document.documentElement.classList.contains('dark'));
+      };
+      applyTheme();
+      const themeObserver = new MutationObserver(applyTheme);
+      if (window.parent !== window) themeObserver.observe(window.parent.document.documentElement, { attributes: true, attributeFilter: ['class'] });
+      const resizeObserver = new ResizeObserver(() => window.parent.postMessage({ type: 'article-lab-size', height: document.body.scrollHeight + 32 }, window.location.origin));
+      resizeObserver.observe(document.body);
+      window.addEventListener('pagehide', () => { themeObserver.disconnect(); resizeObserver.disconnect(); });
+    </script>
+  </body>
+</html>
