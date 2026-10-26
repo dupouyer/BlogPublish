@@ -1,8 +1,10 @@
 ---
 import InteractiveDemo from '../../components/article-lab/InteractiveDemo.astro';
+import NormalBlendLab from '../../components/article-lab/NormalBlendLab';
 import VectorLab from '../../components/article-lab/VectorLab';
 import { type LabId, labs } from '../../lib/article-lab/registry';
 import '../../styles/article-lab.css';
+import '../../styles/normal-blend-lab.css';
 export function getStaticPaths() {
   return Object.entries(labs).map(([id, lab]) => ({ params: { id }, props: { id: id as LabId, lab } }));
 }
@@ -18,9 +20,9 @@ const { id, lab } = Astro.props;
   </head>
   <body>
     <InteractiveDemo title={lab.title} note={lab.note}>
-      <VectorLab id={id} client:visible />
+      {lab.family === 'normal-blend' ? <NormalBlendLab client:visible /> : <VectorLab id={id} client:visible />}
     </InteractiveDemo>
-    <p><a href="/post/dot-cross-linear-algebra" target="_top">阅读完整文章</a></p>
+    <p><a href={lab.family === 'normal-blend' ? '/post/normal-blending-lerp-rnm-surface-gradient' : '/post/dot-cross-linear-algebra'} target="_top">阅读完整文章</a></p>
     <script>
       // Same-origin parent owns theme; report size only to that origin.
       const applyTheme = () => {

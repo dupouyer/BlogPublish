@@ -1,0 +1,38 @@
+.normal-blend .normal-blend-slider {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0;
+}
+.normal-blend label,
+.normal-blend select {
+  min-height: 44px;
+}
+.normal-blend select {
+  font: inherit;
+  max-width: 100%;
+}
+.normal-blend input[type="range"] {
+  min-height: 44px;
+}
+.normal-blend-labels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.normal-blend table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.normal-blend th,
+.normal-blend td {
+  border-bottom: 1px solid #64748b;
+  padding: 8px;
+  text-align: left;
+}
+.normal-blend select:focus-visible {
+  outline: 3px solid #22d3ee;
+  outline-offset: 3px;
+}

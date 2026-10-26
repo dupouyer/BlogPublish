@@ -1,4 +1,9 @@
 export const labs = {
+  'normal-blend': {
+    title: '法线混合 · Lerp / RNM / Surface Gradient',
+    family: 'normal-blend',
+    note: '同一正交切线基下比较 2/4 层。Lerp 逐层等权平均，RNM 逐层重定向，SG 累加 n.xy/n.z；平坦细节会稀释 Lerp，而 RNM 与 SG 保留基础。SG 的顺序无关仅在共同基底与固定权重下成立。',
+  },
   'dot-projection': {
     title: 'Dot Projection · 有符号进度',
     family: 'dot',
