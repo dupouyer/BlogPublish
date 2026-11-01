@@ -85,7 +85,7 @@ pnpm koharu list         # List all backups
 ## Architecture
 
 ### Tech Stack
-- **Framework**: Astro 6.x with React integration
+- **Framework**: Astro 7.3.3 with React integration 6.x
 - **Styling**: Tailwind CSS 4.x with plugins
 - **Content**: Astro Content Layer with a glob loader (`src/content.config.ts`, `src/content/blog/`)
 - **Animations**: Motion (Framer Motion successor)

@@ -8,7 +8,7 @@
 
 | 用途 | 仓库根目录相对路径 |
 | --- | --- |
-| Astro 6 / Koharu 站点工程 | `Site/astro-koharu/` |
+| Astro 7 / Koharu 站点工程 | `Site/astro-koharu/` |
 | 文章 | `Site/astro-koharu/src/content/blog/` |
 | Frontmatter Schema | `Site/astro-koharu/src/content.config.ts` |
 | 站点配置与分类映射 | `Site/astro-koharu/config/site.yaml` 的 `categoryMap` |
