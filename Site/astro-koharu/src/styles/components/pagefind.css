@@ -36,7 +36,7 @@
   width: calc(100% - 3.5rem);
 }
 
-.pagefind-ui__form.svelte-e9gkc3::before {
+.search-dialog .pagefind-ui__form::before {
   display: none;
 }
 

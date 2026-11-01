@@ -2,7 +2,7 @@
 
 ## 当前架构审查
 
-- Astro 6.4.8，`@astrojs/react` 5 与 React 19 已安装；既有导航、评论等使用 islands。
+- Astro 7.3.3，`@astrojs/react` 6 与 React 19 已安装；既有导航、评论等使用 islands。
 - Content Layer glob 接受 md/mdx，但没有 `@astrojs/mdx` 集成，因此不能把 glob 支持误当成 MDX 组件已经可用。本方案保留 `.md`，不升级依赖。
 - Three.js 0.182 与 React Three Fiber 9 已安装，目前用于可选雪景；配置已有关闭雪景时的条件打包。它们可以承载真正需要 WebGL 的 lab，不应作为二维投影的默认依赖。
 - `CustomContent.astro` 承载正文和增强脚本；现有 Markdown remark/rehype 管线支持原始 HTML、自定义语法、数学。新增 rehype 转换只识别注册的本地 lab 链接。
