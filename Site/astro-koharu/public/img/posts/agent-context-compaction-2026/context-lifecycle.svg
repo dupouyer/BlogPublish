@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" role="img" aria-labelledby="t d">
+<title id="t">Unreal Engine tool output information lifecycle</title><desc id="d">UE Editor and MCP output is filtered into working memory and persistent evidence. Task compaction replaces old history but can retrieve archived evidence.</desc>
+<defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#628f96"/></marker></defs>
+<rect width="1200" height="720" rx="16" fill="#f7f6f2"/>
+<g font-family="sans-serif"><text x="56" y="65" font-size="32" font-weight="700" fill="#223b42">UE Tool Output · Information Lifecycle</text><text x="56" y="99" font-size="18" fill="#60757b">Separate the current working set from recoverable historical evidence</text></g>
+<rect x="58" y="165" rx="15" width="283" height="138" fill="#d9e9eb" stroke="#6d929b" stroke-width="2"/>
+<text x="83" y="212" font-size="25" fill="#1f4149" font-family="sans-serif" font-weight="700">UE Editor / MCP</text><text x="83" y="246" font-size="18" fill="#45626b" font-family="sans-serif">Logs · Actor · Material</text><text x="83" y="276" font-size="18" fill="#45626b" font-family="sans-serif">Full source observations</text>
+<path d="M341 235 H425" fill="none" stroke="#628f96" stroke-width="4" marker-end="url(#a)"/>
+<rect x="436" y="165" rx="15" width="314" height="138" fill="#e7e2d4" stroke="#a08b69" stroke-width="2"/>
+<text x="465" y="213" font-size="24" fill="#4d4434" font-family="sans-serif" font-weight="700">Tool Boundary</text><text x="465" y="247" font-size="18" fill="#6d604f" font-family="sans-serif">Filter · Deduplicate · Diff</text><text x="465" y="276" font-size="18" fill="#6d604f" font-family="sans-serif">Attach an evidence ID</text>
+<path d="M750 235 H827" fill="none" stroke="#628f96" stroke-width="4" marker-end="url(#a)"/>
+<rect x="838" y="165" rx="15" width="304" height="138" fill="#d3e9dd" stroke="#6a9b83" stroke-width="2"/>
+<text x="862" y="213" font-size="23" fill="#245440" font-family="sans-serif" font-weight="700">Working Context</text><text x="862" y="247" font-size="18" fill="#416b59" font-family="sans-serif">Current facts · Next test</text><text x="862" y="276" font-size="18" fill="#416b59" font-family="sans-serif">Latest state · Constraints</text>
+<path d="M596 303 V402 H303 V447" fill="none" stroke="#a08b69" stroke-width="4" marker-end="url(#a)"/>
+<rect x="58" y="455" rx="15" width="494" height="162" fill="#fff9ed" stroke="#ae946d" stroke-width="2"/>
+<text x="85" y="499" font-size="24" fill="#584c37" font-family="sans-serif" font-weight="700">Persistent Evidence Store</text><text x="85" y="535" font-size="18" fill="#7b6c50" font-family="sans-serif">Complete logs · Snapshots · File paths</text><text x="85" y="566" font-size="18" fill="#7b6c50" font-family="sans-serif">Search / restore by evidence ID</text><text x="85" y="595" font-size="17" fill="#7b6c50" font-family="sans-serif">Never assume a summary is lossless</text>
+<path d="M552 533 H826" fill="none" stroke="#628f96" stroke-width="4" stroke-dasharray="9 8" marker-end="url(#a)"/>
+<text x="648" y="512" font-size="17" fill="#60757b" font-family="sans-serif">on-demand lookup</text>
+<rect x="838" y="455" rx="15" width="304" height="162" fill="#d9e8ef" stroke="#6590a0" stroke-width="2"/>
+<text x="862" y="499" font-size="23" fill="#285569" font-family="sans-serif" font-weight="700">Compaction Layer</text><text x="862" y="535" font-size="18" fill="#496a77" font-family="sans-serif">Summarize retired steps</text><text x="862" y="566" font-size="18" fill="#496a77" font-family="sans-serif">Keep verified decisions</text><text x="862" y="596" font-size="18" fill="#496a77" font-family="sans-serif">Recover when needed</text>
+<path d="M992 455 V314" fill="none" stroke="#628f96" stroke-width="4" marker-end="url(#a)"/>
+<text x="58" y="678" font-size="17" fill="#718085" font-family="sans-serif">Proposed architecture diagram · not a product benchmark</text></svg>
