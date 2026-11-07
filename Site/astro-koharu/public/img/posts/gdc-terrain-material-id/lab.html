@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GDC Terrain · WebGL2 Lab</title>
-<style>
-:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0 auto;padding:12px;max-width:1000px;font:14px/1.5 system-ui,"Microsoft YaHei",sans-serif;background:#101925;color:#e2edf7}
+<link rel="stylesheet" href="/fonts/ChillRoundFRegular/result.css"><style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0 auto;padding:12px;max-width:1000px;font:14px/1.5 "寒蝉全圆体",system-ui,"Microsoft YaHei",sans-serif;background:#101925;color:#e2edf7}
 h1{margin:4px 0;font-size:18px}.hint{margin:6px 0 13px;color:#aebfd0;font-size:12px}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
 button,select{color:#eaf3fb;background:#223349;border:1px solid #607a96;padding:8px;border-radius:7px;font:inherit}
 button[aria-selected=true]{background:#23628c}
@@ -14,9 +14,9 @@ a{color:#8bd8ff}.err{color:#ffd98d}.footer{color:#b4c7d9;font-size:12px}
 [hidden]{display:none!important}
 @media(max-width:690px){.cols{grid-template-columns:1fr}canvas{height:330px}}
 </style></head><body>
-<h1>GDC 地形｜Material ID + Grid LOD 实验台</h1>
+<h1>GDC 地形｜Material ID 材质实验台</h1>
 <p class="hint">WebGL2 真实绘制 · 程序化 2D Array 纹理 · 教学复现，不代表游戏原始 Shader 或性能数据</p>
-<div class="tabs"><button id="matTab" aria-selected="true">Material ID / Splat</button><button id="meshTab" aria-selected="false">Grid / Displacement</button></div>
+<div class="tabs"><button id="matTab" aria-selected="true">Material ID / Splat</button><button id="meshTab" hidden aria-selected="false">Grid / Displacement</button><a href="/img/posts/gdc-terrain-geometry/lab.html" target="_top">打开独立几何动画</a></div>
 <div class="cols"><section><canvas id="canvas" aria-label="三维地形材质与动态网格"></canvas>
 <p id="message" class="footer">旋转角与位移控制改变真实顶点；纹理细节来自 WebGL sampler2DArray。网格线展示实际索引 Buffer。</p>
 <p class="footer"><a href="/post/gdc-terrain-material-id" target="_top">返回 Material ID 正文</a> · <a href="/post/gdc-terrain-geometry" target="_top">阅读几何 LOD 正文</a></p></section>
@@ -141,6 +141,8 @@ void main(){
  $("matTab").onclick=()=>switchTab("material");$("meshTab").onclick=()=>switchTab("mesh");
  for(const key of ["method","debug","tile","density","height","yaw","wire","amplitude"])$(key).addEventListener("input",()=>{if(key!=="density")draw();change()});
  window.addEventListener("resize",draw);
+ const resizeObserver=new ResizeObserver(()=>{if(parent!==window)parent.postMessage({type:'article-lab-size',height:document.body.scrollHeight+24},location.origin)});resizeObserver.observe(document.body);
+ window.addEventListener('pagehide',()=>resizeObserver.disconnect(),{once:true});
  switchTab("material");
 })();
 </script></body></html>

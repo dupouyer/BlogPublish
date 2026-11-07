@@ -2,6 +2,7 @@
 title: "GDC 地形专题 04｜从 Landscape 到 CDLOD：网格 LOD 与真实 Displacement"
 link: gdc-terrain-geometry
 date: "2026-11-07 14:15:00"
+updated: "2026-11-07"
 description: "比较 UE Landscape、实例化规则网格与 CDLOD，区分基础 Height、材质 Height Blend、微观 Displacement 和碰撞。"
 tags: [GDC, Terrain, CDLOD, Tessellation, Unreal Engine, Rendering]
 categories:
@@ -17,114 +18,203 @@ difficulty: 深入
 learningOutcome: "能区分网格密度、地形高度采样与材质微观位移，明确 CDLOD 的实际工程依赖。"
 ---
 
-地形渲染中容易把三个变量混成一件事：**有多少顶点、顶点从哪里读取高度、材质的 Height 是否真的推动几何。**
+**地形网格的三个独立问题是：选择哪块网格、相邻精度怎样接起来、最终顶点沿哪份高度移动。** Wildlands 与三角洲在这些问题上做了不同取舍；只把一个 Grid 调密，无法解释它们的系统差异。
 
-![地形网格和微观置换的技术边界](/img/posts/gdc-terrain-geometry/cover.svg)
+本篇先从唯一模板生成多个 Patch，再演示 CDLOD 选择、2:1 边缘 Morph、局部裁切、软细分和材质位移。第 03 篇已经解释数据怎么驻留；这里关注数据怎样变成可见的三角形。
 
-## 先做一个可操作的网格实验
+## 一、先把两款游戏放在相同问题上比较
 
-<iframe src="/img/posts/gdc-terrain-material-id/lab.html" title="WebGL2 地形网格和置换实验" loading="lazy" sandbox="allow-scripts" style="width:100%;height:700px;border:1px solid #40516c;border-radius:12px;background:#101924;"></iframe>
+| 问题 | Wildlands 公开机制 | 三角洲公开机制 |
+| --- | --- | --- |
+| 世界分块 | Height / Splat / Vista 按四叉树组织，支持 LOD、裁剪与流送 | CDLOD 规则网格，按世界范围实例化 |
+| 避免昂贵全通用 Shader | 按平地、陡坡与过渡区域划分处理 | 页面生成按材质复杂度选择路径，陡坡内容进入 VT |
+| 近景加密 | Tessellation，材质高度参与 Displacement | CDLOD 继续细分到 LOD−1、LOD−2 等 |
+| 减少实例浪费 | 不能从演讲推断为三角洲相同策略 | 保留父网格，裁去被更细实例替代的部分 |
+| 高度来源 | 基础地形高度 + 材质级高度 | 软细分从 VT 高度取得更准确地形表面 |
+| 材质微高度是否推动几何 | 原稿明确展示 | 不能仅凭 Height Blend 和软细分同时存在就确认 |
 
-[打开独立 WebGL2 实验台](/img/posts/gdc-terrain-material-id/lab.html)，切换到 Grid LOD 标签，改变 Cells、微观位移与观察角度。它会实际生成不同网格 Buffer；不是用多张图片切换。实验不实现原游戏的完整 Quadtree、LOD Morph、VT Page、Nanite 或碰撞。
+Wildlands 的四叉树存储与三角洲的 CDLOD 都能让近处更密、远处更稀，但“使用四叉树”不等于“使用同一个 CDLOD Renderer”。Wildlands 的平地/陡坡分类还涉及投影与 Shader 成本，不应和几何 LOD 选块混成一条操作。
 
-## Landscape 是 Renderer，更是一套编辑器生态
+## 二、独立几何实验：每一页回答一个问题
 
-UE5 Landscape 包含 Heightmap、Weightmap、Component/Section、Spline、碰撞、物理材质、关卡与 Foliage 集成。采用 Landscape 意味着可以直接复用这些工具，但也接受它已有的网格调度边界。
+<iframe class="article-lab-frame" src="/img/posts/gdc-terrain-geometry/lab.html" title="实例网格、CDLOD、边缘拼接、软细分与材质位移动画" loading="lazy" style="width:100%;height:1080px;border:1px solid #40516c;border-radius:12px;"></iframe>
 
-Nanite Landscape 是另一套 PC 可选渲染表示。UE5.4 的 Nanite Tessellation 仍带有实验性质，不能假设 Nanite 表示已替代传统 Landscape 的碰撞与 Water 等数据需求。
+[独立打开几何实验](/img/posts/gdc-terrain-geometry/lab.html)。默认暂停，支持播放、单步、拖动进度与重置。材质位移页默认给出完整位移，先看轮廓，再尝试只改法线。
 
-## CDLOD 的基本数据协议
+| 实验页 | 先做什么 | 应看见什么 |
+| --- | --- | --- |
+| 实例复用 | 播放或拖动进度 | 同一模板顶点映射到不同大小 Patch |
+| CDLOD 选块 | 移动进度 | 相机移动后，小块与大块重新分布，覆盖面积不变 |
+| 接缝 Morph | 进度从 0 拖到 100% | 奇数点收拢；剖面的红色高度差消失 |
+| 裁切与软细分 | 比较 2×2、4×4、8×8 | 子块范围缩小；模板顶点数不变；旧区被裁掉 |
+| 材质位移 | 开关“只改着色法线” | 明暗可相似，真实轮廓和剖面却不同 |
+| 两套路线 | 从加密阶段推进到材质高度阶段 | 采样点增加与额外微高度是两个独立变化 |
 
-三角洲 GDC 2025 介绍了基于规则 Grid Mesh 的 CDLOD Instancing。让一份固定模板网格覆盖不同世界范围，Patch Instance 决定其 Origin、Size、LOD：
+实验图是可定位的算法示意。三维部分真正生成并投影三角形，但使用 Canvas 绘制，不是原游戏或 UE 的 GPU 渲染性能测试。教学剖面与采样规则在正文逐项对应。
 
-~~~hlsl
-// Concept only: actual RHI instance data and UV mapping omitted.
+## 三、实例化复用的究竟是什么？
+
+模板保存 $[0,1]^2$ 内的规则顶点 `GridUV` 和三角形索引。每个 Patch 实例只提供自己的世界原点、尺寸、LOD 和数据地址：
+
+```hlsl
+// 概念代码：世界单位为米；不包含实际 RHI / Instance Buffer 布局。
 float2 xy = PatchOrigin + GridUV * PatchSize;
-float2 heightUV = (xy - HeightWorldOrigin) * HeightUVScale;
-float h = HeightTexture.SampleLevel(HeightSampler, heightUV, LodMip).r;
-float3 posWS = float3(xy, h * HeightScale + HeightOffset);
-~~~
+float2 uv = (xy - HeightWorldOrigin) * HeightUVScale;
+float h = HeightTexture.SampleLevel(HeightSampler, uv, HeightMip).r;
+float3 positionWS = float3(xy, h * HeightScale + HeightOffset);
+```
 
-网格固定为 32×32 Cells 时，近景覆盖 32 米、远景覆盖 128 米，都能复用相同的顶点索引与材质。Patch 的世界范围和 LOD 必须按实际误差与距离确定，上述尺寸只是示例。
+一个 8×8-cell 模板具有 $(8+1)^2=81$ 个顶点和 $2\cdot8^2=128$ 个三角形。覆盖 16m 时顶点间距是 2m，覆盖 64m 时是 8m。**变化的是每个实例的世界范围，Vertex Buffer 和 Index Buffer 可以保持相同。**
 
-**Instancing 降低 Draw Submission，但不保证地形 GPU 时间同步下降。** Vertex Texture Fetch、Shadow Pass、Patch 数量、可见性和 Tile Streaming 仍决定成本。
+实例化可以减少 CPU 提交和重复资源管理，但每个实例的顶点仍会执行高度采样和变换。阴影 Pass、实例数量、Height 驻留、视锥剔除与像素着色依然有成本。
 
-### 最难的不是画网格，而是保证连续性
+## 四、CDLOD 先决定画哪些节点，再决定怎样连续过渡
 
-相邻 Patch 的 LOD 不一致会产生 T-junction、裂缝和 Height 采样误差。完整实现至少需要：规则网格边缘约束、LOD 邻居一致性、Geomorph、视点移动滞回、Tile Bound、HeightMip 的世界一致性、裁剪和碰撞接口。
+CDLOD 的空间选择可从四叉树理解：一个父节点对应一块世界范围，它的四个子节点覆盖相同范围的四个象限。遍历时，远处保留父节点，近处继续访问子节点。
 
-CDLOD 的 Continuous 不是简单的每距离翻倍 Grid Scale，而是过渡策略的一部分。
+完整算法还利用节点的高度上下界做三维范围判断。仅用 `distance(cameraXY,nodeCenter)` 会忽略山顶、谷底与相机高度；实验为了把选块看清，采用二维到矩形的距离，明确不把它称作完整选择器。
 
-## 三角洲 Soft Tessellation 是更密的规则 Grid
+无论采用何种选择策略，都要维持两个基本条件：
 
-它通过近景 LOD -1/-2 增加顶点密度，而不是强制使用老式 GPU Hull/Domain Tessellation。GDC 分享中对 2×2、4×4、8×8 的局部细分进行了比较，公开方案采用 4×4 的成本和质量折中。
+1. **覆盖完整。** 所需世界区域不能漏块；同一区域不要无意重复覆盖。
+2. **过渡兼容。** 相邻块不能突然变成完全不兼容的顶点密度与高度表示。
 
-以 16×16 的基础 Cells 为例：
+动画“CDLOD 选块”记录叶节点的世界矩形；这些矩形面积之和始终为 1。它先展示选块责任，下一页才展示连续性责任，避免颜色变化掩盖真正的接缝问题。
 
-| 细分倍数 | Cells | 三角形数 |
-| --- | ---: | ---: |
-| 1× | 16² | 512 |
-| 2× | 32² | 2048 |
-| 4× | 64² | 8192 |
-| 8× | 128² | 32768 |
+### 裂缝为什么产生：不只因为边上多了一个点
 
-细分倍数增加 4 倍，网格三角形数量可增加 16 倍；所以局部精细范围、距离阈值、Instance Count 都非常重要。
+假设粗边在 $y=0,2,4$ 有顶点，细边在 $y=0,1,2,3,4$ 有顶点。粗边在 0–2 之间是连接两个高度的直线；细边的 $H(1)$ 若偏离该直线，两侧就不共面。
 
-## Wildlands 的 Material Displacement 为什么不同？
+即使所有点都读取同一张高度图，也不能保证 $H(1)=[H(0)+H(2)]/2$。因此“采样相同 Heightmap”本身并不能消除 T-junction 的几何裂缝。
 
-Wildlands 的近景 Tessellation/Displacement，不仅使用 Macro Terrain Height，还使用为每种地表材质制作的局部高度图，让岩块、泥地和碎石的微细几何真正改变轮廓。
+实验下方画的是**同一共享边的两条折线**，不是两张没有空间关系的示意曲线。红色区域就是粗细两条边之间的几何差。
 
-两类高度要分开：
+## 五、Morph 怎样把细网格退化成粗网格？
 
-~~~text
-H_base(worldXY)      -> 山体、道路、Collision 高度
-D_material(detailUV) -> 可重复平铺的微观浮雕
-~~~
+规则网格允许把奇数点逐渐推到前一个偶数点。对整数格坐标 $g$，单轴教学公式是：
 
-可用教学公式表示：
+$$g'=g-(g\bmod2)\,m,\qquad m\in[0,1].$$
 
-$$
-P' = P_{mathrm{base}} + N A(d) igl(D_{mathrm{blend}}-D_0igr).
-$$
+$m=0$ 时保留全部细点，$m=1$ 时每两个点重合。相应的三角形退化，边界顶点集合与粗网格一致。二维实现可分别处理 XY；完整 CDLOD 的 Morph 因子由距离区间决定，不只是对一条边统一拖动。
 
-其中 D0 是零位移基准、A(d) 是距离衰减；多材质区域要让位移高度与有效的覆盖权重协调，以免材质接缝形成几何裂缝。
+一个关键次序是：**先计算 Morph 后的 XY，再按一致的高度定义采样高度。** 如果先取 $H(1)$，再把 XY 挪到 0，细点仍带着原来的高度，就可能形成竖直尖刺。
 
-**三角洲的 Material Height 公开用于 Height Blend，CDLOD 软细分公开用于获取更准确的地形高度；不能仅凭两项同时存在就断言三角洲将各地表材质 Micro Height 以 Wildlands 的方式进入几何阶段。**
+```hlsl
+// 只解释 2:1 对齐；实际 CDLOD 还要处理距离带和节点选择。
+float2 coarseGrid = floor(GridCoord * 0.5) * 2.0;
+float2 morphedGrid = lerp(GridCoord, coarseGrid, Morph);
+float2 xy = PatchOrigin + morphedGrid * GridStep;
+float h = SampleCompatibleHeight(xy); // 两边必须遵守同一有效性与高度约定
+```
 
-### Height Blend ≠ Displacement
+动画末端同时检查“XY 是否收拢”和“共享边最大高度差是否接近 0”。这比只看到 Patch 颜色切换更能验证拼接的含义。
 
-Height Blend 改变 Bottom/Top 材质的覆盖比；Displacement 改变实际渲染顶点的位置。前者不会自动修改网格或碰撞。视觉的微观碎石位移一般也不应直接决定角色或车轮的碰撞；足以影响玩法的沟壑与路肩应该写入 Macro / Terraform Height。
+真实系统还需保证：相邻 LOD 选择不超出过渡策略、高度 Mip 采样兼容、Border 有效、位移幅度与边界一致。Skirt 可以遮部分裂缝，但不是 CDLOD 连续过渡本身。
 
-## 陡坡的 UV 需要独立处理
+![粗细边界 Morph 中间状态，红色区域是两条高度边之间的几何差](/img/posts/gdc-terrain-geometry/process-morph.webp)
 
-XY 世界投影在接近垂直的岩壁上会拉伸。Triplanar 读取 X/Y/Z 三轴投影，Biplanar 只混合权重最大的两个方向；三角洲进一步研究单采样随机化选轴，用于 VT Page 合成。
+静态关键帧｜本文教学模型的 Morph=0.5。上图观察点的位置，下图观察边界实际高度。
 
-对于所选 X 投影，采样 UV 为 yz，并应从连续的 WorldPosition 求梯度，而不是对随机跳变后的 UV 直接做隐式求导：
+原始算法的距离范围、Morph 和节点选择细节见 [Filip Strugar 的论文与实现](https://github.com/fstrugar/CDLOD)。本文的单边动画仅提取其中最小可观察关系。
 
-~~~hlsl
-float3 p = WorldPosition * Tiling;
-float3 dx = ddx(p), dy = ddy(p);
-float4 c = Tex.SampleGrad(TexSampler, p.yz, dx.yz, dy.yz);
-~~~
+## 六、三角洲怎样避免为一个精细角落提交四个整块？
 
-这是一个单轴示例，没有公开游戏的完整随机实现、法线坐标恢复或随机模式。**接近垂直的岩壁写入顶视 XY VT Page 会遭遇有效像素面积不足**，不能只靠无限增大 Triplanar 纹理分辨率解决。
+假设一个父 Patch 只有左上角需要更精细。常规替换可能移除整个父节点，再提交四个子节点；其中三个子节点其实没有精细需求。
 
-## UE5.4 的实际选择
+三角洲公开的改进是保留父实例，让其被替代部分的顶点合并、三角形退化，再单独提交需要的细实例。这样可以保留父级的其余区域。
 
-| 项目目标 | 起点 |
-| --- | --- |
-| 先保证编辑器、Spline、水体与碰撞 | Landscape |
-| PC 高精度微观位移 | 小面积验证 Nanite Landscape Tessellation |
-| Draw/Vertex 证实为主要瓶颈 | 专用 CDLOD Renderer 原型 |
-| 洞穴、悬垂、桥洞 | Mesh/Nanite/其他非单值高度几何 |
-| Mobile 地形 | 适当几何 LOD + Normal/Height Blend，按机型考虑视差 |
+![三角洲的父网格局部裁切与子实例补充示意](/img/posts/gdc-terrain-geometry/delta-cutout.webp)
 
-对同一地形测试 Direct Landscape、Nanite 和 Grid Instance 时，应固定数据、投影、视锥、阴影、像素数；报告 GPU Cost、Vertex Count、Draw Submission、Mip 与流送峰值，不能只报告面数。
+图 1｜原稿第 90 页局部技术图。重点是“保留父级其余区域”，不是把同一区域重复画两次。来源：[Delta Force，GDC 2025](https://media.gdcvault.com/gdc2025/Slides/Jiao_Hang_Delta+Force+Performant.pdf#page=90)，© 原作者 / 腾讯。
 
-下一篇：[笔刷、道路、河流、Decal 与增量构建](/post/gdc-terrain-authoring)。
+动画把过程拆成四个状态：原始父块 → 橙框内旧三角形被裁掉 → 更小的模板实例补入 → 父子组合完成。灰色网格是被移除区域的提示，不代表真实渲染还保留这些三角形。
+
+局部裁切的重点是**减少无效实例或顶点处理**。它不自动解决新旧边界，也不意味着任何任意形状的洞都能靠一个布尔量免费裁掉。实例有效区、退化模式和连接规则需要一起设计。
+
+![父 Patch 裁去局部区域后，用同一模板的细实例补入](/img/posts/gdc-terrain-geometry/process-tess.webp)
+
+静态关键帧｜本文局部裁切模型的组合阶段；右侧是子模板放大图。
+
+## 七、Software Tessellation 的 4×4，不应读成“模板变成四倍大”
+
+三角洲把 CDLOD 继续向近处细分到更密层级，并比较了每次按 2×2、4×4、8×8 细分的代价。其演讲选择 4×4 来平衡误差和实例数量。
+
+这描述的是**空间层级划分和选块策略**。它不要求把唯一模板从 16×16 cells 改成 64×64 cells。模板不变、世界 Patch 边长缩小，同样可以提高单位米的采样密度。
+
+| 教学情形 | Patch 世界边长 | 模板 cells | 顶点间距 |
+| --- | ---: | ---: | ---: |
+| 父 Patch | 64m | 8×8 | 8m |
+| 2 倍细分层 | 32m | 8×8 | 4m |
+| 4 倍细分层 | 16m | 8×8 | 2m |
+| 8 倍细分层 | 8m | 8×8 | 1m |
+
+若把整个父区域全部替换，$r\times r$ 子区会需要 $r^2$ 个模板实例；只局部需要精细时，必须结合裁切和选区才能控制浪费。不能用“每个实例面数没变”推出总面数没增加。
+
+![三角洲软细分选择图及不同细分策略的局部示意](/img/posts/gdc-terrain-geometry/delta-soft-tess.webp)
+
+图 2｜原稿第 92 页局部引用，用于对照层级细分与裁切。来源同上，© 原作者 / 腾讯。本文不照搬原图中具有场景条件的误差百分比作为普遍结论。
+
+还要纠正一个容易误传的边界：第 93 页明确说明该软细分在 **PC 出货**；移动端被认为可行，但当时没有完成出货。不能写成三角洲手机版已经采用了同一细分功能。演讲的 RTX 3080 性能对比仅代表其测试，不等于 UE 或本动画的成绩。
+
+## 八、网格更密，为什么还不一定有碎石轮廓？
+
+细分解决“哪里有采样点”，Displacement 决定“采样点往哪里去”。如果细网格仍然只读取平滑基础 Height，它不会自动长出材质里的每粒石头。
+
+Wildlands 的材质资产包含微观高度，并展示它参与可见几何细节：
+
+![Wildlands 材质位移的原始表面细节对照](/img/posts/gdc-terrain-geometry/wildlands-displacement.webp)
+
+图 3｜原稿第 38 页局部效果图，观察接近地面的几何起伏与轮廓。来源：[Wildlands GDC 2017](https://media.gdcvault.com/gdc2017/Presentations/WERLE_MARTINEZ_GRWterrainTechnologyTools.pdf#page=38)，© Ubisoft / 原作者。
+
+把高度来源写开更清楚：
+
+$$P_{base}=(x,y,H_{terrain}(x,y)),$$
+
+$$P_{final}=P_{base}+N_{base}\,A(d)\,[D_{material}(u,v)-D_0].$$
+
+$H_{terrain}$ 是基础地形，包含道路等 Terraform；$D_{material}$ 是可平铺材质高度；$D_0$ 是零位移基准；$A(d)$ 控制幅度与距离衰减。位移方向 $N_{base}$ 可取约定的基底法线；动画为方便读剖面，沿世界 Z 位移。
+
+### Height Blend、着色法线和 Displacement 要看不同证据
+
+| 改变项 | 明暗 | 网格位置 | 轮廓 / 物理 |
+| --- | --- | --- | --- |
+| Height Blend | 改变材料覆盖与对应光照 | 不自动改变 | 不自动改变 |
+| Normal Map | 改变着色法线 | 不改变 | 不改变轮廓 |
+| 材质 Displacement | 随位移表面变化 | 明确改变 | 改变可见轮廓；物理不自动更新 |
+
+在“材质位移”页，先看右侧起伏和下方剖面，再勾选“只改着色法线”。表面仍能保留细节明暗，但黄色边界回到平面；真实顶点高度范围也回到 0。这正是判断位移是否生效的可观察证据。
+
+![同一材质 Height 对真实顶点和轮廓产生的位移，下方同时显示基础碰撞平面](/img/posts/gdc-terrain-geometry/process-displacement.webp)
+
+静态关键帧｜本文生成的三角形与剖面，非游戏截图。灰线是未更新的基础碰撞面。
+
+接着保持同样 Height 函数，比较 8×8 与 64×64 cells。较低密度错过细峰，较高密度捕捉更多细节；高频高度若超出网格采样能力，会产生跳动和欠采样。细分密度、Height Mip、位移频率和距离衰减应联动控制。
+
+### 多材质位移不能与覆盖权重各走一套
+
+两种材料若颜色按一组权重混合，高度却按另一组不连续选择，交界就可能出现台阶。共享边两侧还必须用一致的材质 ID、Height 采样、零位移和衰减规则。常见方案是先定义连续的混合高度，再让几何与着色读取兼容结果。
+
+这不意味着所有 Height Blend 权重都必须照搬成几何权重；艺术表现可以不同，但不同必须是明确设计，不能由 LOD 或缓存读取差异意外产生。
+
+## 九、数据来自 VT 时，几何路径还缺哪些保障？
+
+顶点读取高度需要可用页。像素反馈未必能覆盖下一帧将出现的所有顶点，阴影相机、快速跨区和远处剔除范围也可能提出不同需求。
+
+几何系统应明确高度的常驻粗级、预取范围、缺页回退及 Morph 兼容性。一个 Patch 回退到粗 Height，另一个仍取细 Height，即使 XY 已对齐也可能高度不同。位移 Bounds 还必须覆盖最大位移，否则剔除和阴影可能过早截断。
+
+视觉碎石通常可以只改画面；会改变车轮通过性的沟坎，则应进入可查询的基础高度或专用碰撞几何。不能认为 WPO、Nanite Displacement 或 RVT Height 会自动更新 Landscape Collision。
+
+## 十、放回 UE5.4：先选数据接口，再选 Renderer
+
+Landscape 包含编辑层、Spline、碰撞、Foliage 和流送工作流；自研 CDLOD 降低提交成本的同时，也要重新接上这些消费者。只有确认瓶颈来自地形提交或几何路径，替换 Renderer 才有明确收益。
+
+PC 可验证 Nanite Landscape 和实验性的 Nanite Tessellation，但仍要保留非 Nanite 数据服务其他系统。Mobile 则应单独确定网格预算、Height 驻留与材质路径，不能根据桌面实验直接宣布支持。
+
+可以让 Landscape 与自研网格消费同一套世界坐标、Heightfield 和材质数据协议。这样替换 Renderer 时，不必重写下一篇要讲的生产工具：[Wildlands 分层生产、Mask、道路与实例整合](/post/gdc-terrain-authoring)。
 
 ## 参考资料
 
-- [Ghost Recon Wildlands Terrain Tools and Technology (2017)](https://media.gdcvault.com/gdc2017/Presentations/WERLE_MARTINEZ_GRWterrainTechnologyTools.pdf)
-- [Delta Force Terrain and Biome Technology (2025)](https://media.gdcvault.com/gdc2025/Slides/Jiao_Hang_Delta%2BForce%2BPerformant.pdf)
-- [UE5.4 Nanite Virtualized Geometry](https://dev.epicgames.com/documentation/en-us/unreal-engine/nanite-virtualized-geometry-in-unreal-engine?application_version=5.4)
+- [Filip Strugar：CDLOD 原始论文、示例和实现](https://github.com/fstrugar/CDLOD)。
+- [Wildlands GDC 2017](https://media.gdcvault.com/gdc2017/Presentations/WERLE_MARTINEZ_GRWterrainTechnologyTools.pdf)：第 19、35、38、47–51 页。
+- [Delta Force GDC 2025](https://media.gdcvault.com/gdc2025/Slides/Jiao_Hang_Delta+Force+Performant.pdf)：第 89–93 页。
+- [UE5.4 Nanite 文档](https://dev.epicgames.com/documentation/en-us/unreal-engine/nanite-virtualized-geometry-in-unreal-engine?application_version=5.4)。

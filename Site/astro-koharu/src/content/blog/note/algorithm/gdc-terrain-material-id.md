@@ -2,6 +2,7 @@
 title: "GDC 地形专题 02｜143 种地表材质如何进入一个 Shader？Material ID 与三材质混合"
 link: gdc-terrain-material-id
 date: "2026-11-07 14:05:00"
+updated: "2026-11-07"
 description: "从 Wildlands 单 ID/四邻域到三角洲双 ID+Weight、ID Fixing、Array 寻址与混合公式，附 WebGL2 交互实验。"
 tags: [GDC, Terrain, Rendering, Unreal Engine, Shader, PBR]
 categories:
@@ -23,11 +24,13 @@ Wildlands 的地表库有 143 种材质，却不需要在同一个 Shader 图里
 
 ## 先操作实验：看四种编码如何改变边界
 
-<iframe src="/img/posts/gdc-terrain-material-id/lab.html" title="GDC Terrain WebGL2：单 ID、四邻域 ID、双 ID/Weight 与动态 Grid LOD" loading="lazy" sandbox="allow-scripts" style="width:100%;height:700px;border:1px solid #40516c;border-radius:12px;background:#101924;"></iframe>
+<iframe class="article-lab-frame" src="/img/posts/gdc-terrain-material-id/lab.html" title="GDC Terrain WebGL2：单 ID、四邻域 ID、双 ID/Weight" loading="lazy" style="width:100%;height:700px;border:1px solid #40516c;border-radius:12px;background:#101924;"></iframe>
 
-[独立打开 WebGL2 实验台](/img/posts/gdc-terrain-material-id/lab.html)。切换 `单 ID`、`Wildlands 四邻域`、`双 ID + Weight`、`三角形三材质教学版`，观察同一片地表产生的不同边界。调试视图分别观察 ID 与 Weight；另一标签可动态调整真实网格顶点数量。浏览器实验只演示**颜色查表与混合**，不证明游戏实际 Shader 的性能。
+[独立打开 WebGL2 实验台](/img/posts/gdc-terrain-material-id/lab.html)。切换 `单 ID`、`Wildlands 四邻域`、`双 ID + Weight`、`三角形三材质教学版`，观察同一片地表产生的不同边界。调试视图分别观察 ID 与 Weight；几何生成已经移到第 04 篇的独立实验。浏览器实验只演示**颜色查表与混合**，不证明游戏实际 Shader 的性能。
 
-![Material ID 查表、邻域混合与 Texture Array 寻址](/img/posts/gdc-terrain-material-id/cover.svg)
+![Wildlands 的原始 Material ID 分布图，伪彩色表示不同地表类别](/img/posts/gdc-terrain-material-id/wildlands-splat.webp)
+
+图 1｜原稿第 33 页的 Splatting 图局部引用；亮色代表离散编号，并非最终地表颜色。来源：[Wildlands GDC 2017](https://media.gdcvault.com/gdc2017/Presentations/WERLE_MARTINEZ_GRWterrainTechnologyTools.pdf#page=33)，© Ubisoft / 原作者。
 
 ## 一、为什么一张 R8 足够保存 143 个 ID？
 
@@ -126,11 +129,13 @@ $$ M=(1-t)M_B+tM_T. $$
 
 进一步 Height Blend 可以从两种材质高度 `hB/hT` 调整权重。示意模型：
 
-$$ t'=\operatorname{saturate}\big((t-0.5)+k(h_T-h_B)+0.5\big). $$
+$$ t'=\operatorname{saturate}\left(\big[(h_T-h_B)+(t-0.5)S\big]K+0.5\right). $$
 
-该式仅是演示的 Height Difference 权重偏置；真实生产要处理高度的参考零点、放缩和远景衰减。**Height Blend 改变材质覆盖，不等于改变地形几何高度。**
+该结构对应三角洲第 66 页：$S$ 控制权重偏置的尺度，$K$ 控制锐度。材质高度的参考零点和范围需要一致；远景还会减弱高度差影响。**Height Blend 改变材质覆盖，不等于改变地形几何高度。**
 
-对移动端 32 种材质，可以在 16 位里放两个 5-bit ID + 一个 6-bit 权重：
+原稿第 67 页的初始方案标注 **5-bit Bottom、5-bit Top、3-bit Weight**。这与下方为了演示 16-bit 完整利用而给出的 **5+5+6 教学方案**不同；不能把 6-bit 权重说成原项目公开编码。
+
+教学示例：在 16 位里放两个 5-bit ID + 一个 6-bit 权重：
 
 ```hlsl
 uint bottom =  packed        & 31u;
@@ -142,7 +147,22 @@ float t     = float((packed >> 10u) & 63u) / 63.0;
 
 ## 五、为什么一个三角形能从六个候选变三个？
 
-三个顶点，每点两个候选 ID，最多形成六种独立材质。三角洲在烘焙阶段执行 **ID Fixing**，根据 Bottom、Top 和权重/优先级，在不破坏主要视觉意图的前提下，把单三角形真正保留的独立 ID 限为三个。
+三个顶点，每点两个候选 ID，最多形成六种独立材质。三角洲第 70–74 页的 **ID Fixing** 在离线阶段限制每个三角形的 ID 并集：
+
+1. 先把三个 Bottom ID 加入容量为 3 的集合。三个位置最多形成三种 Bottom，因此总能放下。
+2. 集合还有位置时，按 Top Weight 从高到低尝试加入 Top ID；已存在的编号不重复占容量。
+3. 放不下的 Top 在该点改成 Bottom ID，使该点不再引入额外材质。
+4. 后续处理邻三角形仍只移除某点的 Top，而不引入新 ID，所以不会把已处理三角形的并集重新扩大。
+
+例如三个点是 `(B=1,T=4,w=.8)`、`(B=1,T=5,w=.6)`、`(B=2,T=6,w=.2)`。先保留 `{1,2}`，再加入最高权重的 4；5 和 6 放不下，分别退回各自 Bottom。结果仍有三个点、六个字段，但独立编号只剩 `{1,2,4}`。
+
+<iframe class="article-lab-frame" src="/img/posts/gdc-terrain-material-id/id-fixing.html" title="双 ID 离线 Fixing 与运行时权重恢复逐步动画" loading="lazy" style="width:100%;height:960px;border:1px solid #40516c;border-radius:12px;"></iframe>
+
+[独立打开 ID Fixing 动画](/img/posts/gdc-terrain-material-id/id-fixing.html)。逐步观察 Bottom 集合、Top 排序、超额 Top 退回，以及修正后每个材质的三点权重。它使用固定小例子解释公开算法，不能代替对整张地图的邻接三角形烘焙验证。
+
+![离线 ID Fixing 关键帧：三个点六字段，保留 ID 集合为 1、2、4](/img/posts/gdc-terrain-material-id/process-fixing.webp)
+
+静态关键帧｜本文固定例子最终状态；超额 Top 已退回各点 Bottom。
 
 之后 Pixel Shader 按三角形重心坐标 `λ0,λ1,λ2` 恢复各个材质的有效权重。对材料编号 `k`：
 
@@ -153,7 +173,7 @@ $$
 
 最后最多对三个不同 `k` 做纹理采样与混合。这个关键限制是在**离线阶段**实现，而不是希望 Pixel Shader 在六种材质中每帧做复杂的动态选择。
 
-实验台里的“三角形三材质”只用每个顶点一个 ID 演示重心混合，**没有实现六候选到三候选的完整离线 ID Fixing**；它用于直观看到双线性方格和三角形重心插值的区别。
+原 WebGL 实验的“三角形三材质”仍是每顶点单 ID 的重心示意，用于比较插值形态；上方新的逐步动画专门解释双 ID 的离线修正与权重恢复。两者职责不同。
 
 ## 六、需要解决的真正工程问题
 

@@ -13,14 +13,19 @@ export const learningSeries: KnowledgeGroup[] = [
   {
     id: 'gdc-terrain-engineering',
     title: 'GDC 专题｜开放世界地形技术',
-    description: '从 Wildlands、三角洲和 UE5.4 的原始技术分享出发，建立地形生产、Material ID、VT、几何 LOD、笔刷与 Decal 的统一决策体系。',
+    description:
+      '从 Wildlands、三角洲和 UE5.4 的原始技术分享出发，建立地形生产、Material ID、VT、几何 LOD、笔刷与 Decal 的统一决策体系。',
     cover: '/img/posts/gdc-terrain-architecture/cover.svg',
     coverAlt: 'GDC 地形技术系列：源数据、材质、缓存与渲染',
     stages: [
       { id: 'overview', title: '地形架构总览', description: '确定源数据、衍生数据和跨系统的职责分界。' },
-      { id: 'material', title: 'Material ID 与材质混合', description: '用 WebGL2 实验单 ID、双 ID、Texture Array 和混合权重。' },
-      { id: 'streaming', title: '纹理缓存与流送', description: '比较 Texture Array、SVT、RVT、Clipmap 与页面更新。' },
-      { id: 'geometry', title: '网格 LOD 与置换', description: '动态观察 Grid 分辨率、CDLOD 原理和材质级位移。' },
+      {
+        id: 'material',
+        title: 'Material ID 与材质混合',
+        description: '用 WebGL2 实验单 ID、双 ID、Texture Array 和混合权重。',
+      },
+      { id: 'streaming', title: '纹理缓存与流送', description: '逐步观察页面请求、物理缓存、父 Mip 回退和 Clipmap 条带。' },
+      { id: 'geometry', title: '网格 LOD 与置换', description: '独立演示实例复用、CDLOD 选块、接缝 Morph、软细分与材质位移。' },
       { id: 'authoring', title: '程序化生产与 Decal', description: '把 Brush、Road、River、Biome、碰撞与缓存失效联起来。' },
     ],
   },
