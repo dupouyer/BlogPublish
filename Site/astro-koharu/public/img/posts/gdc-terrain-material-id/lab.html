@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GDC Terrain · WebGL2 Lab</title>
+<link rel="stylesheet" href="/fonts/ChillRoundFRegular/result.css"><style>
+:root{color-scheme:dark}*{box-sizing:border-box}body{margin:0 auto;padding:12px;max-width:1000px;font:14px/1.5 "寒蝉全圆体",system-ui,"Microsoft YaHei",sans-serif;background:#101925;color:#e2edf7}
+h1{margin:4px 0;font-size:18px}.hint{margin:6px 0 13px;color:#aebfd0;font-size:12px}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+button,select{color:#eaf3fb;background:#223349;border:1px solid #607a96;padding:8px;border-radius:7px;font:inherit}
+button[aria-selected=true]{background:#23628c}
+.cols{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(210px,.9fr);gap:12px}
+canvas{width:100%;height:380px;display:block;border-radius:12px;background:#182738;border:1px solid #53677b}
+.panel{background:#19293a;padding:12px;border:1px solid #475e75;border-radius:10px}
+label{display:block;margin:0 0 13px}label span{display:flex;justify-content:space-between;font-size:13px}input[type=range],select{width:100%;accent-color:#69b8ea}
+.output{margin:9px 0;padding:10px;background:#0f1f2c;border-radius:8px;font:12px/1.7 monospace;white-space:pre-wrap}
+a{color:#8bd8ff}.err{color:#ffd98d}.footer{color:#b4c7d9;font-size:12px}
+[hidden]{display:none!important}
+@media(max-width:690px){.cols{grid-template-columns:1fr}canvas{height:330px}}
+</style></head><body>
+<h1>GDC 地形｜Material ID 材质实验台</h1>
+<p class="hint">WebGL2 真实绘制 · 程序化 2D Array 纹理 · 教学复现，不代表游戏原始 Shader 或性能数据</p>
+<div class="tabs"><button id="matTab" aria-selected="true">Material ID / Splat</button><button id="meshTab" hidden aria-selected="false">Grid / Displacement</button><a href="/img/posts/gdc-terrain-geometry/lab.html" target="_top">打开独立几何动画</a></div>
+<div class="cols"><section><canvas id="canvas" aria-label="三维地形材质与动态网格"></canvas>
+<p id="message" class="footer">旋转角与位移控制改变真实顶点；纹理细节来自 WebGL sampler2DArray。网格线展示实际索引 Buffer。</p>
+<p class="footer"><a href="/post/gdc-terrain-material-id" target="_top">返回 Material ID 正文</a> · <a href="/post/gdc-terrain-geometry" target="_top">阅读几何 LOD 正文</a></p></section>
+<aside class="panel">
+<div id="materialControls">
+<label>选择材质分布算法<select id="method"><option value="0">单 ID / Point</option><option value="1" selected>Wildlands：四邻域 ID 双线性混合</option><option value="2">双 ID + Weight</option><option value="3">三角形 3 ID 重心插值（示意）</option></select></label>
+<label>调试视图<select id="debug"><option value="0">合成颜色</option><option value="1">ID 分类</option><option value="2">Weight 热力图</option></select></label>
+<label><span>贴图重复 <output id="tilev">12</output></span><input id="tile" type="range" min="2" max="30" value="12"></label>
+<div class="output" id="matOutput"></div>
+</div>
+<div id="meshControls" hidden>
+<label>网格边长 Cells<select id="density"><option>8</option><option>16</option><option selected>32</option><option>64</option><option>128</option></select></label>
+<label><span>高度幅度 <output id="heightv">1.0</output></span><input id="height" type="range" min="0" max="3" step=".1" value="1"></label>
+<label><span>观察旋转角 <output id="yawv">-30</output>°</span><input id="yaw" type="range" min="-80" max="80" value="-30"></label>
+<label><input id="wire" type="checkbox" checked> 绘制三角形边线</label>
+<div id="meshOutput" class="output"></div>
+</div>
+<label><span>地形起伏 <output id="amplitudev">0.7</output></span><input id="amplitude" type="range" min="0" max="1.7" step=".1" value=".7"></label>
+<p class="footer">限制：三角形演示每顶点只用一个 ID，不复现三角洲六候选的离线 ID Fixing；Grid 没有多 Patch CDLOD、Geomorph 和物理碰撞；所有贴图是原创程序数据。</p>
+</aside></div>
+<script id="vertex" type="x-shader/x-vertex">#version 300 es
+precision highp float;
+in vec2 aUV;out vec2 vUV;
+uniform float uYaw,uHeight,uAmplitude;
+void main(){
+ vUV=aUV;vec2 p=aUV*2.0-1.0;
+ float z=(.30*sin(4.7*p.x)*cos(3.3*p.y)+.11*sin(11.0*p.x+7.0*p.y))*uHeight*uAmplitude;
+ float c=cos(uYaw),s=sin(uYaw);
+ vec3 r=vec3(p.x*c-p.y*s,z,p.x*s+p.y*c);
+ float ct=cos(.88),st=sin(.88);
+ vec3 t=vec3(r.x,r.y*ct-r.z*st,r.y*st+r.z*ct);
+ gl_Position=vec4(t.x*.77,t.y*.77,(t.z+1.7)*.20,1.0);
+}</script>
+<script id="fragment" type="x-shader/x-fragment">#version 300 es
+precision highp float;precision highp sampler2DArray;
+in vec2 vUV;out vec4 color;
+uniform sampler2D uID;uniform sampler2DArray uArray;
+uniform int uMethod,uDebug,uWire;uniform float uTile;
+int getID(ivec2 p){return int(texelFetch(uID,clamp(p,ivec2(0),ivec2(15)),0).r*255.0+.5);}
+vec3 material(int i){return texture(uArray,vec3(vUV*uTile,float(clamp(i,0,3)))).rgb;}
+vec3 palette(int i){if(i==0)return vec3(.18,.54,.15);if(i==1)return vec3(.60,.36,.19);if(i==2)return vec3(.45,.5,.58);return vec3(.85,.92,.96);}
+void main(){
+ if(uWire==1){color=vec4(.05,.16,.24,1);return;}
+ vec2 cell=vUV*16.0-.5;ivec2 b=ivec2(floor(cell));vec2 f=fract(cell);
+ vec4 data=texelFetch(uID,clamp(ivec2(floor(vUV*16.0)),ivec2(0),ivec2(15)),0);
+ int id=int(data.r*255.0+.5);float wt=data.b;
+ vec3 c=material(id);
+ if(uMethod==1){
+  vec3 low=mix(material(getID(b)),material(getID(b+ivec2(1,0))),f.x);
+  vec3 high=mix(material(getID(b+ivec2(0,1))),material(getID(b+ivec2(1,1))),f.x);
+  c=mix(low,high,f.y);
+ }else if(uMethod==2){
+  c=mix(material(id),material(int(data.g*255.0+.5)),wt);
+ }else if(uMethod==3){
+  int i0,i1,i2;vec3 w;
+  if(f.x+f.y<1.0){i0=getID(b);i1=getID(b+ivec2(1,0));i2=getID(b+ivec2(0,1));w=vec3(1.0-f.x-f.y,f.x,f.y);}
+  else{i0=getID(b+ivec2(1,1));i1=getID(b+ivec2(0,1));i2=getID(b+ivec2(1,0));w=vec3(f.x+f.y-1.0,1.0-f.x,1.0-f.y);}
+  c=material(i0)*w.x+material(i1)*w.y+material(i2)*w.z;
+ }
+ if(uDebug==1)c=palette(id);
+ if(uDebug==2)c=vec3(wt);
+ color=vec4(c,1.0);
+}</script>
+<script>
+(()=>{
+ const $=x=>document.getElementById(x),canvas=$("canvas");
+ const gl=canvas.getContext("webgl2",{antialias:true,alpha:false});
+ if(!gl){$("message").textContent="当前浏览器不支持 WebGL2，请参照正文的算法公式和静态示意图。";return;}
+ const sh=(type,src)=>{const s=gl.createShader(type);gl.shaderSource(s,src);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error(gl.getShaderInfoLog(s));return s};
+ let pr;try{pr=gl.createProgram();gl.attachShader(pr,sh(gl.VERTEX_SHADER,$("vertex").textContent));gl.attachShader(pr,sh(gl.FRAGMENT_SHADER,$("fragment").textContent));gl.linkProgram(pr);if(!gl.getProgramParameter(pr,gl.LINK_STATUS))throw Error(gl.getProgramInfoLog(pr));}catch(e){$("message").textContent="WebGL Shader 错误: "+e.message;return}
+ gl.useProgram(pr);let tab="material",grid=null;
+ const attr=gl.getAttribLocation(pr,"aUV"),uni=name=>gl.getUniformLocation(pr,name);
+ const u={yaw:uni("uYaw"),height:uni("uHeight"),amplitude:uni("uAmplitude"),method:uni("uMethod"),debug:uni("uDebug"),wire:uni("uWire"),tile:uni("uTile")};
+ function mesh(n){
+  if(grid){gl.deleteBuffer(grid.v);gl.deleteBuffer(grid.i);gl.deleteBuffer(grid.e)}
+  const v=[],ind=[],edges=[];
+  for(let y=0;y<=n;y++)for(let x=0;x<=n;x++)v.push(x/n,y/n);
+  for(let y=0;y<n;y++)for(let x=0;x<n;x++){const a=y*(n+1)+x,b=a+1,c=a+n+1,d=c+1;ind.push(a,c,b,b,c,d);edges.push(a,b,a,c,b,c,b,d,c,d)}
+  const mk=(target,data)=>{const b=gl.createBuffer();gl.bindBuffer(target,b);gl.bufferData(target,data,gl.STATIC_DRAW);return b};
+  grid={v:mk(gl.ARRAY_BUFFER,new Float32Array(v)),i:mk(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(ind)),e:mk(gl.ELEMENT_ARRAY_BUFFER,new Uint16Array(edges)),ic:ind.length,ec:edges.length};
+  $("meshOutput").textContent=n+"×"+n+" Cells；"+(n*n*2)+" 三角形；"+((n+1)*(n+1))+" 顶点。无跨 Patch LOD Morph。";
+ }
+ const SIZE=64,L=4,tex=new Uint8Array(SIZE*SIZE*L*4),base=[[72,128,64],[151,111,72],[115,123,132],[201,215,224]];
+ for(let l=0;l<L;l++)for(let y=0;y<SIZE;y++)for(let x=0;x<SIZE;x++){
+  const k=((l*SIZE+y)*SIZE+x)*4,noise=Math.sin((x*19+y*31+l*17)*.82)*13+Math.sin((x+y)*.3)*14;
+  for(let ch=0;ch<3;ch++)tex[k+ch]=Math.max(0,Math.min(255,base[l][ch]+noise));
+  tex[k+3]=255;
+ }
+ const atlas=gl.createTexture();gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D_ARRAY,atlas);
+ gl.texImage3D(gl.TEXTURE_2D_ARRAY,0,gl.RGBA8,SIZE,SIZE,L,0,gl.RGBA,gl.UNSIGNED_BYTE,tex);
+ gl.texParameteri(gl.TEXTURE_2D_ARRAY,gl.TEXTURE_MIN_FILTER,gl.LINEAR_MIPMAP_LINEAR);
+ gl.texParameteri(gl.TEXTURE_2D_ARRAY,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+ gl.texParameteri(gl.TEXTURE_2D_ARRAY,gl.TEXTURE_WRAP_S,gl.REPEAT);gl.texParameteri(gl.TEXTURE_2D_ARRAY,gl.TEXTURE_WRAP_T,gl.REPEAT);gl.generateMipmap(gl.TEXTURE_2D_ARRAY);
+ const idData=new Uint8Array(16*16*4);
+ for(let y=0;y<16;y++)for(let x=0;x<16;x++){const k=(y*16+x)*4,g=x-7+2.2*Math.sin(y*.47),id=g<-2?0:g<2?1:g<5?2:3;idData[k]=id;idData[k+1]=(id+(y%3===0?2:1))%4;idData[k+2]=Math.round((.5+.45*Math.sin(x*.61+y*.25))*255);idData[k+3]=255}
+ const ids=gl.createTexture();gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,ids);
+ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA8,16,16,0,gl.RGBA,gl.UNSIGNED_BYTE,idData);
+ for(const p of [gl.TEXTURE_MIN_FILTER,gl.TEXTURE_MAG_FILTER])gl.texParameteri(gl.TEXTURE_2D,p,gl.NEAREST);
+ gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+ gl.uniform1i(uni("uID"),0);gl.uniform1i(uni("uArray"),1);
+ function draw(){
+  const r=Math.min(2,devicePixelRatio||1),w=Math.max(1,Math.round(canvas.clientWidth*r)),h=Math.max(1,Math.round(canvas.clientHeight*r));
+  if(canvas.width!==w||canvas.height!==h){canvas.width=w;canvas.height=h}
+  gl.viewport(0,0,w,h);gl.clearColor(.08,.13,.20,1);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  gl.disable(gl.CULL_FACE);gl.enable(gl.DEPTH_TEST);gl.depthFunc(gl.LEQUAL);
+  gl.uniform1f(u.yaw,(tab==="mesh"?Number($("yaw").value):-22)*Math.PI/180);
+  gl.uniform1f(u.height,tab==="mesh"?Number($("height").value):1);
+  gl.uniform1f(u.amplitude,Number($("amplitude").value));
+  gl.uniform1i(u.method,Number($("method").value));gl.uniform1i(u.debug,Number($("debug").value));gl.uniform1f(u.tile,Number($("tile").value));
+  gl.bindBuffer(gl.ARRAY_BUFFER,grid.v);gl.enableVertexAttribArray(attr);gl.vertexAttribPointer(attr,2,gl.FLOAT,false,0,0);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,grid.i);gl.uniform1i(u.wire,0);gl.enable(gl.POLYGON_OFFSET_FILL);gl.polygonOffset(1,1);gl.drawElements(gl.TRIANGLES,grid.ic,gl.UNSIGNED_SHORT,0);gl.disable(gl.POLYGON_OFFSET_FILL);
+  if(tab==="mesh"&&$("wire").checked){gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,grid.e);gl.uniform1i(u.wire,1);gl.drawElements(gl.LINES,grid.ec,gl.UNSIGNED_SHORT,0)}
+ }
+ const methods=["单点 R8 ID；没有连续过渡。","四个 R8 ID 分别查 Array，再对材质属性做双线性插值。","每个 Texel 存 Bottom、Top、Weight，本实验使用 Point ID/Weight。","三角形最多 3 个离散 ID，按局部重心坐标插值；不包括离线 Fixing。"];
+ function change(){
+  $("matOutput").textContent=methods[Number($("method").value)]+" 注意：Material Candidates 不等于完整 PBR 的 Texture Fetch 数。";
+  for(const key of ["tile","height","yaw","amplitude"])$(key+"v").textContent=$(key).value;
+  if(tab==="mesh")mesh(Number($("density").value));
+  draw();
+ }
+ function switchTab(next){tab=next;$("materialControls").hidden=next!=="material";$("meshControls").hidden=next!=="mesh";$("matTab").setAttribute("aria-selected",next==="material");$("meshTab").setAttribute("aria-selected",next==="mesh");mesh(next==="material"?64:Number($("density").value));change()}
+ $("matTab").onclick=()=>switchTab("material");$("meshTab").onclick=()=>switchTab("mesh");
+ for(const key of ["method","debug","tile","density","height","yaw","wire","amplitude"])$(key).addEventListener("input",()=>{if(key!=="density")draw();change()});
+ window.addEventListener("resize",draw);
+ const resizeObserver=new ResizeObserver(()=>{if(parent!==window)parent.postMessage({type:'article-lab-size',height:Math.ceil(document.body.getBoundingClientRect().height)+24},location.origin)});resizeObserver.observe(document.body);
+ window.addEventListener('pagehide',()=>resizeObserver.disconnect(),{once:true});
+ switchTab("material");
+})();
+</script></body></html>
