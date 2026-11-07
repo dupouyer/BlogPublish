@@ -637,3 +637,11 @@
   color: hsl(var(--muted-foreground));
   user-select: none;
 }
+
+/* Display equations may exceed a phone viewport; contain their scroll area. */
+.custom-content .katex-display {
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-block: 0.25rem;
+}
