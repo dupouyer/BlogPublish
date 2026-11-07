@@ -83,7 +83,9 @@ return rgb;
 
 令 ID 图的连续纹素坐标为：
 
-$$ q=UV_\mathrm{ID}(W,H)-0.5,\quad b=\lfloor q\rfloor,\quad f=\operatorname{frac}(q). $$
+$$
+q=UV_\mathrm{ID}(W,H)-0.5,\quad b=\lfloor q\rfloor,\quad f=\operatorname{frac}(q).
+$$
 
 在整数坐标 `b, b+(1,0), b+(0,1), b+(1,1)` 各取一个 ID，独立寻址对应的 PBR 属性 `M00...M11`：
 
@@ -125,11 +127,15 @@ TopWeight = 0.35
 
 最初的材质属性可以写成：
 
-$$ M=(1-t)M_B+tM_T. $$
+$$
+M=(1-t)M_B+tM_T.
+$$
 
 进一步 Height Blend 可以从两种材质高度 `hB/hT` 调整权重。示意模型：
 
-$$ t'=\operatorname{saturate}\left(\big[(h_T-h_B)+(t-0.5)S\big]K+0.5\right). $$
+$$
+t'=\operatorname{saturate}\left(\big[(h_T-h_B)+(t-0.5)S\big]K+0.5\right).
+$$
 
 该结构对应三角洲第 66 页：$S$ 控制权重偏置的尺度，$K$ 控制锐度。材质高度的参考零点和范围需要一致；远景还会减弱高度差影响。**Height Blend 改变材质覆盖，不等于改变地形几何高度。**
 

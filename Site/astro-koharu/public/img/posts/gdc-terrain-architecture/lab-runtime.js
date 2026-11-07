@@ -163,7 +163,7 @@ export function setup({ tabs, onTab, onStep, onReset, draw, interval = 750 }) {
 	const ro = new ResizeObserver(() => {
 		if (parent !== window)
 			parent.postMessage(
-				{ type: 'article-lab-size', height: document.body.scrollHeight + 24 },
+				{ type: 'article-lab-size', height: Math.ceil(document.body.getBoundingClientRect().height) + 24 },
 				location.origin,
 			);
 	});

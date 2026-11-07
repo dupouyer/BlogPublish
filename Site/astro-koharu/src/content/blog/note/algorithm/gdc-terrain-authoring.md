@@ -61,7 +61,9 @@ Wildlands 的材质分配不是逐像素手绘数百平方公里。其 Settings 
 
 可用一个教学表达把接口写清楚：
 
-$$M_{apply}(P)=M_{brush}(P)\,M_{slope}(P)\,M_{noise}(P).$$
+$$
+M_{apply}(P)=M_{brush}(P)\,M_{slope}(P)\,M_{noise}(P).
+$$
 
 这里 $M_{apply}$ 是规则应用范围，不是某一种 PBR 材质的最终全局混合权重。规则栈如何覆盖、保留或替换，仍由具体工具定义。Wildlands 规则堆栈的覆盖逻辑也不能直接当成三角洲双 ID 权重编码。
 
@@ -85,7 +87,9 @@ Wildlands 原演讲并没有把所有衍生数据叫作 Splatting：它单独展
 
 在水平采样间距为 $\Delta$ 的 Heightfield 上，用中心差分求斜率：
 
-$$H_x\approx\frac{H(x+\Delta,y)-H(x-\Delta,y)}{2\Delta},\quad H_y\approx\frac{H(x,y+\Delta)-H(x,y-\Delta)}{2\Delta}.$$
+$$
+H_x\approx\frac{H(x+\Delta,y)-H(x-\Delta,y)}{2\Delta},\quad H_y\approx\frac{H(x,y+\Delta)-H(x,y-\Delta)}{2\Delta}.
+$$
 
 基底法线可写成 $N=\operatorname{normalize}(-H_x,-H_y,1)$。坡度角则为 $\theta=\arccos N_z$。坡度场回答“有多陡”，不能单独回答“这是山脊还是凹沟”。
 
@@ -95,7 +99,9 @@ $$H_x\approx\frac{H(x+\Delta,y)-H(x-\Delta,y)}{2\Delta},\quad H_y\approx\frac{H(
 
 二阶差分可以近似拉普拉斯量：
 
-$$\Delta H\approx\frac{H_L+H_R+H_D+H_U-4H_C}{\Delta^2}.$$
+$$
+\Delta H\approx\frac{H_L+H_R+H_D+H_U-4H_C}{\Delta^2}.
+$$
 
 在本坐标定义下，简单碗底为正、山峰为负。动画把负值显示为蓝、正值显示为黄，中间值接近中性。真实地形分析还可以区分 profile curvature、plan curvature 等，不应把所有曲率都等同于这个标量。
 
@@ -146,11 +152,15 @@ Wildlands 的道路工具先解决路径选择，再产生可被其他系统消�
 
 设 $d$ 是点到中心线的水平距离，$w$ 为道路全宽，$b$ 为路肩过渡宽度：
 
-$$m(d)=1-\operatorname{smoothstep}(w/2,w/2+b,d).$$
+$$
+m(d)=1-\operatorname{smoothstep}(w/2,w/2+b,d).
+$$
 
 再由曲线纵断面和横断面得到目标高度 $H_{road}$：
 
-$$H'=(1-m)H+mH_{road}.$$
+$$
+H'=(1-m)H+mH_{road}.
+$$
 
 这是本文的教学施工模型。道路材质和植被排除可以从同一距离生成，却未必使用相同宽度：路肩可比行车面宽，植被安全距离还可继续外扩。保留共同源曲线和各输出参数，才能保证修改后一起更新。
 
@@ -170,7 +180,9 @@ Wildlands 第 91 页把岩石工具分成分布 Mask 和分布规则。Mask 说�
 
 一个教学密度可写成：
 
-$$\rho(P)=\rho_0\,M_{biome}\,M_{slope}\,M_{wetness}\,(1-M_{exclusion}).$$
+$$
+\rho(P)=\rho_0\,M_{biome}\,M_{slope}\,M_{wetness}\,(1-M_{exclusion}).
+$$
 
 密度仍不是最终实例。生成器还要用确定 Seed 采样点、检查最小距离和对象占地，并为每点确定资产 ID、变换和相对地形偏移。Seed 稳定有助于局部修改时保留其他点的布局。
 

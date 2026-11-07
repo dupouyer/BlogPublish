@@ -141,7 +141,7 @@ void main(){
  $("matTab").onclick=()=>switchTab("material");$("meshTab").onclick=()=>switchTab("mesh");
  for(const key of ["method","debug","tile","density","height","yaw","wire","amplitude"])$(key).addEventListener("input",()=>{if(key!=="density")draw();change()});
  window.addEventListener("resize",draw);
- const resizeObserver=new ResizeObserver(()=>{if(parent!==window)parent.postMessage({type:'article-lab-size',height:document.body.scrollHeight+24},location.origin)});resizeObserver.observe(document.body);
+ const resizeObserver=new ResizeObserver(()=>{if(parent!==window)parent.postMessage({type:'article-lab-size',height:Math.ceil(document.body.getBoundingClientRect().height)+24},location.origin)});resizeObserver.observe(document.body);
  window.addEventListener('pagehide',()=>resizeObserver.disconnect(),{once:true});
  switchTab("material");
 })();

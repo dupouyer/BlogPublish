@@ -64,7 +64,9 @@ $$
 
 这里 $p_m$ 是 Page 坐标，$f_m$ 是页内位置。页表给出物理槽坐标 $a$，页边界若带 $b$ 个 Border Texel，物理图集宽高为 $A$，则概念上的最终采样坐标是：
 
-$$UV_{physical}=\frac{a(B+2b)+b+f_m B}{A}.$$
+$$
+UV_{physical}=\frac{a(B+2b)+b+f_m B}{A}.
+$$
 
 Border 保存邻页延拓内容，让双线性及一定范围的各向异性过滤不直接读到另一槽的无关数据；具体采样约定还需处理 texel center、导数和 Border 宽度。这个公式描述地址关系，不是 UE 页表的二进制编码。
 
@@ -76,7 +78,9 @@ Border 保存邻页延拓内容，让双线性及一定范围的各向异性过�
 
 所需页 $(m,x,y)$ 未驻留时，可以继续查父页：
 
-$$(m,x,y)\rightarrow(m+1,\lfloor x/2\rfloor,\lfloor y/2\rfloor).$$
+$$
+(m,x,y)\rightarrow(m+1,\lfloor x/2\rfloor,\lfloor y/2\rfloor).
+$$
 
 找到父页后，要按父级覆盖范围重新计算页内坐标。否则即使拿到正确物理槽，也会显示错误的地块。本实验固定让最粗父页常驻，并显示“请求键 → 实际命中键 → 槽号”。
 
@@ -102,7 +106,9 @@ Wildlands 在第 59–62 页说明了其反馈标记、缺页收集和跨帧生�
 
 一个简化的预算关系是：
 
-$$Q_{t+1}=\max(0,Q_t+R_t-U_t),$$
+$$
+Q_{t+1}=\max(0,Q_t+R_t-U_t),
+$$
 
 其中 $R_t$ 是本帧新增且去重后的缺页数，$U_t$ 是本帧完成的页数。长期 $R_t>U_t$ 时队列不可能靠“再等一帧”自动清空；需要减少需求、增加预算或接受更粗回退。
 
@@ -162,13 +168,17 @@ Mipmap 是完整地图的逐级降采样；Clipmap 在每级 Mip 中只保留一
 
 用环形地址：
 
-$$p=\operatorname{positiveMod}(worldCell,N).$$
+$$
+p=\operatorname{positiveMod}(worldCell,N).
+$$
 
 世界格 8 写到物理格 0，世界格 1–7 仍留在原位置。Shader 依据本级逻辑原点判断有效范围，再用环形地址取值，不能把数组环绕误当成世界本身循环。
 
 二维窗口移动 $\Delta x,\Delta y$，且移动量都小于 $N$ 时，新增纹素数为：
 
-$$N|\Delta x|+N|\Delta y|-|\Delta x\Delta y|.$$
+$$
+N|\Delta x|+N|\Delta y|-|\Delta x\Delta y|.
+$$
 
 减号去掉同时进入新行和新列的重叠角区。大跳跃超过窗口边长时，应重填该级。动画“Clipmap 条带”实际计算新旧矩形差集，并把新增世界格写到对应物理格；黄色条带有时会绕到纹理另一侧。
 
