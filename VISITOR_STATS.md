@@ -25,3 +25,11 @@
 - `GET /api/visits?path=/` 不增加 PV；页面加载时 POST 增加 PV。
 - 60 秒内重复访问同一路径 PV 不变；另一篇文章 PV 单独增加；同一浏览器站点 UV 不重复增加。
 - Astro ClientRouter 的客户端导航应触发文章统计更新。
+- 从站点目录运行 `pnpm exec tsx --test tests/visitor-stats.test.ts`，覆盖首页显示、请求校验、UV/PV、60 秒边界、并发去重和写入失败回滚。SQL 检查使用内存 SQLite；Cloudflare Preview 的真实 D1 与浏览器验证仍需单独执行。
+- 计数与去重锁在同一 D1 batch 事务中提交；任一写入失败会整体回滚，重试不会因已占用去重锁而丢失访问。
+
+## 当前环境（2026-11-10 核对）
+
+- Pages 项目 `blogpublish`，生产分支 `master`，保留现有 Git 自动部署入口。
+- Production：`VISITOR_DB` → `blog`；Preview：`VISITOR_DB` → `blogpublish-visitors-preview`。两库均已按 `migrations/0001_visitors.sql` 初始化并核对三张统计表，预览测试不写入生产库。
+- 修改绑定后必须重新部署；已有部署不会自动获得新绑定。不要将旧 Preview 的结果当作最新提交的验证结果。

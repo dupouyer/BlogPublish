@@ -27,13 +27,12 @@
   async function update() {
     const path = location.pathname.replace(/\/+$/, '') || '/';
     const sequence = ++latest;
+    const visitKey = 'blogpublish:visit:' + path;
     // Throttle reloads and fast client-side revisits; server also enforces 60 seconds.
     let send = true;
     try {
-      const key = 'blogpublish:visit:' + path;
-      const last = Number(sessionStorage.getItem(key) || 0);
+      const last = Number(sessionStorage.getItem(visitKey) || 0);
       if (Date.now() - last < 60000) send = false;
-      else sessionStorage.setItem(key, String(Date.now()));
     } catch { /* Session storage may be disabled. */ }
     try {
       const response = await fetch('/api/visits' + (send ? '' : '?path=' + encodeURIComponent(path)), {
@@ -47,7 +46,10 @@
       });
       if (!response.ok) return;
       const data = await response.json();
-      if (sequence === latest && location.pathname.replace(/\/+$/, '') === path) show(data);
+      if (send) {
+        try { sessionStorage.setItem(visitKey, String(Date.now())); } catch { /* Storage may be disabled. */ }
+      }
+      if (sequence === latest && (location.pathname.replace(/\/+$/, '') || '/') === path) show(data);
     } catch { /* Stats are optional and must never interrupt reading. */ }
   }
   document.addEventListener('astro:page-load', update);
