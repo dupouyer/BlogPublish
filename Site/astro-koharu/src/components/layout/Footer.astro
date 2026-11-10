@@ -47,6 +47,18 @@ const startYear = siteConfig?.startYear ?? currentYear;
       </button>
     </div>
 
+    <!-- Cloudflare D1 visitor statistics: client-rendered, gracefully unavailable before setup. -->
+    <div class="text-muted-foreground flex flex-wrap items-center justify-center gap-4 text-xs opacity-75" aria-label="访客统计">
+      <span class="flex items-center gap-1.5" title="全站独立访客（基于浏览器标识）">
+        <Icon name="ri:user-line" class="h-4 w-4" />
+        访客 <span data-visitor-uv class="font-medium tabular-nums">—</span>
+      </span>
+      <span class="flex items-center gap-1.5" title="全站累计浏览">
+        <Icon name="ri:eye-line" class="h-4 w-4" />
+        浏览 <span data-visitor-pv class="font-medium tabular-nums">—</span>
+      </span>
+    </div>
+
     <!-- Copyright -->
     <div class="text-muted-foreground flex items-center gap-0.5 text-sm">
       <span class="opacity-75">©</span>
