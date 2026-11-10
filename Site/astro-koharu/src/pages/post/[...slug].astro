@@ -189,6 +189,10 @@ if (post.data.description) {
         <CustomContent Content={Content} />
       </article>
       <ArticleKnowledge post={post} position="bottom" />
+      <div class="text-muted-foreground flex items-center gap-2 border-t border-border/50 pt-3 text-xs" aria-label="文章浏览量">
+        <Icon name="ri:eye-line" class="h-4 w-4" />
+        本文阅读 <span data-visitor-post class="font-medium tabular-nums">—</span> 次
+      </div>
       <Comment />
     </div>
   </TwoColumnLayout>

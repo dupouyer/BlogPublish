@@ -61,6 +61,8 @@ const ogImage = getOgImageUrl(post?.data.cover, Astro.site);
     <link rel="stylesheet" href="/fonts/ChillRoundFBold/result.css" media="print" onload="this.setAttribute('media','all')" />
 
     <ClientRouter />
+    <!-- Same-origin Cloudflare Pages analytics, including ClientRouter transitions. -->
+    <script is:inline src="/js/visitor-stats.js" defer></script>
     <LoadingIndicator color="hsl(var(--primary))" />
     <Tooltips />
     <!-- SEO 元数据由 astro-seo 管理 -->
