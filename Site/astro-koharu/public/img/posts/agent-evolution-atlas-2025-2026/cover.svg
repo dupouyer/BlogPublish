@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
+<title id="t">Agent Evolution Atlas 2025—2026</title>
+<desc id="d">An annotated branching timeline showing the transition from Vibe Coding to agentic engineering, with historical forks, constraints and evidence.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101723"/><stop offset=".48" stop-color="#0A0E15"/><stop offset="1" stop-color="#17202A"/></linearGradient><linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#BDA6FF"/><stop offset=".45" stop-color="#71B8FC"/><stop offset="1" stop-color="#5DE5BB"/></linearGradient><pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0H0V64" fill="none" stroke="#7890A6" stroke-opacity=".09"/></pattern><filter id="glow"><feGaussianBlur stdDeviation="16"/></filter></defs>
+<rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#grid)"/>
+<text x="120" y="142" fill="#79E2C0" font-size="25" font-family="monospace" letter-spacing="5">AGENT / EVOLUTION ATLAS</text>
+<text x="120" y="257" fill="#F1F5F9" font-size="73" font-weight="750" font-family="system-ui, sans-serif">从 Vibe Coding</text>
+<text x="120" y="357" fill="#F1F5F9" font-size="73" font-weight="750" font-family="system-ui, sans-serif">到 Agentic Engineering</text>
+<text x="124" y="420" fill="#A1B4C7" font-size="28" font-family="system-ui, sans-serif">2025.01 — 2026.11　理念 · 决策 · 分叉 · 验证</text>
+<path d="M120 700 C260 690 315 598 470 638 S690 724 840 598 S1100 514 1280 569 S1440 450 1500 466" stroke="#8ABFF8" opacity=".24" stroke-width="34" fill="none" filter="url(#glow)"/>
+<path d="M120 700 C260 690 315 598 470 638 S690 724 840 598 S1100 514 1280 569 S1440 450 1500 466" stroke="url(#beam)" stroke-width="6" fill="none"/>
+<path d="M470 638 Q580 527 675 508 T880 474" stroke="#BDA6FF" stroke-width="3" fill="none" stroke-dasharray="9 9" opacity=".8"/>
+<path d="M840 598 Q920 693 1009 706 T1230 749" stroke="#F0B474" stroke-width="3" fill="none" stroke-dasharray="9 9" opacity=".8"/>
+<g stroke="#79DED0" stroke-width="4"><circle cx="120" cy="700" r="12" fill="#0A0E15"/><circle cx="470" cy="638" r="12" fill="#0A0E15"/><circle cx="840" cy="598" r="12" fill="#0A0E15"/><circle cx="1280" cy="569" r="12" fill="#0A0E15"/><circle cx="1500" cy="466" r="12" fill="#0A0E15"/></g>
+<g font-family="monospace" font-size="22" fill="#CFD8E1"><text x="120" y="758">2025 Q1</text><text x="440" y="699">TOOLS</text><text x="790" y="658">CONTEXT</text><text x="1233" y="635">HARNESS</text><text x="1395" y="428">2026 Q4</text></g>
+<rect x="120" y="813" width="1360" height="1" fill="#485969"/><text x="122" y="847" fill="#8497A9" font-family="monospace" font-size="17">38 NODES</text><text x="365" y="847" fill="#8497A9" font-family="monospace" font-size="17">18 DECISION FORKS</text><text x="785" y="847" fill="#8497A9" font-family="monospace" font-size="17">47 SOURCES</text><text x="1155" y="847" fill="#8497A9" font-family="monospace" font-size="17">HISTORICAL REPLAY</text>
+</svg>
