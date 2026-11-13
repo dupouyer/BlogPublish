@@ -1,17 +1,50 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="t d">
-<title id="t">Agent Evolution Atlas 2025—2026</title>
-<desc id="d">An annotated branching timeline showing the transition from Vibe Coding to agentic engineering, with historical forks, constraints and evidence.</desc>
-<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101723"/><stop offset=".48" stop-color="#0A0E15"/><stop offset="1" stop-color="#17202A"/></linearGradient><linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#BDA6FF"/><stop offset=".45" stop-color="#71B8FC"/><stop offset="1" stop-color="#5DE5BB"/></linearGradient><pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse"><path d="M64 0H0V64" fill="none" stroke="#7890A6" stroke-opacity=".09"/></pattern><filter id="glow"><feGaussianBlur stdDeviation="16"/></filter></defs>
+<title id="t">Agent 技术演化与决策分叉，纯视觉 Banner</title>
+<desc id="d">无可见文字。渐变星空和细网格下方，一条蓝紫青绿光谱的演化曲线连接代码、协作、层级、代理网络、验证与工程模块符号，并在关键节点分叉。</desc>
+<defs>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0C1728"/><stop offset=".52" stop-color="#090E18"/><stop offset="1" stop-color="#10202C"/></linearGradient>
+<linearGradient id="beam" x1="0" x2="1"><stop stop-color="#AD9AFE"/><stop offset=".25" stop-color="#9BC5FF"/><stop offset=".58" stop-color="#5CD5D5"/><stop offset="1" stop-color="#7CEDBA"/></linearGradient>
+<linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#213A52" stop-opacity=".8"/><stop offset="1" stop-color="#182536" stop-opacity=".35"/></linearGradient>
+<radialGradient id="mist"><stop stop-color="#426AA0" stop-opacity=".30"/><stop offset="1" stop-color="#426AA0" stop-opacity="0"/></radialGradient>
+<pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M60 0H0V60" stroke="#6E90B7" stroke-opacity=".08" fill="none"/></pattern>
+<pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="#6592B7" opacity=".3"/></pattern>
+<filter id="glow" x="-30%" y="-130%" width="160%" height="360%"><feGaussianBlur stdDeviation="17"/></filter>
+<filter id="smallGlow" x="-150%" y="-150%" width="400%" height="400%"><feGaussianBlur stdDeviation="5"/></filter>
+</defs>
 <rect width="1600" height="900" fill="url(#bg)"/><rect width="1600" height="900" fill="url(#grid)"/>
-<text x="120" y="142" fill="#79E2C0" font-size="25" font-family="monospace" letter-spacing="5">AGENT / EVOLUTION ATLAS</text>
-<text x="120" y="257" fill="#F1F5F9" font-size="73" font-weight="750" font-family="system-ui, sans-serif">从 Vibe Coding</text>
-<text x="120" y="357" fill="#F1F5F9" font-size="73" font-weight="750" font-family="system-ui, sans-serif">到 Agentic Engineering</text>
-<text x="124" y="420" fill="#A1B4C7" font-size="28" font-family="system-ui, sans-serif">2025.01 — 2026.11　理念 · 决策 · 分叉 · 验证</text>
-<path d="M120 700 C260 690 315 598 470 638 S690 724 840 598 S1100 514 1280 569 S1440 450 1500 466" stroke="#8ABFF8" opacity=".24" stroke-width="34" fill="none" filter="url(#glow)"/>
-<path d="M120 700 C260 690 315 598 470 638 S690 724 840 598 S1100 514 1280 569 S1440 450 1500 466" stroke="url(#beam)" stroke-width="6" fill="none"/>
-<path d="M470 638 Q580 527 675 508 T880 474" stroke="#BDA6FF" stroke-width="3" fill="none" stroke-dasharray="9 9" opacity=".8"/>
-<path d="M840 598 Q920 693 1009 706 T1230 749" stroke="#F0B474" stroke-width="3" fill="none" stroke-dasharray="9 9" opacity=".8"/>
-<g stroke="#79DED0" stroke-width="4"><circle cx="120" cy="700" r="12" fill="#0A0E15"/><circle cx="470" cy="638" r="12" fill="#0A0E15"/><circle cx="840" cy="598" r="12" fill="#0A0E15"/><circle cx="1280" cy="569" r="12" fill="#0A0E15"/><circle cx="1500" cy="466" r="12" fill="#0A0E15"/></g>
-<g font-family="monospace" font-size="22" fill="#CFD8E1"><text x="120" y="758">2025 Q1</text><text x="440" y="699">TOOLS</text><text x="790" y="658">CONTEXT</text><text x="1233" y="635">HARNESS</text><text x="1395" y="428">2026 Q4</text></g>
-<rect x="120" y="813" width="1360" height="1" fill="#485969"/><text x="122" y="847" fill="#8497A9" font-family="monospace" font-size="17">38 NODES</text><text x="365" y="847" fill="#8497A9" font-family="monospace" font-size="17">18 DECISION FORKS</text><text x="785" y="847" fill="#8497A9" font-family="monospace" font-size="17">47 SOURCES</text><text x="1155" y="847" fill="#8497A9" font-family="monospace" font-size="17">HISTORICAL REPLAY</text>
+<ellipse cx="1410" cy="660" rx="640" ry="380" fill="url(#mist)"/>
+<ellipse cx="130" cy="690" rx="540" ry="260" fill="url(#mist)" opacity=".7"/>
+<path d="M0 785 Q240 702 475 755 T900 730 T1600 690 V900 H0Z" fill="#17253B" opacity=".47"/>
+<path d="M0 817 Q300 766 620 796 T1150 777 T1600 725 V900 H0Z" fill="#18243C" opacity=".52"/>
+<path d="M0 780 Q280 718 550 734 T1100 694 T1600 655" stroke="#3D7396" stroke-width="2" stroke-opacity=".2" fill="none"/>
+<path d="M0 795 Q350 745 650 741 T1150 712 T1600 690" stroke="#57A5C1" stroke-width="1" stroke-opacity=".13" fill="none"/>
+<path d="M25 705 C170 713 244 655 340 650 S555 717 665 664 S846 580 960 616 S1178 649 1288 561 S1469 540 1570 475" stroke="#85BCFF" stroke-opacity=".2" stroke-width="44" filter="url(#glow)" fill="none"/>
+<path d="M25 705 C170 713 244 655 340 650 S555 717 665 664 S846 580 960 616 S1178 649 1288 561 S1469 540 1570 475" stroke="url(#beam)" stroke-width="6" stroke-linecap="round" fill="none"/>
+<path d="M340 650 Q434 536 552 541 T775 500" fill="none" stroke="#AE91FB" stroke-width="2.5" stroke-dasharray="9 10" opacity=".62"/>
+<path d="M665 664 Q776 778 894 749 T1110 785" fill="none" stroke="#DCA780" stroke-width="2.5" stroke-dasharray="9 10" opacity=".63"/>
+<path d="M960 616 Q1056 519 1168 477 T1355 411" fill="none" stroke="#77C8D6" stroke-width="2" stroke-dasharray="8 12" opacity=".31"/>
+<g fill="none" stroke="#7BB6DD" opacity=".28"><path d="M55 824 Q400 752 760 819 T1510 786"/><path d="M55 843 Q400 771 760 839 T1510 805"/><path d="M55 866 Q400 792 760 860 T1510 832"/></g>
+<rect x="0" y="720" width="1600" height="180" fill="url(#dots)" opacity=".6"/>
+<g stroke="#92CAE1" stroke-width="3" fill="#0E1B29">
+<circle cx="80" cy="704" r="10"/><circle cx="340" cy="650" r="11"/><circle cx="665" cy="664" r="11"/><circle cx="960" cy="616" r="11"/><circle cx="1288" cy="561" r="11"/><circle cx="1570" cy="475" r="10"/>
+</g>
+<g fill="#99DDF0"><circle cx="80" cy="704" r="3"/><circle cx="340" cy="650" r="3"/><circle cx="665" cy="664" r="3"/><circle cx="960" cy="616" r="3"/><circle cx="1288" cy="561" r="3"/><circle cx="1570" cy="475" r="3"/></g>
+<g stroke="#7DC6E2" stroke-opacity=".24" fill="url(#card)">
+<rect x="235" y="525" width="130" height="92" rx="19"/>
+<rect x="511" y="531" width="130" height="92" rx="19"/>
+<rect x="810" y="483" width="130" height="92" rx="19"/>
+<rect x="1110" y="437" width="130" height="92" rx="19"/>
+<rect x="1411" y="345" width="130" height="92" rx="19"/>
+</g>
+<!-- Code changes: paired chevrons and a single connector -->
+<g stroke="#BBA6FA" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M281 559l-18 14 18 14M314 559l18 14-18 14M306 551l-11 42"/></g>
+<!-- Collaboration: distinct human and speech signals -->
+<g fill="none" stroke="#90C3FE" stroke-width="4" stroke-linecap="round"><circle cx="555" cy="558" r="10"/><path d="M537 597q0-20 18-20t18 20"/><rect x="579" y="551" width="36" height="24" rx="9"/><path d="M588 575l-3 9 14-9"/></g>
+<!-- Layers: stable structure -->
+<g fill="none" stroke="#7BDAEB" stroke-width="4.5" stroke-linejoin="round"><path d="M831 526l43-16 43 16-43 17z"/><path d="M832 543l42 18 42-18M834 557l40 17 40-17"/></g>
+<!-- Agents: hierarchy/network -->
+<g fill="none" stroke="#6FE1D4" stroke-width="4.3" stroke-linecap="round"><rect x="1158" y="460" width="31" height="25" rx="7"/><path d="M1174 460v-9M1167 472h2m11 0h2M1174 485v12M1174 497h-33M1174 497h33M1141 497v9M1207 497v9"/><circle cx="1141" cy="511" r="6"/><circle cx="1207" cy="511" r="6"/></g>
+<!-- Governance: modular architecture -->
+<g fill="none" stroke="#88E3C8" stroke-width="4.2" stroke-linejoin="round"><path d="M1454 384l20-11 20 11v24l-20 11-20-11zM1474 395l20-11M1474 395l-20-11M1474 395v24"/><path d="M1494 378l17-10 17 10v20l-17 10-17-10M1511 388l17-10M1511 388l-17-10M1511 388v20" opacity=".75"/></g>
+<g fill="#6CA4D5" opacity=".25"><circle cx="123" cy="472" r="4"/><circle cx="178" cy="520" r="3"/><circle cx="435" cy="401" r="4"/><circle cx="711" cy="434" r="3"/><circle cx="1069" cy="356" r="4"/><circle cx="1336" cy="316" r="3"/></g>
 </svg>
