@@ -1,0 +1,1490 @@
+{
+  "events": [
+    {
+      "id": "operator",
+      "date": "2025-01-23",
+      "title": "Agent 从“回答”转向“操作”",
+      "cat": "tool",
+      "imp": 2,
+      "tag": "GUI 行动",
+      "known": "OpenAI Operator 研究预览让模型依据屏幕反馈点击、输入、滚动，跨越自然语言建议与实际软件操作之间的边界。",
+      "limits": "浏览器操作成功率和安全性尚有限；关键步骤需要用户监督，界面变化易造成失败。",
+      "change": "从“模型能说什么”转为“模型能采取什么动作”；开始为执行建立权限边界。",
+      "openq": "GUI 自动化能否替代 API？当页面变化时如何恢复？",
+      "src": [
+        "operator"
+      ]
+    },
+    {
+      "id": "vibe",
+      "date": "2025-02-02",
+      "title": "Vibe Coding：忘掉代码，直接试",
+      "cat": "idea",
+      "imp": 3,
+      "tag": "范式命名",
+      "known": "Karpathy 使用 Cursor Composer + 语音描述需求，Accept All、不读 diff，以“看到效果—继续修正”为主。原表述明确更适合随手做的周末项目。",
+      "limits": "短任务能惊喜地产出结果，但代码可理解性、回归与安全缺乏保障。",
+      "change": "人类从编码动作提升到意图与效果反馈层；“低输入→可见产物”成为新的产品期待。",
+      "openq": "正式工程能否持续 Accept All？当修改超过人类审查能力怎么办？",
+      "src": [
+        "karpathy"
+      ],
+      "fork": "vibe-review"
+    },
+    {
+      "id": "claudecode",
+      "date": "2025-02-24",
+      "title": "Claude Code：终端成为 Agent 工作台",
+      "cat": "product",
+      "imp": 3,
+      "tag": "工具循环",
+      "known": "Claude 3.7 Sonnet 与 Claude Code 研究预览同时推出，Agent 可以读取仓库、执行命令、编辑文件。",
+      "limits": "仍依赖用户指引和权限审批；模型对大仓库、复杂任务、暗含设计意图的把握不稳定。",
+      "change": "从 IDE 中的单次建议迈向拥有文件、shell 和测试反馈的执行循环。",
+      "openq": "应把自主性放在 IDE、Terminal，还是托管沙箱？",
+      "src": [
+        "claude37"
+      ],
+      "fork": "interface"
+    },
+    {
+      "id": "responses",
+      "date": "2025-03-11",
+      "title": "Responses API：Agent 成为可编排系统",
+      "cat": "infra",
+      "imp": 2,
+      "tag": "统一工具接口",
+      "known": "OpenAI 发布 Responses API、内置 web/file/computer 工具、Agents SDK 与 tracing。",
+      "limits": "开发者过去往往自行管理多轮 tool calls、状态和可观测性，系统集成昂贵。",
+      "change": "把工具循环、轨迹和编排从应用胶水代码抽象成平台能力。",
+      "openq": "该用固定流程约束模型，还是放权由模型动态规划？",
+      "src": [
+        "responses"
+      ],
+      "fork": "workflow-agent"
+    },
+    {
+      "id": "metr",
+      "date": "2025-03-19",
+      "title": "METR：用任务“时间跨度”而非演示评价能力",
+      "cat": "eval",
+      "imp": 3,
+      "tag": "衡量框架",
+      "known": "METR 提出 50% 成功率任务时长（按人类专家耗时）作为能力维度，发现历史趋势持续上升。",
+      "limits": "演示可以筛选成功案例；短 benchmark 分数不足以表达长流程中持续犯错的风险。",
+      "change": "“能完成多长的任务、可靠性是多少”开始成为评估 Agent 的核心问题。",
+      "openq": "任务分布与环境差异会多大程度影响外推？",
+      "src": [
+        "metr"
+      ],
+      "fork": "metric"
+    },
+    {
+      "id": "codexcli",
+      "date": "2025-04-16",
+      "title": "Codex CLI：开源本地 Agent Harness",
+      "cat": "product",
+      "imp": 1,
+      "tag": "本地可控",
+      "known": "OpenAI 在 2025 年 4 月推出轻量级开源 Codex CLI，围绕本地文件、命令行与批准机制工作。",
+      "limits": "本地环境拥有真实依赖和代码，但安装、权限、环境漂移需用户承担。",
+      "change": "Agent loop 逐步成为可复用、可审查、可扩展的软件基础设施。",
+      "openq": "单次工具循环如何处理上下文爆炸？",
+      "src": [
+        "codexcli",
+        "codexcloud"
+      ]
+    },
+    {
+      "id": "best",
+      "date": "2025-04-18",
+      "title": "Explore → Plan → Code → Commit",
+      "cat": "practice",
+      "imp": 2,
+      "tag": "工作流范式",
+      "known": "Anthropic 的 Claude Code 实践建议先理解仓库、计划，再实现与提交；用测试、Git、主动 /clear 管理流程。",
+      "limits": "Agent 容易过早开工；会话累积大量无关内容；复杂任务没有清晰的完成条件。",
+      "change": "人类介入从逐行写代码变为规划和纠偏；计划成为可外置的工作产物。",
+      "openq": "计划是否会成为新的过度审批瓶颈？",
+      "src": [
+        "claudebest"
+      ],
+      "fork": "prompt-plan"
+    },
+    {
+      "id": "cloud",
+      "date": "2025-05-16",
+      "title": "Codex Cloud：从陪同编码到异步派单",
+      "cat": "product",
+      "imp": 3,
+      "tag": "沙箱 / PR",
+      "known": "Codex 云端研究预览把任务放入隔离沙箱并行执行，完成后提交代码或 PR。",
+      "limits": "研究预览初期没有充分的执行中纠偏能力；异步执行比实时编辑更慢。",
+      "change": "工程交付单位从“对话回合”变成“一个可验证的代码变更”。",
+      "openq": "同步结对是否会被云端异步任务取代？",
+      "src": [
+        "codexcloud"
+      ],
+      "fork": "sync-async"
+    },
+    {
+      "id": "claude4",
+      "date": "2025-05-22",
+      "title": "Claude 4：更稳定的长任务与工具中思考",
+      "cat": "model",
+      "imp": 2,
+      "tag": "长任务增强",
+      "known": "Anthropic 宣布 Opus 4 / Sonnet 4，强调长期任务、工具间思考、并行工具以及基于文件的记忆。",
+      "limits": "强模型能工作更久，不等于天然拥有持续项目记忆；高成本任务需要验证反馈。",
+      "change": "开发者开始重新估计 Agent 可以承担的任务跨度。",
+      "openq": "长任务应该在单一上下文中坚持到底吗？",
+      "src": [
+        "claude4"
+      ]
+    },
+    {
+      "id": "multi",
+      "date": "2025-06-13",
+      "title": "多 Agent 研究系统：并行是有条件的杠杆",
+      "cat": "practice",
+      "imp": 3,
+      "tag": "分工与协作",
+      "known": "Anthropic 的 Research 系统用规划 Agent 分派并行检索子 Agent，报告质量收益与协调成本。",
+      "limits": "子 Agent 互相重复、协调和 token 成本增加，任务不易分解时增益有限。",
+      "change": "从单轨多轮对话走向可并行的专门角色和结果聚合。",
+      "openq": "是否每个代码任务都应该使用多 Agent？",
+      "src": [
+        "multi"
+      ],
+      "fork": "multi-or-single"
+    },
+    {
+      "id": "gpt5",
+      "date": "2025-08-07",
+      "title": "GPT-5：编码进入更可靠的工具协作阶段",
+      "cat": "model",
+      "imp": 2,
+      "tag": "性能台阶",
+      "known": "OpenAI 报告 GPT-5 在其 SWE-bench Verified 评测配置中为 74.9%，强调代码库理解、修复和工具协作。",
+      "limits": "供应商 benchmark 受提示、工具、样本影响；不能把 SWE-bench 得分当作真实项目成功率。",
+      "change": "任务分配可以变得更激进，但仍应把模型能力与工程环境分开衡量。",
+      "openq": "高 benchmark 能否预测真实多周项目维护？",
+      "src": [
+        "gpt5"
+      ]
+    },
+    {
+      "id": "codex5",
+      "date": "2025-09-15",
+      "title": "GPT-5-Codex：交互编辑与长时间自治合流",
+      "cat": "model",
+      "imp": 2,
+      "tag": "专用编码模型",
+      "known": "OpenAI 推出 GPT-5-Codex，并升级 CLI、IDE、Cloud 和代码审查。",
+      "limits": "模型即使更强，仍需要清晰审批、回滚、任务跟踪与运行环境。",
+      "change": "“同一 Agent 内核跨多个工作面”成为产品路线；短任务和长任务使用不同节奏。",
+      "openq": "开发者应该管理会话，还是管理可审查的工作单元？",
+      "src": [
+        "codex5"
+      ]
+    },
+    {
+      "id": "context",
+      "date": "2025-09-29",
+      "title": "Context Engineering 取代单纯 Prompt 技巧",
+      "cat": "idea",
+      "imp": 3,
+      "tag": "上下文经济学",
+      "known": "Anthropic 将核心问题定义为：在有限上下文中放入最能促成目标行为的信息。同期 Sonnet 4.5 发布了 checkpoint、context editing 和 memory tool。",
+      "limits": "向模型塞入更多历史并不等于更理解项目；上下文有干扰、成本和过期风险。",
+      "change": "重心从“如何措辞”移动到“信息何时加载、如何压缩、怎样外置”。",
+      "openq": "应该只追求百万 token，还是追求按需发现和渐进披露？",
+      "src": [
+        "context",
+        "sonnet45",
+        "cursorplan"
+      ],
+      "fork": "context-window"
+    },
+    {
+      "id": "skills",
+      "date": "2025-10-16",
+      "title": "Agent Skills：把专业流程变成按需加载的能力包",
+      "cat": "infra",
+      "imp": 3,
+      "tag": "知识程序化",
+      "known": "Anthropic 提出基于文件夹的 Skills，支持按需发现、加载说明、脚本和资源，降低重复传输领域知识的成本。",
+      "limits": "一个超长 System Prompt 难维护、容易过时；针对领域重复解释程序知识低效。",
+      "change": "可重复的工程方法开始脱离会话，转为可版本管理的项目资产。",
+      "openq": "哪些知识要放在 prompt、Skills、代码检查器和训练中？",
+      "src": [
+        "skills"
+      ],
+      "fork": "skill-route"
+    },
+    {
+      "id": "mcpcode",
+      "date": "2025-11-04",
+      "title": "MCP 工具调用：从海量上下文走向代码执行",
+      "cat": "infra",
+      "imp": 2,
+      "tag": "工具扩展性",
+      "known": "Anthropic 指出直接暴露大量 MCP 工具定义和结果会吞噬上下文，提出让 Agent 通过代码调用工具。",
+      "limits": "工具集越多，初始定义成本、筛选难度和长输出污染越明显。",
+      "change": "接口互通仍重要，但“全部工具一口气提供”不再是默认最佳实践。",
+      "openq": "工具发现、权限管理、沙箱与代码执行怎样一起设计？",
+      "src": [
+        "mcpcode"
+      ],
+      "fork": "tools"
+    },
+    {
+      "id": "handoff",
+      "date": "2025-11-26",
+      "title": "跨会话长任务：Checkpoint 优于隐式记忆",
+      "cat": "practice",
+      "imp": 3,
+      "tag": "外置状态",
+      "known": "Anthropic 发布长任务 Harness，使用初始化 Agent、进度文件、功能清单和 Git 提交把工作交给下一上下文。",
+      "limits": "每次新会话失去历史；仅靠自动压缩会遗漏已完成工作和设计约束。",
+      "change": "会话变成可替换的“工人”，仓库与任务状态成为事实源。",
+      "openq": "一个超级会话与短会话接力应该如何取舍？",
+      "src": [
+        "long"
+      ],
+      "fork": "memory-handoff"
+    },
+    {
+      "id": "skillsstandard",
+      "date": "2025-12-18",
+      "title": "Agent Skills 成为跨平台开放标准",
+      "cat": "infra",
+      "imp": 1,
+      "tag": "可移植能力包",
+      "known": "Anthropic 在已有 Skills 机制的基础上宣布公开开放标准，希望工具与专业能力包可跨应用/厂商移植。",
+      "limits": "标准化并不自动解决 Skills 的可信来源、权限、依赖和版本更新问题。",
+      "change": "领域知识复用开始从私有 Prompt 扩展为开放生态组件。",
+      "openq": "跨平台能力包如何兼顾可信更新与稳定版本？",
+      "src": [
+        "skillsstandard"
+      ]
+    },
+    {
+      "id": "evals",
+      "date": "2026-01-09",
+      "title": "Eval First：从“看上去完成”到统计可靠性",
+      "cat": "eval",
+      "imp": 3,
+      "tag": "可重复评估",
+      "known": "Anthropic 系统解释 pass@k 与 pass^k，强调测试集、真实失败案例、明确评分标准。",
+      "limits": "单次成功可能只是幸运抽卡；模型评分器、模糊任务与环境噪声会误导结论。",
+      "change": "验收不仅要看能否成功一次，还要看重复执行是否稳定。",
+      "openq": "怎样把用户主观偏好转化成可复核的结果？",
+      "src": [
+        "evals"
+      ],
+      "fork": "one-shot-metric"
+    },
+    {
+      "id": "agentloop",
+      "date": "2026-01-23",
+      "title": "Agent Loop 透明化：模型不是全部系统",
+      "cat": "infra",
+      "imp": 2,
+      "tag": "可控执行机制",
+      "known": "OpenAI 拆解 Codex 的推理、工具调用、上下文累计与批准机制，明确 Harness 与模型的职责边界。",
+      "limits": "单回合可能产生数百工具调用；工具污染上下文，模型与 runtime 均会造成失败。",
+      "change": "Agent 的工程接口成为长期稳定的设计对象。",
+      "openq": "如何把工具、上下文和权限从特定模型中解耦？",
+      "src": [
+        "agentloop"
+      ]
+    },
+    {
+      "id": "codexapp",
+      "date": "2026-02-02",
+      "title": "Codex App：开发者监督多个 Agent",
+      "cat": "product",
+      "imp": 2,
+      "tag": "并行工作台",
+      "known": "OpenAI 发布 Codex App，支持跨多个独立任务的 Agent 调度，初期为 macOS。",
+      "limits": "并行提升吞吐，也扩大代码冲突、注意力切换和验收负担。",
+      "change": "编辑器不再是唯一中心；人的角色向任务组合与验收靠拢。",
+      "openq": "当 Agent 产出远超审查速度，该怎样重新定义 Review？",
+      "src": [
+        "codexapp"
+      ]
+    },
+    {
+      "id": "compiler",
+      "date": "2026-02-05",
+      "title": "16 个 Claude 写出可编译 Linux 的 C 编译器",
+      "cat": "experiment",
+      "imp": 3,
+      "tag": "自治协作极限",
+      "known": "Anthropic 报告 16 个 Agent、近 2,000 个 Claude Code 会话和约 2 万美元 API 成本，产出约 10 万行 Rust 编译器。",
+      "limits": "高强度实验可行不等于适合所有项目；并行依赖清晰接口、可执行测试和协调成本。",
+      "change": "长程自治不再只有玩具样例，但对确定性验证与工程约束高度依赖。",
+      "openq": "复杂项目能否用大量 Agent 换取人类审查时间？",
+      "src": [
+        "compiler",
+        "opus46"
+      ],
+      "fork": "multi-or-single"
+    },
+    {
+      "id": "harness",
+      "date": "2026-02-11",
+      "title": "Harness Engineering：人设计环境，Agent 写代码",
+      "cat": "idea",
+      "imp": 3,
+      "tag": "架构与反馈",
+      "known": "OpenAI 记录内部项目约百万行完全 Agent 编写代码、约 1,500 个 PR 和显式架构边界、工作树、浏览器/日志可观察性。",
+      "limits": "项目最初因环境未清晰说明而停滞；巨型 AGENTS.md 会腐烂；人工审查无法跟上吞吐。",
+      "change": "架构规则、文档地图、验证和持续清理成为比“写代码”更核心的工程工作。",
+      "openq": "没有逐行 Code Review 后，如何保证长期可维护性？",
+      "src": [
+        "harness"
+      ],
+      "fork": "review"
+    },
+    {
+      "id": "agentic",
+      "date": "2026-02-25",
+      "title": "从 Vibe Coding 到 Agentic Engineering",
+      "cat": "idea",
+      "imp": 3,
+      "tag": "控制与验证",
+      "known": "Karpathy 将关注点从连续发提示转向并行任务、可测试环境、评审和更高层的方向管理。",
+      "limits": "自然语言交付已经成立，但无结构地 Accept All 难保证复杂产品的意图与一致性。",
+      "change": "人类从驱动每一步的 Execution Mindset 转为组织验证闭环的 Verification Mindset。",
+      "openq": "软件工程经验会贬值，还是变为更大的杠杆？",
+      "src": [
+        "agentic",
+        "third"
+      ],
+      "fork": "vibe-review"
+    },
+    {
+      "id": "gpt54",
+      "date": "2026-03-05",
+      "title": "GPT-5.4：统一编码、电脑操作与专业任务",
+      "cat": "model",
+      "imp": 2,
+      "tag": "跨工具能力",
+      "known": "OpenAI 推出 GPT-5.4，融合编码模型能力、计算机使用、长任务及原生压缩支持。",
+      "limits": "单次推理能力提升不等于高可靠执行；工具执行与上下文管理仍影响结果。",
+      "change": "跨工具回路成熟，Agent 可以针对真实软件“运行—检查—修复”。",
+      "openq": "模型越强，Harness 的复杂度应增加还是减少？",
+      "src": [
+        "gpt54"
+      ]
+    },
+    {
+      "id": "harnessapp",
+      "date": "2026-03-24",
+      "title": "Planner → Generator → Evaluator",
+      "cat": "practice",
+      "imp": 3,
+      "tag": "独立验收",
+      "known": "Anthropic 针对完整前端应用引入规划、生成、独立评估，Evaluator 用真实浏览器操作检验功能。",
+      "limits": "生成器会高估自身质量；看起来存在的函数可能未被正确 UI 交互调用。",
+      "change": "把“需求展开”与“验收执行”分离，探索美学与功能双重评分。",
+      "openq": "独立评估什么时候值得额外成本？",
+      "src": [
+        "harnessapp"
+      ],
+      "fork": "one-shot-eval"
+    },
+    {
+      "id": "automode",
+      "date": "2026-03-25",
+      "title": "权限疲劳：逐次确认也会失效",
+      "cat": "safety",
+      "imp": 2,
+      "tag": "授权策略",
+      "known": "Anthropic 报告用户批准了 93% 的 Claude Code 权限请求，设计 auto mode 分类器减少低价值确认。",
+      "limits": "全部放开权限危险；每次都弹窗又令用户习惯性同意，形成虚假的安全感。",
+      "change": "安全由“人每次点同意”转向沙箱、风险分类和关键操作审批。",
+      "openq": "静态规则与模型审核应该怎么互相制衡？",
+      "src": [
+        "automode"
+      ],
+      "fork": "permissions"
+    },
+    {
+      "id": "managed",
+      "date": "2026-04-08",
+      "title": "Managed Agents：Harness 要跟着模型一起收敛",
+      "cat": "infra",
+      "imp": 2,
+      "tag": "重新审视脚手架",
+      "known": "Anthropic 提出稳定的 Brain/Hands 接口，并强调为弱模型设计的变通机制可能随能力提升而过时。",
+      "limits": "过去为防止模型提前停止而加入的状态处理和重置策略，会随着更强模型变成额外复杂度。",
+      "change": "不再把所有 Harness 技巧当永恒最佳实践；定期用新模型重新评估必要性。",
+      "openq": "增加复杂度与移除过时约束哪个更重要？",
+      "src": [
+        "managed"
+      ],
+      "fork": "harness-complexity"
+    },
+    {
+      "id": "evalfly",
+      "date": "2026-05-12",
+      "title": "Traces → Evals → Codex：经验进入反馈飞轮",
+      "cat": "eval",
+      "imp": 2,
+      "tag": "自我改进",
+      "known": "OpenAI 给出用真实轨迹、人工/模型反馈形成评测并驱动 Harness 修改的实践样例。",
+      "limits": "经验若仅留在聊天记录中，就不能帮助未来迭代；模型自评不能直接作为真实性保证。",
+      "change": "从失败个例走向持续回归资产与自动改进候选方案。",
+      "openq": "谁来审核评测本身是否忠实于目标？",
+      "src": [
+        "evalfly"
+      ]
+    },
+    {
+      "id": "contain",
+      "date": "2026-05-25",
+      "title": "自治扩大了“爆炸半径”",
+      "cat": "safety",
+      "imp": 2,
+      "tag": "能力与权限双增",
+      "known": "Anthropic 解释 Agent 可访问更高风险基础设施后，风险不只取决于犯错概率，还取决于一旦犯错的影响。",
+      "limits": "强模型可以降低部分错误率，但访问更多资源会放大损失上界。",
+      "change": "把权限隔离、最小授权与可终止性提升为 Agent 系统基本能力。",
+      "openq": "能力越高，是否应该赋予越广的默认权限？",
+      "src": [
+        "contain"
+      ]
+    },
+    {
+      "id": "gpt6",
+      "date": "2026-09-03",
+      "title": "GPT-6 Astra：更长任务与中途纠偏",
+      "cat": "model",
+      "imp": 3,
+      "tag": "新能力台阶",
+      "known": "OpenAI 发布 GPT-6 Astra，增强复杂、多步骤工作与电脑操作，并发布异步工具与中途引导接口。",
+      "limits": "模型能做更难的任务，也增强了安全与误对齐风险，不能自动默认全权自治。",
+      "change": "人类可在长任务执行过程中调整目标，而不是只能在结果出来后返工。",
+      "openq": "中途 Steering 与完全无人值守之间如何划分职责？",
+      "src": [
+        "gpt6",
+        "gpt6api"
+      ]
+    },
+    {
+      "id": "projects",
+      "date": "2026-09-10",
+      "title": "Cursor Projects：从任务代理到项目级代理",
+      "cat": "product",
+      "imp": 2,
+      "tag": "长期项目状态",
+      "known": "Cursor 发布 Projects，目标是跨月保留上下文、分派多 Agent，并执行周期性工作。",
+      "limits": "“一个任务一会话”难承载项目层的未完成事项、反复反馈和持续维护。",
+      "change": "工作单元开始上移到长期 Project；任务会话变成项目的一次执行片段。",
+      "openq": "项目记忆如何避免陈旧、互相矛盾和脱离仓库？",
+      "src": [
+        "cursorprojects"
+      ],
+      "fork": "memory-handoff"
+    },
+    {
+      "id": "recursive",
+      "date": "2026-09-18",
+      "title": "从人工观察到模型辅助的研发循环",
+      "cat": "eval",
+      "imp": 2,
+      "tag": "能力增长证据",
+      "known": "Anthropic 报告 Claude Code 任务成功率的内部趋势，范围涵盖开放式问题，并由 Claude 评审。",
+      "limits": "模型判定器与任务分布存在偏差；内部成功率不等于独立项目的确定性保证。",
+      "change": "更长任务的可用性持续提升，同时要求对评估方式作更清楚的披露。",
+      "openq": "模型评审改善能否转化为独立可重复证据？",
+      "src": [
+        "recursive",
+        "metr11"
+      ]
+    },
+    {
+      "id": "gpt61",
+      "date": "2026-09-29",
+      "title": "原生 Multi-Agent 与 Computer Use API",
+      "cat": "infra",
+      "imp": 2,
+      "tag": "并行与长期控制",
+      "known": "OpenAI API 将多 Agent 委派、计算机使用等能力纳入可用接口；工具调用与长程控制进一步平台化。",
+      "limits": "并行不是免费：需处理环境隔离、调度成本、权限审批与中间结果整合。",
+      "change": "Agent 编排更多变成平台能力，而非人人维护手工 Crew。",
+      "openq": "哪些分工值得编排，哪些任务单 Agent 更快？",
+      "src": [
+        "gpt61"
+      ],
+      "fork": "multi-or-single"
+    },
+    {
+      "id": "scion",
+      "date": "2026-10-13",
+      "title": "Scion：Git 与 CI 开始遇到 Agent 规模瓶颈",
+      "cat": "infra",
+      "imp": 3,
+      "tag": "代码基础设施",
+      "known": "Anthropic 报告合并变更从 2026 年 5 月每天约 2,500 增至 9 月超过 30,000；为此构建 Scion 替换其超大单仓的 Git 系统。",
+      "limits": "此极端规模具有特殊性，不能推断一般团队应放弃 Git；全局 Merge Queue 和漫长 CI 开销变为瓶颈。",
+      "change": "版本控制、合并与测试从“人类开发节奏”开始向“Agent 生产节奏”转型。",
+      "openq": "什么时候值得重造开发基础设施，什么时候优化 Git 工作树和 CI 即可？",
+      "src": [
+        "scion"
+      ],
+      "fork": "git-vs-scion"
+    },
+    {
+      "id": "maint",
+      "date": "2026-10-14",
+      "title": "维护反噬：生成越来越快，清理也要自动化",
+      "cat": "practice",
+      "imp": 3,
+      "tag": "工程垃圾回收",
+      "known": "OpenAI 描述 GPT-6 系列辅助提出维护 PR，团队累计合并超过 1,400 个，仍强调证据、收益衡量与人工审查。",
+      "limits": "盲目清理会删除仍有用途的实验分支；量产代码让技术债也快速累积。",
+      "change": "维护从偶发重构升级为持续、证据驱动的工作流。",
+      "openq": "软件架构需要记录代码以外的“为什么存在”。",
+      "src": [
+        "maint"
+      ]
+    },
+    {
+      "id": "memory",
+      "date": "2026-11-06",
+      "title": "Agent Memory：记录、索引、巩固成为独立系统",
+      "cat": "infra",
+      "imp": 2,
+      "tag": "可维护记忆",
+      "known": "Anthropic 提出记忆层级与 Dreaming：长期笔记、索引和按需注入，离线整理能修正、归纳历史。",
+      "limits": "即时记忆会打断任务；全部注入上下文成本高且会携带错误，历史笔记会过时。",
+      "change": "工程记忆从会话摘要转向可更新的知识图谱和选择性检索。",
+      "openq": "自动整理如何避免错误记忆影响后续任务？",
+      "src": [
+        "memory"
+      ],
+      "fork": "memory-handoff"
+    },
+    {
+      "id": "saltline",
+      "date": "2026-11-09",
+      "title": "Saltline：单句要求，不等于单步执行",
+      "cat": "experiment",
+      "imp": 3,
+      "tag": "One-shot 实验",
+      "known": "Felix Rieseberg 以一条提示驱动 Fable 5.2 生成 1.4 MB 单文件浏览器 FPS；其披露约 8 小时、约 270 万输出与 4.45 亿输入 token、缓存较重，按 API 价格估算约 550 美元。",
+      "limits": "这是范围受限、以表现为先的微型 FPS 实验；公开信息不足以证明项目全流程设计可复现或维护成本极低。",
+      "change": "低人工输入能生成惊艳原型；产品想法、回归验收和多年架构仍应外置。",
+      "openq": "探索性抽卡与正式产品工程应该如何切换？",
+      "src": [
+        "fable",
+        "felix",
+        "saltline"
+      ],
+      "fork": "one-shot-eval"
+    },
+    {
+      "id": "persistent",
+      "date": "2026-11-12",
+      "title": "Persistent Agent：24/7 自治需要控制平面",
+      "cat": "safety",
+      "imp": 3,
+      "tag": "持续自治的边界",
+      "known": "OpenAI 披露企业内运行持久 Agent 的做法：可信控制平面与不可信执行分离、沙箱、身份、自动审查和可观测性。",
+      "limits": "连续工作和广泛权限放大失控、越权与审计风险；传统软件静态配置假设不再完整成立。",
+      "change": "长程自治成为运营系统工程问题，不只是更多 tokens 或更长提示词。",
+      "openq": "“永远运行”应遵守哪些独立于模型的安全约束？",      "src": [
+        "persistent"
+      ],
+      "fork": "persistent-choice"
+    }
+  ],
+  "forks": {
+    "vibe-review": {
+      "q": "人可以不看代码，直接 Accept All 吗？",
+      "when": "2025-02-02",
+      "context": "早期 LLM 已可快速产出小应用，但维护性、权限和真实回归仍缺乏支撑。",
+      "opts": [
+        {
+          "name": "纯 Vibe / Accept All",
+          "at": "最快反馈、极低门槛，适合原型和一次性演示。",
+          "cost": "几乎没有可追责的行为契约；长期修改易累积隐性故障。",
+          "date": "2026-02-11",
+          "end": "仍适合低风险探索；OpenAI 的大规模案例转向架构约束与验收。",
+          "status": "conditional"
+        },
+        {
+          "name": "人工逐行审核",
+          "at": "保留精细控制，适合高风险变更。",
+          "cost": "代码吞吐远超人工注意力；对大量机器代码不可扩展。",
+          "date": "2026-02-11",
+          "end": "变为风险分级审核，不能作为所有变更的唯一保护。",
+          "status": "conditional"
+        },
+        {
+          "name": "Agent 产出 + 可执行验证",
+          "at": "将人的关注点从语法转向目标、结构和行为。",
+          "cost": "建设测试、沙箱与观测性有前期成本。",
+          "date": "2026-03-24",
+          "end": "OpenAI Harness + Anthropic 独立 Evaluator 给出可复用工程证据。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "interface": {
+      "q": "Agent 应该工作在什么界面？",
+      "when": "2025-02-24",
+      "context": "IDE 强在交互可见性，Terminal 强在全仓库工具链，Cloud 强在隔离与异步。",
+      "opts": [
+        {
+          "name": "IDE 内联结对",
+          "at": "低门槛、及时监督、适合短反馈循环。",
+          "cost": "需要人工持续关注；并行数量受限。",
+          "date": "2026-02-26",
+          "end": "仍适合探索与细节打磨；不是大批量任务的唯一入口。",
+          "status": "conditional"
+        },
+        {
+          "name": "CLI / 本地 Agent",
+          "at": "可运行编译、测试和仓库操作；容易脚本化。",
+          "cost": "本地依赖、权限与环境漂移。",
+          "date": "2026-01-23",
+          "end": "成为统一 Agent Loop 的重要入口。",
+          "status": "preferred"
+        },
+        {
+          "name": "云端沙箱 / 异步 Agent",
+          "at": "隔离环境、可并行委派、交付 PR。",
+          "cost": "环境复现、异步反馈和资源成本。",
+          "date": "2026-02-02",
+          "end": "与 IDE/CLI 并存，形成单一 Harness 的多种工作面。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "workflow-agent": {
+      "q": "固定 Workflow 还是动态 Agent？",
+      "when": "2025-03-11",
+      "context": "流程可预知性与适应复杂异常之间的权衡。",
+      "opts": [
+        {
+          "name": "预定义 Workflow",
+          "at": "可预测、易测试、费用可控。",
+          "cost": "分支爆炸时难适应未知环境。",
+          "date": "2026-04-08",
+          "end": "结构稳定的任务仍常常最优。",
+          "status": "preferred"
+        },
+        {
+          "name": "模型自主 Agent Loop",
+          "at": "会根据工具反馈修复、探索未知情况。",
+          "cost": "失败轨迹难预估，要求沙箱和可观察性。",
+          "date": "2026-04-08",
+          "end": "复杂非确定任务的核心执行单元，需 Harness。",
+          "status": "preferred"
+        },
+        {
+          "name": "处处使用多 Agent",
+          "at": "表面上并行而智能。",
+          "cost": "协调、上下文和验证费用过高。",
+          "date": "2026-02-05",
+          "end": "仅在有明确并行收益时值得采用。",
+          "status": "limited"
+        }
+      ]
+    },
+    "metric": {
+      "q": "“能力好”该用什么指标？",
+      "when": "2025-03-19",
+      "context": "单题得分和演示效果无法反映自主执行的持续可靠性。",
+      "opts": [
+        {
+          "name": "只看公开 Benchmark",
+          "at": "快、易比较、公开数字。",
+          "cost": "配置与测试分布差异，忽略环境与工具能力。",
+          "date": "2026-01-09",
+          "end": "必须标注测试配置，不能代表生产稳定性。",
+          "status": "limited"
+        },
+        {
+          "name": "人类耗时对应的 Time Horizon",
+          "at": "直接量化可独立完成的任务跨度。",
+          "cost": "受任务集、环境和成功率阈值影响。",
+          "date": "2026-01-29",
+          "end": "METR 更新方法与任务集，趋势有价值，数字应带方法版本。",
+          "status": "preferred"
+        },
+        {
+          "name": "项目级回归 + 重复试验",
+          "at": "与真实业务风险一致。",
+          "cost": "需要建设真实案例与验收器。",
+          "date": "2026-01-09",
+          "end": "pass@k、pass^k 与真实事故转化成 evals。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "prompt-plan": {
+      "q": "一句 Prompt 后直接编码，还是先规划？",
+      "when": "2025-04-18",
+      "context": "探索型需求可能很短，复杂代码库已有隐含设计约束。",
+      "opts": [
+        {
+          "name": "直接编码 / 快速迭代",
+          "at": "成本低，适合小修复、低风险 UI。",
+          "cost": "复杂任务容易误解范围和中途返工。",
+          "date": "2026-03-24",
+          "end": "小任务依然可用。",
+          "status": "conditional"
+        },
+        {
+          "name": "Explore → Plan → Code → Verify",
+          "at": "先识别现有实现和验收条件。",
+          "cost": "每次都完整审批会拖慢简单任务。",
+          "date": "2026-03-24",
+          "end": "成为中高风险任务推荐流程，并按风险缩放。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "sync-async": {
+      "q": "人在现场陪同，还是把任务异步委派？",
+      "when": "2025-05-16",
+      "context": "同期 Codex 云端研究预览明确与 CLI 结对模式并存。",
+      "opts": [
+        {
+          "name": "同步 Pairing",
+          "at": "快速澄清设计和视觉选择。",
+          "cost": "人持续在线成为吞吐瓶颈。",
+          "date": "2026-02-26",
+          "end": "保留为设计探索和实时纠偏路径。",
+          "status": "conditional"
+        },
+        {
+          "name": "异步 Agent Task / PR",
+          "at": "并行处理明确工作单元，方便离线执行。",
+          "cost": "环境、合并冲突、Review 与 CI 成本会浮现。",
+          "date": "2026-10-13",
+          "end": "大任务成为重要默认；高吞吐甚至倒逼版本控制变化。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "multi-or-single": {
+      "q": "所有任务都应该组建 Agent 团队吗？",
+      "when": "2025-06-13",
+      "context": "研究检索天然可拆分，耦合代码编辑则会互相踩踏。",
+      "opts": [
+        {
+          "name": "单 Agent 端到端",
+          "at": "上下文完整、成本较低、合并简单。",
+          "cost": "同时探索多条独立路径效率有限。",
+          "date": "2026-04-08",
+          "end": "简单任务仍首选，模型变强后应重新测试必要性。",
+          "status": "preferred"
+        },
+        {
+          "name": "并行多 Agent / Crew",
+          "at": "独立调查、编译器子系统、审查可并行。",
+          "cost": "token、协调、合并和重复工作成本显著。",
+          "date": "2026-02-05",
+          "end": "编译器实验显示可行，但需清晰分工与自动验收。",
+          "status": "conditional"
+        },
+        {
+          "name": "层层嵌套的复杂编排",
+          "at": "理论上能把工作分解得更精细。",
+          "cost": "容易引入比任务本身更昂贵的 Orchestration。",
+          "date": "2026-04-08",
+          "end": "不是默认最优；Harness 复杂性需要和模型能力一起复评。",
+          "status": "limited"
+        }
+      ]
+    },
+    "context-window": {
+      "q": "解决长期任务：堆更多上下文还是更好组织？",
+      "when": "2025-09-29",
+      "context": "长仓库、持续工具日志、重复说明让上下文成为成本与噪声源。",
+      "opts": [
+        {
+          "name": "尽量塞进最大上下文",
+          "at": "初期无需检索系统。",
+          "cost": "信息污染、注意力稀释、token 费用上升。",
+          "date": "2026-02-11",
+          "end": "适合一次性深读，但不能替代项目结构与知识管理。",
+          "status": "limited"
+        },
+        {
+          "name": "按需检索 + 精简 AGENTS.md",
+          "at": "节省 token，把重要约束放在正确时刻。",
+          "cost": "检索/索引本身可能失效。",
+          "date": "2026-02-11",
+          "end": "OpenAI 公开明确从巨型入口文件转向文档地图。",
+          "status": "preferred"
+        },
+        {
+          "name": "Compaction + 持久计划 + Git",
+          "at": "长任务跨上下文保持明确状态。",
+          "cost": "摘要损失、错误的历史状态写入。",
+          "date": "2026-11-06",
+          "end": "以可核实的外部状态补偿压缩；记忆进一步分层。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "skill-route": {
+      "q": "专业工程知识应该放在哪里？",
+      "when": "2025-10-16",
+      "context": "领域工作流会不断复用，但全部塞进通用 Prompt 会腐烂。",
+      "opts": [
+        {
+          "name": "万能巨大系统提示",
+          "at": "配置简单。",
+          "cost": "难维护、占上下文、不易验证和版本管理。",
+          "date": "2026-02-11",
+          "end": "OpenAI 证实超长入口文件效果不佳。",
+          "status": "limited"
+        },
+        {
+          "name": "按需 Skills / 版本化脚本",
+          "at": "按任务加载专业流程，可以复用与迭代。",
+          "cost": "发现机制、权限和更新需治理。",
+          "date": "2025-12-18",
+          "end": "Anthropic 发布跨平台开放规范；适合可复用流程知识。",
+          "status": "preferred"
+        },
+        {
+          "name": "把所有经验写进自动 Lint/Eval",
+          "at": "违反规则立即给出机器反馈。",
+          "cost": "主观偏好、创意目标难完全机器验证。",
+          "date": "2026-02-11",
+          "end": "关键稳定不变量用机器规则；主观标准仍保留人类决策。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "tools": {
+      "q": "Agent 如何调用大量外部工具？",
+      "when": "2025-11-04",
+      "context": "MCP 工具扩张使工具描述和返回结果占用大量上下文。",
+      "opts": [
+        {
+          "name": "直接暴露所有 MCP Tool",
+          "at": "简单直观，一步直达。",
+          "cost": "tool schema 与结果占满上下文。",
+          "date": "2025-11-04",
+          "end": "在大型工具生态下不具备良好扩展性。",
+          "status": "limited"
+        },
+        {
+          "name": "动态发现 + 代码编排调用",
+          "at": "按需工具选择、程序化过滤输出。",
+          "cost": "代码执行需要沙箱与权限边界。",
+          "date": "2026-09-29",
+          "end": "随着平台原生工具发现与多 Agent 能力成熟，更趋可行。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "memory-handoff": {
+      "q": "项目要靠会话记忆，还是外部长期状态？",
+      "when": "2025-11-26",
+      "context": "上下文窗口有限，任务可能持续数天甚至数月。",
+      "opts": [
+        {
+          "name": "无限续聊 / 只做 Compaction",
+          "at": "短期连续、低迁移摩擦。",
+          "cost": "累计噪声、遗失决策、缺乏客观状态验证。",
+          "date": "2026-02-11",
+          "end": "适合同一未完成任务，不能作为完整项目记忆。",
+          "status": "conditional"
+        },
+        {
+          "name": "任务级新会话 + Git/Handoff",
+          "at": "隔离噪声，检查点可审计。",
+          "cost": "需要良好入口文档和进度同步。",
+          "date": "2026-02-11",
+          "end": "明确成为长时编码 Agent 的稳健策略。",
+          "status": "preferred"
+        },
+        {
+          "name": "项目级知识图谱 / Memory",
+          "at": "跨任务复用已确认设计与偏好。",
+          "cost": "记忆可能变旧、混淆推测和事实。",
+          "date": "2026-11-06",
+          "end": "Anthropic 探索分层、回顾整理与索引检索，仍有研究问题。",
+          "status": "emerging"
+        }
+      ]
+    },
+    "one-shot-metric": {
+      "q": "评估“一次成功”和“稳定成功”哪个更重要？",
+      "when": "2026-01-09",
+      "context": "多次尝试可以挑成功样本，但生产系统要考虑重复运行。",
+      "opts": [
+        {
+          "name": "展示最好的那次 / pass@k",
+          "at": "适合创意探索，成功样例价值高。",
+          "cost": "掩盖失败率，容易把抽卡误认为高可靠。",
+          "date": "2026-11-09",
+          "end": "Saltline 证明上限，但不是稳定项目交付率。",
+          "status": "conditional"
+        },
+        {
+          "name": "pass@1 + pass^k + 故障回归",
+          "at": "关注首轮成功和连续可靠性。",
+          "cost": "测试昂贵，需要明确任务定义。",
+          "date": "2026-03-24",
+          "end": "正式产品更值得采用；视觉类任务仍需人工/模型联合评分。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "review": {
+      "q": "写码已免费，审核每一行还有意义吗？",
+      "when": "2026-02-11",
+      "context": "OpenAI 案例每名工程师每日合并多个 PR；人工 QA 成为稀缺资源。",
+      "opts": [
+        {
+          "name": "每一行都人工审查",
+          "at": "对安全敏感模块能发现细节。",
+          "cost": "大规模生成后无法与代码吞吐匹配。",
+          "date": "2026-02-11",
+          "end": "保留高风险差异审查，但不作为统一流程。",
+          "status": "conditional"
+        },
+        {
+          "name": "Agent Review + 架构 Lint + 行为 Evals",
+          "at": "把多轮检查提升为自动系统。",
+          "cost": "模型评审可能互相确认错误，测试本身也需验证。",
+          "date": "2026-10-14",
+          "end": "OpenAI 的 Harness 与维护 PR 验证了可行性，仍保留人工价值判断。",
+          "status": "preferred"
+        },
+        {
+          "name": "不审查、不测试，直接合并",
+          "at": "极限吞吐。",
+          "cost": "质量问题和安全后果随规模累积。",
+          "date": "2026-11-12",
+          "end": "持久 Agent 仍需要隔离、自动审核和可观测性。",
+          "status": "limited"
+        }
+      ]
+    },
+    "one-shot-eval": {
+      "q": "一句话完成全站：自由生成还是多阶段验收？",
+      "when": "2026-03-24",
+      "context": "强模型可以生成完整应用，但需求含糊、视觉主观、交互错误难靠自评识别。",
+      "opts": [
+        {
+          "name": "单提示自由生成",
+          "at": "适合探索创意上限、早期 Demo。",
+          "cost": "选出的成功案例不代表可维护、可重复的工程。",
+          "date": "2026-11-09",
+          "end": "Saltline 显示很高的原型上限；执行内部细节并未完整公开。",
+          "status": "conditional"
+        },
+        {
+          "name": "Planner → Generator → Evaluator",
+          "at": "把含糊要求展开为可验证规格，再独立跑 UI。",
+          "cost": "更多模型调用和浏览器运行时间。",
+          "date": "2026-04-08",
+          "end": "复杂应用值得采用；强模型下简单任务无需套全流程。",
+          "status": "preferred"
+        },
+        {
+          "name": "人工每一步都审批",
+          "at": "可控制所有设计细节。",
+          "cost": "过度监督阻碍长期自治与并行。",
+          "date": "2026-03-25",
+          "end": "应转为风险与产品决策边界审批。",
+          "status": "conditional"
+        }
+      ]
+    },
+    "permissions": {
+      "q": "批准每次操作，是最安全的方式吗？",
+      "when": "2026-03-25",
+      "context": "用户批准 93% 权限请求，频繁弹窗引发审批疲劳。",
+      "opts": [
+        {
+          "name": "每次操作请求批准",
+          "at": "用户始终有最终点击权。",
+          "cost": "审批疲劳导致盲目同意。",
+          "date": "2026-03-25",
+          "end": "不能单独作为可靠防线。",
+          "status": "limited"
+        },
+        {
+          "name": "--dangerously-skip-permissions",
+          "at": "零交互与最快速度。",
+          "cost": "越权/误操作损害非常大。",
+          "date": "2026-05-25",
+          "end": "不应作为常规默认安全模式。",
+          "status": "limited"
+        },
+        {
+          "name": "沙箱 + 风险分类 + 关键审批",
+          "at": "低风险自动化，高风险阻断。",
+          "cost": "需要设计完善的可信边界。",
+          "date": "2026-11-12",
+          "end": "OpenAI 的持久 Agent 控制平面继续深化这种做法。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "harness-complexity": {
+      "q": "模型变强后，Harness 该越来越复杂吗？",
+      "when": "2026-04-08",
+      "context": "部分保护策略基于旧模型的失败模式，可能已不符合新模型。",
+      "opts": [
+        {
+          "name": "永久叠加旧规则",
+          "at": "短期风险可控，迁移成本低。",
+          "cost": "互相矛盾、延迟、token 成本高。",
+          "date": "2026-04-08",
+          "end": "Anthropic 建议周期性重新验证旧假设。",
+          "status": "limited"
+        },
+        {
+          "name": "稳定接口 + 定期减法",
+          "at": "清晰、便于更换模型和独立测试。",
+          "cost": "需要真实 eval 数据决定是否可以删。",
+          "date": "2026-04-08",
+          "end": "推荐方向：随能力增长清理过时补丁。",
+          "status": "preferred"
+        }
+      ]
+    },
+    "git-vs-scion": {
+      "q": "Agent 时代 Git 还够用吗？",
+      "when": "2026-10-13",
+      "context": "超高频变更和超大 monorepo 将合并与 CI 变成新瓶颈。",
+      "opts": [
+        {
+          "name": "Git + Worktree + CI",
+          "at": "生态成熟，个人团队普遍适用。",
+          "cost": "极端吞吐下大量全仓操作开销。",
+          "date": "2026-10-13",
+          "end": "仍是普通团队默认方案，优先优化增量 CI 和工作树。",
+          "status": "preferred"
+        },
+        {
+          "name": "专用 Scion / 服务端版本控制",
+          "at": "针对万级日合并、高密度 Agent 运行扩展。",
+          "cost": "自研、迁移和运维代价极高。",
+          "date": "2026-10-13",
+          "end": "Anthropic 的极端规模证明专用方案可行，不应直接泛化。",
+          "status": "conditional"
+        }
+      ]
+    },
+    "persistent-choice": {
+      "q": "让 Agent 24/7 持续运行，是不是更高阶？",
+      "when": "2026-11-12",
+      "context": "范围更广、会自主改代码/配置的 Agent 可能碰触生产资源。",
+      "opts": [
+        {
+          "name": "任务级短生命周期 Agent",
+          "at": "目标可界定、权限可收敛、便于审查。",
+          "cost": "无法主动发现新任务与持续响应。",
+          "date": "2026-11-12",
+          "end": "对大部分开发任务仍是稳健默认。",
+          "status": "preferred"
+        },
+        {
+          "name": "持续 Agent + 可信控制平面",
+          "at": "可主动监控、修复、汇总和长期执行。",
+          "cost": "身份、凭据、审计、沙箱和自修改风险更复杂。",
+          "date": "2026-11-12",
+          "end": "OpenAI 生产实践说明可行，但必须把模型执行视为不可信。",
+          "status": "conditional"
+        },
+        {
+          "name": "持久 Agent 直接用人类全权限",
+          "at": "配置最简单。",
+          "cost": "无法清晰区分主体和责任，存在越权与审计空白。",
+          "date": "2026-11-12",
+          "end": "不建议。",
+          "status": "limited"
+        }
+      ]
+    }
+  },
+  "sources": {
+    "operator": [
+      "Introducing Operator · OpenAI",
+      "https://openai.com/index/introducing-operator/",
+      "2025-01-23"
+    ],
+    "karpathy": [
+      "Karpathy 原始 Vibe Coding 帖文",
+      "https://x.com/karpathy/status/1886192184808149383",
+      "2025-02-02"
+    ],
+    "claude37": [
+      "Claude 3.7 Sonnet and Claude Code · Anthropic",
+      "https://www.anthropic.com/news/claude-3-7-sonnet",
+      "2025-02-24"
+    ],
+    "responses": [
+      "New tools for building agents · OpenAI",
+      "https://openai.com/index/new-tools-for-building-agents/",
+      "2025-03-11"
+    ],
+    "metr": [
+      "Measuring AI ability to complete long software tasks · METR",
+      "https://metr.org/blog/2025-03-19-measuring-ai-ability-to-complete-long-tasks/",
+      "2025-03-19"
+    ],
+    "codexcli": [
+      "OpenAI Codex CLI · GitHub",
+      "https://github.com/openai/codex",
+      "2025-04-16"
+    ],
+    "claudebest": [
+      "Claude Code best practices · Anthropic",
+      "https://www.anthropic.com/research/claude-code-best-practices",
+      "2025-04-18"
+    ],
+    "codexcloud": [
+      "Introducing Codex · OpenAI",
+      "https://openai.com/index/introducing-codex/",
+      "2025-05-16"
+    ],
+    "claude4": [
+      "Introducing Claude 4 · Anthropic",
+      "https://www.anthropic.com/news/claude-4",
+      "2025-05-22"
+    ],
+    "multi": [
+      "How we built our multi-agent research system · Anthropic",
+      "https://www.anthropic.com/engineering/multi-agent-research-system",
+      "2025-06-13"
+    ],
+    "gpt5": [
+      "Introducing GPT-5 for developers · OpenAI",
+      "https://openai.com/index/introducing-gpt-5-for-developers/",
+      "2025-08-07"
+    ],
+    "codex5": [
+      "Introducing upgrades to Codex · OpenAI",
+      "https://openai.com/index/introducing-upgrades-to-codex/",
+      "2025-09-15"
+    ],
+    "context": [
+      "Effective context engineering for AI agents · Anthropic",
+      "https://www.anthropic.com/research/effective-context-engineering-for-ai-agents",
+      "2025-09-29"
+    ],
+    "sonnet45": [
+      "Introducing Claude Sonnet 4.5 · Anthropic",
+      "https://www.anthropic.com/news/claude-sonnet-4-5",
+      "2025-09-29"
+    ],
+    "cursorplan": [
+      "Browser Controls, Plan Mode, and Hooks · Cursor",
+      "https://cursor.com/changelog/1-7",
+      "2025-09-29"
+    ],
+    "skills": [
+      "Equipping agents with Agent Skills · Anthropic",
+      "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+      "2025-10-16"
+    ],
+    "skillsstandard": [      "Agent Skills 开放标准 · Anthropic（页面更新 2025-12-18）",
+      "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+      "2025-12-18"
+    ],
+    "mcpcode": [
+      "Code execution with MCP · Anthropic",
+      "https://www.anthropic.com/engineering/code-execution-with-mcp",
+      "2025-11-04"
+    ],
+    "long": [
+      "Effective harnesses for long-running agents · Anthropic",
+      "https://www.anthropic.com/research/effective-harnesses-for-long-running-agents",
+      "2025-11-26"
+    ],
+    "evals": [
+      "Demystifying evals for AI agents · Anthropic",
+      "https://www.anthropic.com/research/demystifying-evals-for-ai-agents",
+      "2026-01-09"
+    ],
+    "agentloop": [
+      "Unrolling the Codex agent loop · OpenAI",
+      "https://openai.com/index/unrolling-the-codex-agent-loop/",
+      "2026-01-23"
+    ],
+    "codexapp": [
+      "Introducing the Codex app · OpenAI",
+      "https://openai.com/index/introducing-the-codex-app/",
+      "2026-02-02"
+    ],
+    "opus46": [
+      "Introducing Claude Opus 4.6 · Anthropic",
+      "https://www.anthropic.com/news/claude-opus-4-6",
+      "2026-02-05"
+    ],
+    "compiler": [
+      "Building a C compiler with parallel Claudes · Anthropic",
+      "https://www.anthropic.com/research/building-c-compiler",
+      "2026-02-05"
+    ],
+    "harness": [
+      "Harness engineering · OpenAI",
+      "https://openai.com/index/harness-engineering/",
+      "2026-02-11"
+    ],
+    "agentic": [
+      "Karpathy 原始 Agentic Engineering 帖文",
+      "https://x.com/karpathy/status/2026731645169185220",
+      "2026-02-25"
+    ],
+    "third": [
+      "The third era of AI software development · Cursor",
+      "https://cursor.com/blog/third-era",
+      "2026-02-26"
+    ],
+    "gpt54": [
+      "Introducing GPT-5.4 · OpenAI",
+      "https://openai.com/index/introducing-gpt-5-4/",
+      "2026-03-05"
+    ],
+    "harnessapp": [
+      "Harness design for long-running application development · Anthropic",
+      "https://www.anthropic.com/research/harness-design-long-running-apps",
+      "2026-03-24"
+    ],
+    "automode": [
+      "Claude Code auto mode · Anthropic",
+      "https://www.anthropic.com/engineering/claude-code-auto-mode",
+      "2026-03-25"
+    ],
+    "cursor3": [
+      "Meet the new Cursor · Cursor",
+      "https://cursor.com/blog/cursor-3",
+      "2026-04-02"
+    ],
+    "managed": [
+      "Scaling Managed Agents · Anthropic",
+      "https://www.anthropic.com/research/managed-agents",
+      "2026-04-08"
+    ],
+    "evalfly": [
+      "Build an Agent Improvement Loop · OpenAI",
+      "https://developers.openai.com/cookbook/examples/agents_sdk/agent_improvement_loop",
+      "2026-05-12"
+    ],
+    "contain": [
+      "How we contain Claude across products · Anthropic",
+      "https://www.anthropic.com/research/how-we-contain-claude",
+      "2026-05-25"
+    ],
+    "metr11": [
+      "Time Horizon 1.1 · METR",
+      "https://metr.org/blog/2026-01-29-time-horizon-1-1/",
+      "2026-01-29"
+    ],
+    "gpt6": [
+      "GPT-6 Astra 发布 · OpenAI",
+      "https://help.openai.com/en/articles/6825453-chatgpt-release-notes",
+      "2026-09-03"
+    ],
+    "gpt6api": [
+      "GPT-6 Astra API / 9 月 3 日工具控制变更 · OpenAI",
+      "https://developers.openai.com/api/docs/changelog",
+      "2026-09-03"
+    ],
+    "recursive": [
+      "When AI builds itself · Anthropic",
+      "https://www.anthropic.com/institute/recursive-self-improvement",
+      "2026-09-18"
+    ],
+    "cursorprojects": [
+      "Introducing Projects · Cursor",
+      "https://cursor.com/blog/projects",
+      "2026-09-10"
+    ],
+    "gpt61": [
+      "OpenAI API changelog: GPT-6.1 Sol & multi-agent",
+      "https://developers.openai.com/api/docs/changelog",
+      "2026-09-29"
+    ],
+    "scion": [
+      "Redesigning source control · Anthropic",
+      "https://www.anthropic.com/research/redesigning-source-control",
+      "2026-10-13"
+    ],
+    "maint": [
+      "Maintaining software with GPT-6 family · OpenAI",
+      "https://developers.openai.com/blog/maintaining-software-with-the-gpt-6-family",
+      "2026-10-14"
+    ],
+    "memory": [
+      "The components of agent memory · Anthropic",
+      "https://www.anthropic.com/research/components-of-agent-memory",
+      "2026-11-06"
+    ],
+    "fable": [
+      "Claude Fable and Mythos 5.2 · Anthropic",
+      "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+      "2026-11-09"
+    ],
+    "saltline": [
+      "Saltline 独立页面：作者实验描述",
+      "https://saltline.games/",
+      "2026-11-09"
+    ],
+    "felix": [
+      "Felix Rieseberg 原始实验说明",
+      "https://x.com/felixrieseberg/status/2119925633564463609",
+      "2026-11-09"
+    ],
+    "persistent": [
+      "Securing persistent agents like OpenClaw · OpenAI",
+      "https://developers.openai.com/blog/securing-persistent-agents-like-openclaw-at-openai",
+      "2026-11-12"
+    ]
+  },
+  "curve": [
+    [
+      "2025-01-23",
+      [
+        1.5,
+        1,
+        1,
+        0.5,
+        1
+      ]
+    ],
+    [
+      "2025-02-24",
+      [
+        2,
+        1.5,
+        2,
+        1,
+        1
+      ]
+    ],
+    [
+      "2025-05-22",
+      [
+        2.5,
+        2,
+        2.5,
+        1.5,
+        1.5
+      ]
+    ],
+    [
+      "2025-08-07",
+      [
+        3,
+        2.5,
+        3,
+        2,
+        2
+      ]
+    ],
+    [
+      "2025-11-26",
+      [
+        3.5,
+        3.5,
+        3.5,
+        2.5,
+        2.5
+      ]
+    ],
+    [
+      "2026-02-11",
+      [
+        4,
+        4,
+        4,
+        3.5,
+        3.5
+      ]
+    ],
+    [
+      "2026-05-25",
+      [
+        4.5,
+        4,
+        4.5,
+        4,
+        4
+      ]
+    ],
+    [
+      "2026-09-29",
+      [
+        4.5,
+        4.5,
+        4.5,
+        4,
+        4.5
+      ]
+    ],
+    [
+      "2026-11-13",
+      [
+        5,
+        4.5,
+        5,
+        4.5,
+        4.5
+      ]
+    ]
+  ],
+  "phases": [
+    [
+      "2025-01-01",
+      "2025-03-31",
+      "① 自然语言驱动",
+      "从建议到执行。核心问题：能不能做？"
+    ],
+    [
+      "2025-04-01",
+      "2025-06-30",
+      "② Agent Loop",
+      "工具、Shell、沙箱与异步 PR。核心问题：怎么做？"
+    ],
+    [
+      "2025-07-01",
+      "2025-09-30",
+      "③ Context Engineering",
+      "上下文成为关键生产资源。核心问题：给它知道什么？"
+    ],
+    [
+      "2025-10-01",
+      "2025-12-31",
+      "④ 跨会话工程",
+      "Skills、工具发现、进度外置。核心问题：如何不遗忘？"
+    ],
+    [
+      "2026-01-01",
+      "2026-03-31",
+      "⑤ Harness / Evals",
+      "验证与设计边界压过代码速度。核心问题：如何证明？"
+    ],
+    [
+      "2026-04-01",
+      "2026-08-31",
+      "⑥ 可控持续自治",
+      "减法式 Harness、可信执行与评估飞轮。核心问题：能否安全持续？"
+    ],
+    [
+      "2026-09-01",
+      "2026-11-13",
+      "⑦ Agent 规模化",
+      "项目级状态、超高吞吐基础设施与持久 Agent。核心问题：如何治理？"
+    ]
+  ]
+}
