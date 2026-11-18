@@ -86,6 +86,8 @@ PR 草稿状态只表示审阅状态，不等于文章的 `draft` 字段。分�
 
 Astro 7.4.7 要求 Node >= 22.23.4；仓库和站点的 `.nvmrc` 固定 Node 22.23.4，根目录和站点的 `package.json` 固定 pnpm 9.15.1。根目录 manifest 仅用于让 Cloudflare 在安装指定 Node 后识别并安装 pnpm，不定义另一套构建入口。Cloudflare 保留现有构建命令，使用仓库根目录的 `.nvmrc` 选择 Node。
 
+站点 `.npmrc` 跳过 ONNX Runtime 的可选 CUDA 二进制下载；静态构建和默认 CPU 相似文章生成不依赖 CUDA。需要本地 GPU 推理时，可在安装依赖前设置 `ONNXRUNTIME_NODE_INSTALL_CUDA=v12` 覆盖此默认值。
+
 所有站点命令从 `Site/astro-koharu/` 执行，使用现有脚本：
 
 ```bash
