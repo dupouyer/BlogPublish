@@ -85,11 +85,12 @@ test('rejects malformed input and cross-site/bot requests without changing count
   for (const body of [null, [], 1, 'bad', {}, { path: '//bad', visitor }, { path: '/', visitor: 'invalid' }]) {
     assert.equal((await onRequestPost({ env, request: request(body) })).status, 400);
   }
-  for (const headers of [
+  const rejectedHeaders: Record<string, string>[] = [
     { origin: 'https://other.example' },
     { 'sec-fetch-site': 'cross-site' },
     { 'user-agent': 'Googlebot' },
-  ]) {
+  ];
+  for (const headers of rejectedHeaders) {
     assert.equal((await onRequestPost({ env, request: request({ path: '/', visitor }, headers) })).status, 403);
   }
   assert.equal(
