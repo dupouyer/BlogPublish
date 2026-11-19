@@ -40,7 +40,7 @@ $$
 
 负的 X 不是箭头翻转了，而是箭头沿新 X 轴的反向分量为 0.6。下面先固定箭头，只改变坐标轴；同时看世界箭头、新读数和重建结果，不要只盯着数字。
 
-![金色向量在两组基底中指向同一世界方向；紫色分量首尾相接，重建原向量。](/img/posts/basis-change-for-ta/same-vector-two-frames.svg)
+![金色向量在两组基底中指向同一世界方向；紫色分量首尾相接，重建原向量。](/img/posts/basis-change-for-ta/same-vector-two-frames.svg?v=20261119-size)
 
 [交互：换一组尺子，方向不变](/labs/basis-change)
 
