@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" role="img" aria-labelledby="title desc">
+  <title id="title">同一向量，在两组正交坐标轴中的分量</title>
+  <desc id="desc">金色向量固定朝上。左侧旧坐标为 0, 0, 1。右侧沿 T′ 反向走 0.6，再沿 N′ 正向走 0.8，回到同一个箭头端点，所以新坐标是 -0.6, 0, 0.8。两侧 B 轴均垂直于图面。</desc>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" markerWidth="5" markerHeight="5" refX="8" refY="5" orient="auto-start-reverse"><path d="m0 0 10 5-10 5z" fill="#68ccdf"/></marker>
+    <marker id="v" viewBox="0 0 10 10" markerWidth="4.5" markerHeight="4.5" refX="8" refY="5" orient="auto"><path d="m0 0 10 5-10 5z" fill="#fbd77b"/></marker>
+    <marker id="p" viewBox="0 0 10 10" markerWidth="5" markerHeight="5" refX="8" refY="5" orient="auto"><path d="m0 0 10 5-10 5z" fill="#c2a5fb"/></marker>
+  </defs>
+  <rect width="900" height="430" rx="22" fill="#0f1b30"/>
+  <rect x="26" y="22" width="410" height="384" rx="16" fill="#15233d"/><rect x="464" y="22" width="410" height="384" rx="16" fill="#15233d"/>
+  <g font-family="system-ui,sans-serif" font-size="25" fill="#e8eefb">
+    <text x="48" y="64">原坐标轴</text><text x="486" y="64">倾斜后的坐标轴</text>
+  </g>
+  <g fill="none" stroke="#68ccdf" stroke-width="3" marker-end="url(#a)">
+    <path d="M210 285H395"/><path d="M210 285V94"/><path d="M655 285 803 396"/><path d="M655 285 770 132"/>
+  </g>
+  <g fill="none" stroke="#fbd77b" stroke-width="5" marker-end="url(#v)"><path d="M210 285V125"/><path d="M655 285V125"/></g>
+  <g fill="none" stroke="#c2a5fb" stroke-width="3" stroke-dasharray="7 6" marker-end="url(#p)"><path d="M654 284 578.2 227.4"/><path d="M578.2 227.4 653.7 126.7"/></g>
+  <g fill="#d6e6f0">
+    <circle cx="210" cy="285" r="6"/><circle cx="655" cy="285" r="6"/>
+  </g>
+  <g font-family="system-ui,sans-serif" font-size="22" fill="#9cddec">
+    <text x="397" y="291">T</text><text x="220" y="109">N</text><text x="810" y="398">T′</text><text x="777" y="135">N′</text>
+    <text x="224" y="313">⊗ B</text><text x="669" y="313">⊗ B′</text>
+  </g>
+  <g font-family="system-ui,sans-serif" font-size="23" fill="#fbd77b"><text x="178" y="143">V</text><text x="666" y="143">V</text></g>
+  <g font-family="system-ui,sans-serif" font-size="20" fill="#d4bafa"><text x="487" y="258">−0.6 T′</text><text x="505" y="164">+0.8 N′</text></g>
+  <g font-family="ui-monospace,monospace" font-size="26" fill="#e8eefb"><text x="96" y="368">[0, 0, 1]</text><text x="488" y="368">[−0.6, 0, 0.8]</text></g>
+</svg>

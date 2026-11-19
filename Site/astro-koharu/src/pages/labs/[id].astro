@@ -1,4 +1,6 @@
 ---
+import BasisChangeLab from '../../components/article-lab/BasisChangeLab';
+import '../../styles/basis-change-lab.css';
 import InteractiveDemo from '../../components/article-lab/InteractiveDemo.astro';
 import NormalBlendLab from '../../components/article-lab/NormalBlendLab';
 import VectorLab from '../../components/article-lab/VectorLab';
@@ -20,9 +22,9 @@ const { id, lab } = Astro.props;
   </head>
   <body>
     <InteractiveDemo title={lab.title} note={lab.note}>
-      {lab.family === 'normal-blend' ? <NormalBlendLab client:visible /> : <VectorLab id={id} client:visible />}
+      {lab.family === 'basis-change' ? <BasisChangeLab client:visible /> : lab.family === 'normal-blend' ? <NormalBlendLab client:visible /> : <VectorLab id={id} client:visible />}
     </InteractiveDemo>
-    <p><a href={lab.family === 'normal-blend' ? '/post/normal-blending-lerp-rnm-surface-gradient' : '/post/dot-cross-linear-algebra'} target="_top">阅读完整文章</a></p>
+    <p><a href={lab.family === 'basis-change' ? '/post/basis-change-for-ta' : lab.family === 'normal-blend' ? '/post/normal-blending-lerp-rnm-surface-gradient' : '/post/dot-cross-linear-algebra'} target="_top">阅读完整文章</a></p>
     <script>
       // Same-origin parent owns theme; report size only to that origin.
       const applyTheme = () => {

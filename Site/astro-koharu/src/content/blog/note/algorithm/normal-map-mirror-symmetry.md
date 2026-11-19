@@ -13,7 +13,7 @@ draft: false
 math: true
 series:
   id: linear-algebra-for-ta
-  order: 2
+  order: 3
   stage: coordinates
 collection: [normal-mapping]
 prerequisites: [dot-cross-linear-algebra]

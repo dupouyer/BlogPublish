@@ -1,4 +1,9 @@
 export const labs = {
+  'basis-change': {
+    title: '基变换 · 换尺子，方向不变',
+    family: 'basis-change',
+    note: '固定 V=(0,0,1)。默认 T′=(0.8,0,-0.6)、B′=(0,1,0)、N′=(0.6,0,0.8)，新坐标为 (-0.6,0,0.8)，重建仍为 V。绕固定 N′ 转 +90°，坐标变为 (0,0.6,0.8)，Z 不变。',
+  },
   'normal-blend': {
     title: '法线混合 · Lerp / RNM / Surface Gradient',
     family: 'normal-blend',

@@ -39,7 +39,7 @@ export const learningSeries: KnowledgeGroup[] = [
         id: 'coordinates',
         title: '表面坐标系',
         description: '把几何直觉用于 TBN、镜像与法线。',
-        planned: ['基变换：沿坐标轴测量与重建', '非均匀缩放下的法线变换'],
+        planned: ['非均匀缩放下的法线变换'],
       },
       {
         id: 'applications',
