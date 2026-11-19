@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="两组不同朝向的坐标框架穿过同一根金色向量">
+  <defs>
+    <linearGradient id="back" x2="1" y2="1" gradientUnits="objectBoundingBox">
+      <stop stop-color="#0a1326"/><stop offset="1" stop-color="#142746"/>
+    </linearGradient>
+    <radialGradient id="halo"><stop stop-color="#386f88" stop-opacity=".37"/><stop offset="1" stop-color="#112035" stop-opacity="0"/></radialGradient>
+    <pattern id="grid" width="65" height="65" patternUnits="userSpaceOnUse"><path d="M65 0H0V65" fill="none" stroke="#8db8d1" stroke-opacity=".08"/></pattern>
+    <marker id="gold" viewBox="0 0 10 10" markerWidth="4" markerHeight="4" refX="8" refY="5" orient="auto"><path d="m0 0 10 5-10 5z" fill="#fde299"/></marker>
+  </defs>
+  <path fill="url(#back)" d="M0 0h1600v900H0z"/><path fill="url(#grid)" d="M0 0h1600v900H0z"/>
+  <ellipse fill="url(#halo)" cx="928" cy="480" rx="670" ry="480"/>
+  <g transform="translate(868 536)">
+    <path d="M-560 185-235-106 486-27 163 273Z" fill="#4fa9c3" fill-opacity=".11" stroke="#63a9c4" stroke-opacity=".39" stroke-width="2"/>
+    <path d="M-451 23-236-246 450 53 232 322Z" fill="#9b80f6" fill-opacity=".1" stroke="#aa9be8" stroke-opacity=".47" stroke-width="2"/>
+    <g fill="none" stroke="#6dc9dc" stroke-width="3" stroke-opacity=".68">
+      <path d="M-472 109 472-109m-664-23L192 132M0 158V-390"/>
+      <path d="m-420 141 124-113m18 152 124-113m22 150L-8 104m25 153 124-113m-57-3 20-19" opacity=".35"/>
+    </g>
+    <g fill="none" stroke="#b49cf5" stroke-width="3" stroke-opacity=".72">
+      <path d="m-419-182 838 364m-564 23L145-205m-222 332L208-344"/>
+      <path d="M-383-65 293 229m-620-379 686 298M-269-220l686 298" opacity=".32"/>
+    </g>
+    <path d="M0 0V-256" stroke="#fde299" stroke-width="10" marker-end="url(#gold)"/>
+    <path d="M0-254 158-268M0-254-93-179" fill="none" stroke="#fde299" stroke-width="2" stroke-opacity=".66" stroke-dasharray="7 10"/>
+    <circle r="13" fill="#fcdda0"/>
+  </g>
+</svg>

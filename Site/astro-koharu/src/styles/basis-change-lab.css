@@ -1,0 +1,105 @@
+.basis-lab {
+  --basis-border: #64748b;
+}
+.basis-lab .basis-lead {
+  border-left: 3px solid #25b69b;
+  padding-left: 12px;
+}
+.basis-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+.basis-buttons button {
+  min-height: 44px;
+  margin: 0;
+  padding: 8px 12px;
+  font: inherit;
+  color: var(--fg);
+  background: var(--panel);
+  border: 1px solid var(--basis-border);
+  border-radius: 8px;
+  cursor: pointer;
+}
+.basis-controls,
+.basis-panels {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.basis-controls label {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px;
+}
+.basis-controls input {
+  grid-column: 1 / -1;
+  min-height: 44px;
+  margin: 0;
+  width: 100%;
+}
+.basis-controls output {
+  font-variant-numeric: tabular-nums;
+}
+.basis-panels {
+  margin-top: 16px;
+}
+.basis-panel {
+  min-width: 0;
+  border: 1px solid var(--basis-border);
+  border-radius: 12px;
+  padding: 10px;
+}
+.basis-panel h2 {
+  font-size: 16px;
+  margin: 2px 0 12px;
+}
+.basis-panel svg {
+  height: auto;
+  aspect-ratio: 400 / 330;
+}
+.basis-panel dl {
+  margin: 8px 0;
+}
+.basis-panel dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.basis-panel dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+.basis-result {
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+.basis-summary {
+  background: var(--panel);
+  padding: 12px;
+  margin-top: 16px;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+}
+.basis-boundary {
+  font-size: 13px;
+}
+.basis-lab summary {
+  cursor: pointer;
+  min-height: 44px;
+  padding-top: 10px;
+}
+.basis-lab :focus-visible {
+  outline: 3px solid #25b69b;
+  outline-offset: 3px;
+}
+@media (max-width: 620px) {
+  .basis-controls,
+  .basis-panels {
+    grid-template-columns: 1fr;
+  }
+  .basis-buttons button {
+    width: 100%;
+  }
+}
