@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="430" viewBox="0 0 900 430" role="img" aria-labelledby="title desc">
   <title id="title">同一向量，在两组正交坐标轴中的分量</title>
   <desc id="desc">金色向量固定朝上。左侧旧坐标为 0, 0, 1。右侧沿 T′ 反向走 0.6，再沿 N′ 正向走 0.8，回到同一个箭头端点，所以新坐标是 -0.6, 0, 0.8。两侧 B 轴均垂直于图面。</desc>
   <defs>
